@@ -25,15 +25,23 @@ export async function distributeCommissions(transactionId: string): Promise<{
 }> {
   const svc = createServiceClient()
 
-  // Charger la transaction complète
+  // Verrou atomique : transition processing|escrow → distributing via UPDATE RETURNING.
+  // PostgreSQL garantit qu'un seul appelant concurrent obtient la ligne.
+  // Si aucune ligne retournée → déjà distribué ou en cours → idempotent.
   const { data: tx } = await svc
     .from('transactions')
-    .select('id, merchant_id, buyer_id, amount_fcfa, commission_rate, commission_total, status, payment_method, product_id, merchants(total_gmv)')
+    .update({ status: 'distributing' })
+    .in('status', ['processing', 'escrow'])
     .eq('id', transactionId)
+    .select('id, merchant_id, buyer_id, amount_fcfa, commission_rate, commission_total, payment_method, product_id, merchants(total_gmv)')
     .single()
 
-  if (!tx) return { ok: false, error: 'Transaction introuvable', cashback: { amount: 0, isGfp: false } }
-  if (tx.status === 'completed') return { ok: true, cashback: { amount: 0, isGfp: false } } // idempotent
+  if (!tx) {
+    const { data: existing } = await svc
+      .from('transactions').select('id').eq('id', transactionId).maybeSingle()
+    if (!existing) return { ok: false, error: 'Transaction introuvable', cashback: { amount: 0, isGfp: false } }
+    return { ok: true, cashback: { amount: 0, isGfp: false } }
+  }
 
   // ── Activation de compte (premier achat sans parrain) ──
   // Doit se faire AVANT le calcul des commissions pour que les uplines

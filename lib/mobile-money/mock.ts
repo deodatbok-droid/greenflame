@@ -120,6 +120,10 @@ export function getMoMoAdapter(operator: 'mtn_momo' | 'moov_money'): MoMoAdapter
 
   const { mtnMoMoLive } = require('./mtn')
   if (operator === 'mtn_momo') return mtnMoMoLive
-  // Moov Money live non encore disponible — fallback mock
-  return moovMoneyMock
+  // Moov Money live non implémenté — erreur explicite plutôt que fallback silencieux
+  // (le mock ne fonctionne pas en serverless : setTimeout ne survit pas à la fin de la requête)
+  throw new Error(
+    '[GreenFlame] Moov Money live adapter not implemented. ' +
+    'Set PAYMENT_MODE=mock for development, or implement lib/mobile-money/moov.ts for production.'
+  )
 }

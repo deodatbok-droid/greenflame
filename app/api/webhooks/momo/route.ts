@@ -10,22 +10,29 @@ export async function POST(req: NextRequest) {
 
   const rawBody = await req.text()
 
-  // Verification HMAC — rejeter les callbacks non signes
+  // MOMO_WEBHOOK_SECRET est obligatoire en production.
+  // En dev (NODE_ENV !== 'production'), la vérification est optionnelle.
   const webhookSecret = process.env.MOMO_WEBHOOK_SECRET
-  if (webhookSecret) {
-    const signature = req.headers.get('X-Callback-Signature') ?? req.headers.get('X-Signature') ?? ''
-    if (signature) {
-      const expected = createHmac('sha256', webhookSecret).update(rawBody).digest('hex')
-      try {
-        const valid = timingSafeEqual(Buffer.from(signature, 'hex'), Buffer.from(expected, 'hex'))
-        if (!valid) return NextResponse.json({ error: 'Invalid signature' }, { status: 401 })
-      } catch {
-        return NextResponse.json({ error: 'Invalid signature format' }, { status: 401 })
-      }
+  if (!webhookSecret) {
+    if (process.env.NODE_ENV === 'production') {
+      console.error('[SECURITY] MOMO_WEBHOOK_SECRET absent — tous les callbacks refusés')
+      return NextResponse.json({ error: 'Webhook not configured' }, { status: 503 })
     }
-    // Si pas de signature dans le header → accepte en dev (PAYMENT_MODE=mock), rejette en prod
-    else if (process.env.PAYMENT_MODE === 'live') {
+    // Dev uniquement : continuer sans vérification HMAC
+  } else {
+    const signature = req.headers.get('X-Callback-Signature') ?? req.headers.get('X-Signature') ?? ''
+    if (!signature) {
       return NextResponse.json({ error: 'Missing signature' }, { status: 401 })
+    }
+    const expected = createHmac('sha256', webhookSecret).update(rawBody).digest('hex')
+    try {
+      const sigBuf = Buffer.from(signature.replace(/^sha256=/, ''), 'hex')
+      const expBuf = Buffer.from(expected, 'hex')
+      if (sigBuf.length !== expBuf.length || !timingSafeEqual(sigBuf, expBuf)) {
+        return NextResponse.json({ error: 'Invalid signature' }, { status: 401 })
+      }
+    } catch {
+      return NextResponse.json({ error: 'Invalid signature format' }, { status: 401 })
     }
   }
 
