@@ -1,0 +1,1 @@
+SELECT amount_fcfa, idempotency_key, created_at FROM transactions WHERE buyer_id = (SELECT id FROM users WHERE phone = '+22997025083') ORDER BY amount_fcfa DESC LIMIT 10;

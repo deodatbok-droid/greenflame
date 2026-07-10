@@ -1,0 +1,1 @@
+SELECT id, full_name, phone, role, email FROM users WHERE full_name ILIKE '%deodat%' OR full_name ILIKE '%déodat%' OR email = 'deodatbok@gmail.com';

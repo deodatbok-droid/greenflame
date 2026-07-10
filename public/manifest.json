@@ -1,0 +1,64 @@
+{
+  "id": "/",
+  "name": "GreenFlame",
+  "short_name": "GreenFlame",
+  "description": "Commerce communautaire pan-africain — achetez local, gagnez du cashback.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#16a34a",
+  "theme_color": "#16a34a",
+  "lang": "fr",
+  "dir": "ltr",
+  "categories": ["finance", "shopping"],
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192-maskable.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Marketplace",
+      "short_name": "Marché",
+      "description": "Explorer les produits",
+      "url": "/marketplace",
+      "icons": [{ "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }]
+    },
+    {
+      "name": "Mon Wallet",
+      "short_name": "Wallet",
+      "description": "Consulter mon solde",
+      "url": "/wallet",
+      "icons": [{ "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }]
+    },
+    {
+      "name": "Payer",
+      "short_name": "Payer",
+      "description": "Effectuer un paiement",
+      "url": "/pay",
+      "icons": [{ "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }]
+    }
+  ]
+}

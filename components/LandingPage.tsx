@@ -1,0 +1,386 @@
+'use client'
+
+import { useState } from 'react'
+import Link from 'next/link'
+import Image from 'next/image'
+import { useLocale } from '@/components/providers/LocaleProvider'
+import LangToggle from '@/components/ui/LangToggle'
+
+export default function LandingPage({ isLoggedIn = false }: { isLoggedIn?: boolean }) {
+  const [menuOpen, setMenuOpen] = useState(false)
+  const { t } = useLocale()
+
+  const STEPS = [
+    { num: '01', title: t('landing.step1Title'), desc: t('landing.step1Desc'), icon: '🛒', color: 'bg-green-600' },
+    { num: '02', title: t('landing.step2Title'), desc: t('landing.step2Desc'), icon: '💰', color: 'bg-amber-500' },
+    { num: '03', title: t('landing.step3Title'), desc: t('landing.step3Desc'), icon: '🌱', color: 'bg-emerald-600' },
+  ]
+
+  const VALUES = [
+    { icon: '🔒', title: t('landing.value1Title'), desc: t('landing.value1Desc'), bg: 'bg-green-50',   border: 'border-green-100',   iconBg: 'bg-green-100' },
+    { icon: '📡', title: t('landing.value2Title'), desc: t('landing.value2Desc'), bg: 'bg-amber-50',   border: 'border-amber-100',   iconBg: 'bg-amber-100' },
+    { icon: '🌍', title: t('landing.value3Title'), desc: t('landing.value3Desc'), bg: 'bg-emerald-50', border: 'border-emerald-100', iconBg: 'bg-emerald-100' },
+  ]
+
+  const STATS = [
+    { value: t('landing.stat1Value'), label: t('landing.stat1Label') },
+    { value: '100%',                  label: t('landing.stat2Label') },
+    { value: 'MTN · Moov · Celtiis', label: t('landing.stat3Label') },
+    { value: t('landing.stat4Value'), label: t('landing.stat4Label') },
+  ]
+
+  const BUYER_FEATURES = [
+    { icon: '💚', text: t('landing.buyerFeature1') },
+    { icon: '🌐', text: t('landing.buyerFeature2') },
+    { icon: '📱', text: t('landing.buyerFeature3') },
+    { icon: '🔥', text: t('landing.buyerFeature4') },
+  ]
+
+  const MERCHANT_FEATURES = [
+    { icon: '🏪', text: t('landing.merchantFeature1') },
+    { icon: '📲', text: t('landing.merchantFeature2') },
+    { icon: '🔄', text: t('landing.merchantFeature3') },
+    { icon: '📊', text: t('landing.merchantFeature4') },
+  ]
+
+  const FEE_CODES = [
+    { code: 'C-3',  label: t('landing.feeCode1Label'), desc: t('landing.feeCode1Desc') },
+    { code: 'C-5',  label: t('landing.feeCode2Label'), desc: t('landing.feeCode2Desc') },
+    { code: 'C-10', label: t('landing.feeCode3Label'), desc: t('landing.feeCode3Desc') },
+    { code: 'C-15', label: t('landing.feeCode4Label'), desc: t('landing.feeCode4Desc') },
+  ]
+
+  return (
+    <div className="min-h-screen bg-white text-gray-900 font-sans">
+
+      {/* ── NAVBAR ── */}
+      <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-gray-100 shadow-sm">
+        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2.5 font-semibold text-lg">
+            <div className="w-[72px] h-[72px] rounded-xl flex-shrink-0">
+              <Image src="/logo-transparent.png" alt="GreenFlame" width={72} height={72} className="object-contain w-full h-full" priority />
+            </div>
+            <span className="text-green-700">GreenFlame</span>
+          </Link>
+
+          <div className="hidden md:flex items-center gap-6 text-sm text-gray-600">
+            <Link href="#comment" className="hover:text-green-700 transition-colors">{t('landing.navHow')}</Link>
+            <Link href="#valeurs" className="hover:text-green-700 transition-colors">{t('landing.navWhy')}</Link>
+            <Link href="/demo" className="hover:text-green-700 transition-colors">{t('landing.navDemo')}</Link>
+          </div>
+
+          <div className="hidden md:flex items-center gap-3">
+            <LangToggle className="text-gray-500" />
+            {isLoggedIn ? (
+              <>
+                <Link href="/dashboard" className="text-sm text-gray-600 hover:text-green-700 transition-colors">
+                  {t('landing.navMyDashboard')}
+                </Link>
+                <Link href="/register" className="text-sm bg-green-700 text-white px-4 py-2 rounded-lg hover:bg-green-800 transition-colors font-medium">
+                  {t('landing.navJoin')}
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link href="/login" className="text-sm text-gray-600 hover:text-green-700 transition-colors">
+                  {t('common.signIn')}
+                </Link>
+                <Link href="/register" className="text-sm bg-green-700 text-white px-4 py-2 rounded-lg hover:bg-green-800 transition-colors font-medium">
+                  {t('landing.navJoin')}
+                </Link>
+              </>
+            )}
+          </div>
+
+          <button className="md:hidden p-2 text-gray-600" onClick={() => setMenuOpen(!menuOpen)} aria-label="Menu">
+            {menuOpen ? '✕' : '☰'}
+          </button>
+        </div>
+
+        {menuOpen && (
+          <div className="md:hidden border-t border-gray-100 bg-white px-4 py-4 flex flex-col gap-4 text-sm">
+            <Link href="#comment" className="text-gray-600" onClick={() => setMenuOpen(false)}>{t('landing.navHow')}</Link>
+            <Link href="#valeurs" className="text-gray-600" onClick={() => setMenuOpen(false)}>{t('landing.navWhy')}</Link>
+            <Link href="/demo" className="text-gray-600" onClick={() => setMenuOpen(false)}>{t('landing.navDemo')}</Link>
+            <LangToggle className="text-gray-500 self-start" />
+            <hr className="border-gray-100" />
+            {isLoggedIn ? (
+              <>
+                <Link href="/dashboard" className="text-gray-600">{t('landing.navMyDashboard')}</Link>
+                <Link href="/register" className="bg-green-700 text-white px-4 py-2 rounded-lg text-center font-medium">
+                  {t('landing.navJoin')}
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link href="/login" className="text-gray-600">{t('common.signIn')}</Link>
+                <Link href="/register" className="bg-green-700 text-white px-4 py-2 rounded-lg text-center font-medium">
+                  {t('landing.navJoin')}
+                </Link>
+              </>
+            )}
+          </div>
+        )}
+      </nav>
+
+      {/* ── HERO ── */}
+      <section className="relative overflow-hidden text-white">
+        <div className="absolute inset-0">
+          <Image
+            src="/images/hero.jpg"
+            alt={t('landing.heroAlt')}
+            fill
+            className="object-cover object-center"
+            priority
+          />
+        </div>
+        <div className="absolute inset-0 bg-green-900/85" />
+        <div className="absolute inset-0 bg-gradient-to-br from-green-700/30 via-transparent to-green-900/30" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-amber-400/10 rounded-full translate-y-1/2 -translate-x-1/2" />
+        <div className="absolute top-1/2 left-1/4 w-32 h-32 bg-emerald-400/10 rounded-full" />
+
+        <div className="relative max-w-6xl mx-auto px-4 pt-44 pb-20 md:pt-52 md:pb-28 text-center">
+          <div className="absolute top-8 inset-x-0 flex justify-center">
+            <div className="inline-flex items-center gap-2 bg-white/15 text-white text-xs font-medium px-4 py-1.5 rounded-full border border-white/20 backdrop-blur-sm">
+              {t('landing.heroBadge')}
+            </div>
+          </div>
+
+          <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold leading-tight mb-6 mx-auto flex items-center justify-center gap-3 md:gap-6">
+            <Image src="/logo-transparent.png" alt="" width={128} height={128} className="object-contain drop-shadow-lg flex-shrink-0 w-32 h-32 hidden md:block" />
+            <span>{t('landing.heroTitle1')}{' '}<span className="text-amber-300">{t('landing.heroTitle2')}</span>{' '}{t('landing.heroTitle3')}</span>
+            <Image src="/logo-transparent.png" alt="" width={128} height={128} className="object-contain drop-shadow-lg flex-shrink-0 w-32 h-32 hidden md:block" />
+          </h1>
+
+          <p className="text-lg md:text-xl text-green-100 max-w-xl mx-auto mb-10 leading-relaxed">
+            {t('landing.heroSubtitle')}
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link href="/register" className="bg-white text-green-700 px-8 py-4 rounded-xl font-semibold text-base hover:bg-green-50 transition-colors shadow-lg">
+              {t('landing.heroStart')}
+            </Link>
+            <Link href="/demo" className="border border-white/40 text-white px-8 py-4 rounded-xl font-semibold text-base hover:bg-white/10 transition-colors">
+              {t('landing.heroDemo')}
+            </Link>
+          </div>
+          <div className="mt-4 flex justify-center">
+            <Link href="/telecharger" className="inline-flex items-center gap-2 text-green-200 text-sm hover:text-white transition-colors">
+              <span>🔥</span>
+              <span>Télécharger l&apos;app Android</span>
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+              </svg>
+            </Link>
+          </div>
+
+          {isLoggedIn && (
+            <p className="mt-5 text-green-300 text-sm">
+              {t('landing.heroMember')}{' '}
+              <Link href="/dashboard" className="text-white font-semibold underline underline-offset-2 hover:text-amber-300 transition-colors">
+                {t('landing.heroDashboard')}
+              </Link>
+            </p>
+          )}
+
+          <div className="mt-10 flex flex-wrap justify-center gap-6 text-sm text-green-200 relative">
+            <div className="absolute -inset-x-8 -inset-y-3 bg-green-900/40 rounded-xl blur-sm -z-10" />
+            <span>{t('landing.heroCheck1')}</span>
+            <span>{t('landing.heroCheck2')}</span>
+            <span>{t('landing.heroCheck3')}</span>
+          </div>
+        </div>
+      </section>
+
+      {/* ── STATS BAND ── */}
+      <section className="bg-amber-400 text-gray-900 py-10">
+        <div className="max-w-6xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+          {STATS.map((s) => (
+            <div key={s.value}>
+              <div className="text-2xl md:text-3xl font-bold mb-1">{s.value}</div>
+              <div className="text-amber-800 text-sm leading-snug">{s.label}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── UBUNTU ── */}
+      <section className="bg-green-950 py-14 md:py-20 text-center px-4">
+        <p className="text-2xl md:text-4xl font-serif italic text-amber-300 tracking-wide">
+          &ldquo;Umuntu ngumuntu ngabantu.&rdquo;
+        </p>
+        <p className="mt-4 text-green-300 text-sm md:text-base tracking-widest uppercase">
+          {t('landing.ubuntuSubtitle')}
+        </p>
+      </section>
+
+      {/* ── COMMENT ÇA MARCHE ── */}
+      <section id="comment" className="max-w-6xl mx-auto px-4 py-14 md:py-24">
+        <div className="text-center mb-14">
+          <span className="text-xs font-bold text-green-600 tracking-widest uppercase">{t('landing.sectionSystem')}</span>
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mt-2 mb-4">
+            {t('landing.howTitle')}
+          </h2>
+          <p className="text-gray-500 max-w-lg mx-auto">
+            {t('landing.howSubtitle')}
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-8">
+          {STEPS.map((step) => (
+            <div key={step.num} className="relative bg-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-md hover:border-green-200 transition-all">
+              <div className={`w-12 h-12 ${step.color} rounded-2xl flex items-center justify-center text-white font-bold text-lg mb-5 shadow-sm`}>
+                {step.num}
+              </div>
+              <div className="text-4xl mb-4">{step.icon}</div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">{step.title}</h3>
+              <p className="text-gray-500 text-sm leading-relaxed">{step.desc}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Codes de commission */}
+        <div className="mt-14 bg-green-50 border border-green-100 rounded-3xl p-8">
+          <div className="text-center mb-8">
+            <span className="text-xs font-bold text-green-600 tracking-widest uppercase">{t('landing.transparencyLabel')}</span>
+            <h3 className="text-xl md:text-2xl font-bold text-gray-900 mt-2 mb-2">
+              {t('landing.feesTitle')}
+            </h3>
+            <p className="text-gray-500 text-sm max-w-xl mx-auto">
+              {t('landing.feesSubtitle')}
+            </p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
+            {FEE_CODES.map(({ code, label, desc }) => (
+              <div key={code} className="bg-white rounded-2xl p-4 text-center border border-green-100 shadow-sm">
+                <p className="text-2xl font-bold text-green-700 mb-1">{code}</p>
+                <p className="text-xs font-semibold text-gray-700">{label}</p>
+                <p className="text-xs text-gray-400 mt-1">{desc}</p>
+              </div>
+            ))}
+          </div>
+          <p className="text-center text-xs text-gray-400 mt-6">
+            {t('landing.feesNote')}
+          </p>
+        </div>
+      </section>
+
+      {/* ── ACHETEURS vs MARCHANDS ── */}
+      <section className="py-12 md:py-20 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-8">
+
+          {/* Acheteurs */}
+          <div className="bg-gradient-to-br from-green-700 to-green-900 rounded-3xl p-8 text-white">
+            <div className="text-4xl mb-4">🛍️</div>
+            <h3 className="text-2xl font-bold mb-2">{t('landing.buyerTitle')}</h3>
+            <p className="text-green-200 text-sm mb-6">{t('landing.buyerSubtitle')}</p>
+            <ul className="space-y-3 mb-8">
+              {BUYER_FEATURES.map((f) => (
+                <li key={f.text} className="flex items-start gap-3">
+                  <span className="text-xl flex-shrink-0">{f.icon}</span>
+                  <span className="text-green-100 text-sm leading-relaxed">{f.text}</span>
+                </li>
+              ))}
+            </ul>
+            <Link href="/register" className="inline-block bg-white text-green-700 font-semibold px-6 py-3 rounded-xl hover:bg-green-50 transition-colors text-sm">
+              {t('landing.buyerCta')}
+            </Link>
+          </div>
+
+          {/* Marchands */}
+          <div className="bg-gradient-to-br from-amber-500 to-orange-600 rounded-3xl p-8 text-white">
+            <div className="text-4xl mb-4">🏪</div>
+            <h3 className="text-2xl font-bold mb-2">{t('landing.merchantTitle')}</h3>
+            <p className="text-amber-100 text-sm mb-6">{t('landing.merchantSubtitle')}</p>
+            <ul className="space-y-3 mb-8">
+              {MERCHANT_FEATURES.map((f) => (
+                <li key={f.text} className="flex items-start gap-3">
+                  <span className="text-xl flex-shrink-0">{f.icon}</span>
+                  <span className="text-amber-100 text-sm leading-relaxed">{f.text}</span>
+                </li>
+              ))}
+            </ul>
+            <Link href="/register" className="inline-block bg-white text-orange-600 font-semibold px-6 py-3 rounded-xl hover:bg-amber-50 transition-colors text-sm">
+              {t('landing.merchantCta')}
+            </Link>
+          </div>
+
+        </div>
+      </section>
+
+      {/* ── VALEURS ── */}
+      <section id="valeurs" className="max-w-6xl mx-auto px-4 py-14 md:py-24">
+        <div className="text-center mb-14">
+          <span className="text-xs font-bold text-green-600 tracking-widest uppercase">{t('landing.promiseLabel')}</span>
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mt-2 mb-4">
+            {t('landing.whyTitle')}
+          </h2>
+          <p className="text-gray-500 max-w-lg mx-auto">
+            {t('landing.whySubtitle')}
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-6">
+          {VALUES.map((v) => (
+            <div key={v.title} className={`${v.bg} rounded-2xl p-8 border ${v.border}`}>
+              <div className={`w-12 h-12 ${v.iconBg} rounded-2xl flex items-center justify-center text-2xl mb-5`}>
+                {v.icon}
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">{v.title}</h3>
+              <p className="text-gray-600 text-sm leading-relaxed">{v.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── CTA FINAL ── */}
+      <section className="max-w-6xl mx-auto px-4 pb-16 md:pb-24 text-center">
+        <div className="relative overflow-hidden bg-green-700 rounded-3xl px-8 py-16 text-white">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-amber-400/10 rounded-full translate-y-1/2 -translate-x-1/2" />
+          <div className="relative">
+            <div className="w-16 h-16 mx-auto mb-6 rounded-2xl overflow-hidden shadow-xl border border-white/20">
+              <Image src="/logo-transparent.png" alt="GreenFlame" width={64} height={64} className="object-contain w-full h-full" />
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              {t('landing.ctaTitle')}
+            </h2>
+            <p className="text-green-200 mb-8 max-w-md mx-auto">
+              {t('landing.ctaSubtitle')}
+            </p>
+            <Link href="/register" className="inline-block bg-white text-green-700 px-8 py-4 rounded-xl font-semibold text-base hover:bg-green-50 transition-colors shadow-lg">
+              {t('landing.ctaJoin')}
+            </Link>
+            <div className="mt-5">
+              <Link href="/telecharger" className="inline-flex items-center gap-2 text-green-200 text-sm hover:text-white transition-colors">
+                <span>🔥</span>
+                <span>Télécharger l&apos;app Android (.apk)</span>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── FOOTER ── */}
+      <footer className="border-t border-gray-100 py-10 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-400">
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg overflow-hidden border border-gray-200">
+              <Image src="/logo-transparent.png" alt="GreenFlame" width={28} height={28} className="object-contain w-full h-full" />
+            </div>
+            <span className="font-medium text-gray-600">GreenFlame</span>
+            <span>— {t('landing.footerTagline')}</span>
+          </div>
+          <div className="flex gap-6">
+            <Link href="/terms" className="hover:text-gray-600 transition-colors">{t('landing.footerTerms')}</Link>
+            <Link href="/privacy" className="hover:text-gray-600 transition-colors">{t('landing.footerPrivacy')}</Link>
+            <Link href="/demo" className="hover:text-gray-600 transition-colors">{t('landing.navDemo')}</Link>
+            <Link href="/telecharger" className="hover:text-gray-600 transition-colors">🔥 App Android</Link>
+          </div>
+        </div>
+      </footer>
+
+    </div>
+  )
+}

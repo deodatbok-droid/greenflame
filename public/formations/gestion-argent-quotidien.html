@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestion d'argent au quotidien — Mini-formation GreenFlame</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--g:#16a34a;--gd:#14532d;--f:#f97316;--bg:#f7fef4;--card:#fff;--text:#111827;--muted:#6b7280}
+body{font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.65;max-width:600px;margin:0 auto;padding-bottom:60px}
+.header{background:linear-gradient(140deg,#14532d 0%,#16a34a 100%);color:#fff;padding:28px 20px 24px;text-align:center}
+.header .emoji{font-size:56px;display:block;margin-bottom:10px;line-height:1}
+.header h1{font-size:21px;font-weight:800;line-height:1.3;margin-bottom:6px}
+.header .meta{font-size:11px;opacity:.7;text-transform:uppercase;letter-spacing:.1em;margin-bottom:16px}
+.header .steps{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.header .step{background:rgba(255,255,255,.2);border-radius:20px;padding:5px 12px;font-size:12px;font-weight:600}
+.progress-bar{height:5px;background:rgba(0,0,0,.1)}
+.progress-fill{height:5px;background:var(--f);transition:width .5s ease;width:0%}
+.section-wrap{margin:14px 12px 0;border-radius:16px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.07)}
+.section-header{background:var(--card);padding:15px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none}
+.section-header:active{background:#f9fafb}
+.section-num{width:30px;height:30px;border-radius:50%;background:var(--g);color:#fff;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.section-title{flex:1;font-weight:600;font-size:14px;line-height:1.35}
+.section-toggle{font-size:22px;color:var(--g);line-height:1;transition:transform .25s;flex-shrink:0}
+.section-toggle.open{transform:rotate(45deg)}
+.section-body{background:var(--card);overflow:hidden;max-height:0;transition:max-height .35s ease}
+.section-body.open{max-height:3000px}
+.section-inner{padding:4px 16px 18px}
+.section-inner p{margin-bottom:11px;color:#374151;font-size:14px}
+.section-inner h3{font-size:14px;font-weight:700;color:var(--gd);margin:16px 0 8px;display:flex;align-items:center;gap:6px}
+.section-inner ul,.section-inner ol{padding-left:18px;margin-bottom:11px;color:#374151;font-size:14px}
+.section-inner li{margin-bottom:7px}
+.section-inner li::marker{color:var(--g)}
+.section-inner strong{color:var(--gd)}
+.tip{background:#fefce8;border-left:3px solid var(--f);border-radius:0 10px 10px 0;padding:10px 14px;margin:12px 0;font-size:13px;color:#713f12}
+.sep{text-align:center;padding:22px 16px 6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
+.card{background:var(--card);margin:8px 12px 0;border-radius:16px;padding:20px;box-shadow:0 1px 6px rgba(0,0,0,.07)}
+.card h2{font-size:17px;font-weight:700;color:var(--gd);margin-bottom:4px}
+.card .sub{font-size:13px;color:var(--muted);margin-bottom:18px}
+label{display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:5px;margin-top:14px}
+label:first-of-type{margin-top:0}
+input[type=number]{width:100%;border:1.5px solid #e5e7eb;border-radius:10px;padding:11px 13px;font-size:16px;color:var(--text);outline:none;background:#fff;-moz-appearance:textfield}
+input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
+input[type=number]:focus{border-color:var(--g)}
+.btn{width:100%;margin-top:16px;background:var(--g);color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;transition:background .15s;-webkit-tap-highlight-color:transparent}
+.btn:active{background:var(--gd)}
+.btn.flame{background:var(--f)}
+.btn.flame:active{background:#ea580c}
+.btn:disabled{background:#9ca3af;cursor:default}
+.result-box{margin-top:16px;border-radius:12px;overflow:hidden;display:none;border:1.5px solid #e5e7eb}
+.result-box.show{display:block}
+.result-item{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid #f3f4f6}
+.result-item:last-child{border:none}
+.rl{font-size:13px;color:var(--muted)}
+.rv{font-weight:700;font-size:15px}
+.rv.green{color:#16a34a}
+.rv.orange{color:#f97316}
+.rv.red{color:#dc2626}
+.result-advice{margin:14px 0 0;padding:13px;border-radius:10px;font-size:13px;line-height:1.55;font-weight:500}
+.result-advice.ok{background:#f0fdf4;color:#166534}
+.result-advice.warn{background:#fffbeb;color:#92400e}
+.result-advice.bad{background:#fef2f2;color:#991b1b}
+.question{margin-bottom:22px}
+.question p{font-size:14px;font-weight:600;margin-bottom:10px;color:#111}
+.option{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:10px;margin-bottom:6px;cursor:pointer;transition:border-color .15s,background .15s;font-size:14px}
+.option:active{background:#f9fafb}
+.option input[type=radio]{margin-top:2px;accent-color:var(--g);flex-shrink:0;width:16px;height:16px}
+.option.correct{background:#f0fdf4;border-color:#16a34a}
+.option.wrong{background:#fef2f2;border-color:#ef4444}
+.score-box{margin-top:16px;border-radius:12px;padding:18px;text-align:center;display:none;background:var(--bg);border:1.5px solid #d1fae5}
+.score-box.show{display:block}
+.score-num{font-size:48px;font-weight:900;color:var(--g);line-height:1.1}
+.score-lbl{font-size:13px;color:var(--muted);margin:4px 0 12px}
+.score-msg{font-size:14px;font-weight:600;color:#111;line-height:1.4}
+.cert-section{margin:14px 12px 0;background:var(--card);border-radius:16px;padding:20px;box-shadow:0 1px 6px rgba(0,0,0,.07);display:none}
+.cert-section.show{display:block}
+.cert-section h2{font-size:17px;font-weight:700;color:var(--gd);margin-bottom:5px}
+.cert-section .sub{font-size:13px;color:var(--muted);margin-bottom:16px}
+.cert-name-input{width:100%;border:1.5px solid #e5e7eb;border-radius:10px;padding:13px;font-size:17px;text-align:center;outline:none;margin-bottom:12px;font-weight:600}
+.cert-name-input:focus{border-color:var(--g)}
+.certificate{display:none;margin-top:16px;border:2.5px solid var(--g);border-radius:16px;padding:28px 20px;text-align:center;background:linear-gradient(160deg,#f0fdf4 0%,#fff 60%)}
+.certificate.show{display:block}
+.cert-brand{font-size:13px;font-weight:800;color:var(--g);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.cert-top{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:18px}
+.cert-emoji{font-size:44px;margin-bottom:8px;display:block}
+.cert-awarded{font-size:13px;color:#374151;margin-bottom:6px}
+.cert-name{font-size:24px;font-weight:900;color:var(--gd);margin-bottom:18px;font-style:italic;word-break:break-word}
+.cert-text{font-size:14px;font-weight:600;color:#111;margin-bottom:6px;line-height:1.4}
+.cert-issuer{font-size:12px;color:var(--muted);margin-bottom:20px}
+.cert-date{font-size:11px;color:var(--muted);padding-top:14px;border-top:1px solid #d1fae5}
+@media print{
+  body>*{display:none!important}
+  .certificate{display:block!important;margin:0;border-radius:0;border-width:6px}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span class="emoji">💰</span>
+  <div class="meta">Mini-formation · GreenFlame</div>
+  <h1>Gestion d'argent au quotidien</h1>
+  <div class="steps">
+    <span class="step">📖 5 sections</span>
+    <span class="step">🧮 Simulateur</span>
+    <span class="step">📝 Quiz · Certificat</span>
+  </div>
+</div>
+<div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+
+<!-- SECTION 1 -->
+<div class="section-wrap">
+  <div class="section-header" onclick="toggle(this)">
+    <div class="section-num">1</div>
+    <div class="section-title">Pourquoi l'argent disparaît-il avant la fin du mois ?</div>
+    <div class="section-toggle">+</div>
+  </div>
+  <div class="section-body">
+    <div class="section-inner">
+      <p>Tu gagnes de l'argent — et pourtant il s'évapore. Ce n'est pas un problème de volonté ni de revenu insuffisant. C'est presque toujours un problème de <strong>visibilité</strong> : tu ne sais pas exactement où il va.</p>
+      <h3>🎯 Les 5 pièges les plus courants</h3>
+      <ol>
+        <li><strong>Les dépenses invisibles</strong> — les petits achats non suivis (eau glacée, zémidjan imprévu, snacks, airtime...) qui semblent minimes mais totalisent parfois 20–30% du budget mensuel.</li>
+        <li><strong>Les achats impulsifs</strong> — "c'est en promo", "j'en ai besoin", "ce n'est pas cher" sont les phrases qui vident un compte.</li>
+        <li><strong>L'absence de plan</strong> — sans budget même simple, chaque dépense est une décision isolée. Sans plan d'ensemble, on ne voit jamais la limite approcher.</li>
+        <li><strong>Les dettes informelles</strong> — prêter et oublier de récupérer, emprunter et rembourser par petites tranches non suivies.</li>
+        <li><strong>Les cotisations non budgétées</strong> — tontines, cérémonies, cagnottes familiales entrent souvent de façon imprévue dans le mois.</li>
+      </ol>
+      <div class="tip">La plupart des gens qui ont du mal avec l'argent ne gagnent pas moins — ils voient juste moins clairement où il va. La solution commence par regarder.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 2 -->
+<div class="section-wrap">
+  <div class="section-header" onclick="toggle(this)">
+    <div class="section-num">2</div>
+    <div class="section-title">Les 5 règles des gens qui s'en sortent</div>
+    <div class="section-toggle">+</div>
+  </div>
+  <div class="section-body">
+    <div class="section-inner">
+      <p>Ces règles ne nécessitent ni compte bancaire, ni application complexe. Juste de la méthode.</p>
+      <h3>📋 Règle 1 — Écrire chaque dépense pendant 30 jours</h3>
+      <p>Un carnet, un fichier, un message vocal à toi-même — peu importe. L'objectif : rendre les dépenses invisibles visibles. Au bout d'un mois, les patterns apparaissent clairement.</p>
+      <h3>🗂️ Règle 2 — Les 3 enveloppes</h3>
+      <p>Dès que tu reçois ton revenu, divise-le mentalement (ou physiquement) en 3 :</p>
+      <ul>
+        <li><strong>Enveloppe Besoins (60-70%)</strong> — loyer, nourriture, transport, santé, scolarité.</li>
+        <li><strong>Enveloppe Épargne (10-20% minimum)</strong> — intouchable sauf urgence vraie.</li>
+        <li><strong>Enveloppe Libre (le reste)</strong> — loisirs, imprévus, cadeaux.</li>
+      </ul>
+      <h3>⏰ Règle 3 — Se payer en premier</h3>
+      <p>Mets de côté ta part d'épargne <em>immédiatement</em> après avoir reçu ton revenu — avant de payer quoi que ce soit d'autre. L'épargne qui attend "la fin du mois" n'existe presque jamais.</p>
+      <h3>⏳ Règle 4 — Le test des 24h</h3>
+      <p>Avant tout achat non essentiel, attends 24h. Si tu y penses encore le lendemain et que tu le veux toujours, c'est sans doute utile. Sinon, tu viens d'économiser.</p>
+      <h3>🛡️ Règle 5 — Le coussin de sécurité</h3>
+      <p>Constitue progressivement un fonds d'urgence de <strong>1 à 3 mois de dépenses essentielles</strong>. Ce coussin t'empêche de t'endetter à la moindre dépense imprévue.</p>
+      <div class="tip">Ces règles sont simples à comprendre et difficiles à maintenir sans habitude. Commence par une seule : tenir le carnet pendant 30 jours.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 3 -->
+<div class="section-wrap">
+  <div class="section-header" onclick="toggle(this)">
+    <div class="section-num">3</div>
+    <div class="section-title">L'outil simple : le tableau des 3 colonnes</div>
+    <div class="section-toggle">+</div>
+  </div>
+  <div class="section-body">
+    <div class="section-inner">
+      <p>Pas besoin d'une application complexe. Ce tableau tient sur une feuille ou dans un cahier.</p>
+      <h3>📊 Structure du tableau mensuel</h3>
+      <ul>
+        <li><strong>Colonne 1 — Ce qui rentre :</strong> salaire, activités secondaires, remboursements reçus.</li>
+        <li><strong>Colonne 2 — Ce qui sort (fixe) :</strong> loyer, scolarité, abonnements, remboursements de dettes. Ces montants ne changent pas d'un mois à l'autre.</li>
+        <li><strong>Colonne 3 — Ce qui sort (variable) :</strong> nourriture, transport, santé, loisirs. Ces montants varient — c'est ici qu'on peut agir.</li>
+      </ul>
+      <p>Le solde = Colonne 1 − Colonne 2 − Colonne 3. Si ce chiffre est positif, tu avances. S'il est négatif, ton tableau te dit exactement où chercher pour corriger.</p>
+      <h3>📅 La bonne fréquence</h3>
+      <ul>
+        <li><strong>En début de mois :</strong> planifie tes dépenses fixes + ton épargne.</li>
+        <li><strong>Chaque semaine :</strong> note les dépenses variables de la semaine (5 min).</li>
+        <li><strong>En fin de mois :</strong> compare prévu vs réel. Où as-tu dépassé ? Pourquoi ?</li>
+      </ul>
+      <div class="tip">La régularité vaut mieux que la précision. Un suivi approximatif chaque semaine est bien plus utile qu'un suivi parfait fait une fois par trimestre.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 4 -->
+<div class="section-wrap">
+  <div class="section-header" onclick="toggle(this)">
+    <div class="section-num">4</div>
+    <div class="section-title">Gérer les dépenses imprévues et les dettes</div>
+    <div class="section-toggle">+</div>
+  </div>
+  <div class="section-body">
+    <div class="section-inner">
+      <p>Deux sujets qui font dérailler même les meilleures intentions financières.</p>
+      <h3>🚨 Les imprévus — les anticiper avant qu'ils arrivent</h3>
+      <p>Un imprévu n'est "imprévu" que dans son timing. Tomber malade, devoir réparer quelque chose, une dépense familiale urgente — ces événements sont certains, seule leur date est inconnue.</p>
+      <ul>
+        <li>Intègre une <strong>ligne "imprévus" dans ton budget mensuel</strong> — même si tu n'y touches pas ce mois-ci, elle sera là le mois suivant.</li>
+        <li>Le montant recommandé : 5 à 10% de tes revenus mensuels.</li>
+      </ul>
+      <h3>💳 Les dettes — la méthode boule de neige</h3>
+      <p>Si tu as plusieurs dettes, utilise la <strong>méthode de la boule de neige</strong> :</p>
+      <ol>
+        <li>Liste toutes tes dettes du plus petit au plus grand montant.</li>
+        <li>Paie le minimum sur toutes, sauf la plus petite.</li>
+        <li>Attaque-toi de toutes tes forces à la plus petite dette d'abord.</li>
+        <li>Une fois remboursée, reporte l'effort sur la suivante.</li>
+      </ol>
+      <p>L'avantage psychologique : tu vois des dettes disparaître rapidement, ce qui maintient la motivation.</p>
+      <div class="tip">Avant de contracter une nouvelle dette, pose-toi la question : "Est-ce que je peux me permettre les mensualités chaque mois, même en cas de mois difficile ?" Si tu hésites, la réponse est non.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 5 -->
+<div class="section-wrap">
+  <div class="section-header" onclick="toggle(this)">
+    <div class="section-num">5</div>
+    <div class="section-title">Par où commencer dès aujourd'hui</div>
+    <div class="section-toggle">+</div>
+  </div>
+  <div class="section-body">
+    <div class="section-inner">
+      <p>La meilleure méthode est celle qu'on applique, pas la plus complexe. Voici les 3 actions à faire dans les prochaines 24h.</p>
+      <h3>✅ Action 1 — Le bilan de ce mois</h3>
+      <p>Prends 10 minutes pour lister (de mémoire si nécessaire) ce que tu as dépensé ce mois. Classe en : logement, nourriture, transport, communication, loisirs, imprévus. Quel poste te surprend le plus ?</p>
+      <h3>✅ Action 2 — Fixe un seul objectif d'épargne</h3>
+      <p>Pas 10 objectifs — un seul, petit et atteignable. Par exemple : mettre de côté 2 000 FCFA ce mois-ci. Puis le mois prochain, 3 000. La régularité compte plus que le montant.</p>
+      <h3>✅ Action 3 — Crée ton système de suivi</h3>
+      <p>Un carnet, un message WhatsApp à toi-même, une note sur ton téléphone — choisis quelque chose que tu vas réellement utiliser. Pendant 7 jours, note chaque dépense, même les plus petites.</p>
+      <div class="tip">Tu n'as pas besoin de tout changer en même temps. Une petite habitude maintenue pendant 30 jours vaut mieux qu'un plan parfait abandonné au bout d'une semaine.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SIMULATEUR -->
+<div class="sep">🧮 Simule ta situation</div>
+<div class="card">
+  <h2>Mon tableau de bord mensuel</h2>
+  <p class="sub">Entre tes chiffres pour voir où tu en es.</p>
+  <label>Revenus mensuels nets (FCFA)</label>
+  <input type="number" id="rev" placeholder="ex : 80 000" min="0">
+  <label>Loyer / logement (FCFA)</label>
+  <input type="number" id="loyer" placeholder="ex : 20 000" min="0">
+  <label>Nourriture (FCFA)</label>
+  <input type="number" id="nourriture" placeholder="ex : 25 000" min="0">
+  <label>Transport (FCFA)</label>
+  <input type="number" id="transport" placeholder="ex : 8 000" min="0">
+  <label>Autres dépenses fixes (santé, scolarité, dettes…)</label>
+  <input type="number" id="autres" placeholder="ex : 10 000" min="0">
+  <button class="btn" onclick="calcBudget()">Calculer mon bilan →</button>
+  <div class="result-box" id="res">
+    <div class="result-item"><span class="rl">Revenus</span><span class="rv" id="r-rev">—</span></div>
+    <div class="result-item"><span class="rl">Total dépenses</span><span class="rv" id="r-dep">—</span></div>
+    <div class="result-item"><span class="rl">Reste disponible</span><span class="rv" id="r-reste">—</span></div>
+    <div class="result-item"><span class="rl">Épargne recommandée (10%)</span><span class="rv" id="r-epargne">—</span></div>
+    <div class="result-advice" id="r-advice"></div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div class="sep">📝 Quiz de validation</div>
+<div class="card">
+  <h2>Teste tes connaissances</h2>
+  <p class="sub">5 questions · Score minimum 3/5 pour le certificat</p>
+
+  <div class="question">
+    <p>1. Quelle est la première étape pour reprendre le contrôle de son argent ?</p>
+    <label class="option"><input type="radio" name="q0" value="0"> Gagner plus d'argent</label>
+    <label class="option"><input type="radio" name="q0" value="1"> Noter toutes ses dépenses pendant 30 jours</label>
+    <label class="option"><input type="radio" name="q0" value="2"> Ouvrir un compte bancaire</label>
+    <label class="option"><input type="radio" name="q0" value="3"> Arrêter tout achat non essentiel</label>
+  </div>
+
+  <div class="question">
+    <p>2. Selon la règle des 3 enveloppes, quel est le pourcentage minimum conseillé pour l'épargne ?</p>
+    <label class="option"><input type="radio" name="q1" value="0"> 2%</label>
+    <label class="option"><input type="radio" name="q1" value="1"> 5%</label>
+    <label class="option"><input type="radio" name="q1" value="2"> 10%</label>
+    <label class="option"><input type="radio" name="q1" value="3"> 30%</label>
+  </div>
+
+  <div class="question">
+    <p>3. La règle du "se payer en premier" signifie :</p>
+    <label class="option"><input type="radio" name="q2" value="0"> Payer ses dettes en priorité</label>
+    <label class="option"><input type="radio" name="q2" value="1"> Dépenser pour ses plaisirs avant les autres obligations</label>
+    <label class="option"><input type="radio" name="q2" value="2"> Mettre son épargne de côté dès réception du revenu, avant toute autre dépense</label>
+    <label class="option"><input type="radio" name="q2" value="3"> Augmenter son salaire</label>
+  </div>
+
+  <div class="question">
+    <p>4. Lequel de ces éléments est une "dépense invisible" courante ?</p>
+    <label class="option"><input type="radio" name="q3" value="0"> Le loyer mensuel</label>
+    <label class="option"><input type="radio" name="q3" value="1"> La scolarité des enfants</label>
+    <label class="option"><input type="radio" name="q3" value="2"> Les petits achats quotidiens non suivis (eau, snacks, trajets imprévus…)</label>
+    <label class="option"><input type="radio" name="q3" value="3"> L'électricité</label>
+  </div>
+
+  <div class="question">
+    <p>5. Le coussin de sécurité idéal correspond à :</p>
+    <label class="option"><input type="radio" name="q4" value="0"> 50 000 FCFA fixe</label>
+    <label class="option"><input type="radio" name="q4" value="1"> 1 semaine de dépenses</label>
+    <label class="option"><input type="radio" name="q4" value="2"> 1 à 3 mois de dépenses essentielles</label>
+    <label class="option"><input type="radio" name="q4" value="3"> 1 an de salaire</label>
+  </div>
+
+  <button class="btn" id="quizBtn" onclick="submitQuiz()">Valider mes réponses →</button>
+  <div class="score-box" id="scoreBox">
+    <div class="score-num" id="scoreNum"></div>
+    <div class="score-lbl">Score</div>
+    <div class="score-msg" id="scoreMsg"></div>
+  </div>
+</div>
+
+<!-- CERTIFICAT -->
+<div class="cert-section" id="certSection">
+  <h2>🎓 Ton certificat de complétion</h2>
+  <p class="sub">Tu as validé la mini-formation. Entre ton nom pour générer ton certificat.</p>
+  <input type="text" class="cert-name-input" id="certNameInput" placeholder="Ton prénom et nom" maxlength="50">
+  <button class="btn flame" onclick="generateCert()">Générer mon certificat 🎓</button>
+  <div class="certificate" id="certDiv">
+    <div class="cert-brand">🔥 GreenFlame</div>
+    <div class="cert-top">Certificat de complétion</div>
+    <span class="cert-emoji">💰</span>
+    <div class="cert-awarded">Ce certificat est décerné à</div>
+    <div class="cert-name" id="certName">—</div>
+    <div class="cert-text">Mini-formation<br><strong>Gestion d'argent au quotidien</strong></div>
+    <div class="cert-issuer">GreenFlame — Commerce communautaire pan-africain</div>
+    <div class="cert-date" id="certDate">—</div>
+    <button class="btn" style="margin-top:14px;font-size:13px;padding:10px" onclick="window.print()">📥 Imprimer / Télécharger</button>
+  </div>
+</div>
+
+<script>
+const CORRECT = [1, 2, 2, 2, 2];
+let openCount = 0;
+
+function toggle(header) {
+  const body = header.nextElementSibling;
+  const icon = header.querySelector('.section-toggle');
+  const isOpen = body.classList.contains('open');
+  if (!isOpen) openCount++;
+  else openCount = Math.max(0, openCount - 1);
+  body.classList.toggle('open');
+  icon.classList.toggle('open');
+  updateProgress();
+}
+
+function updateProgress() {
+  const total = 5 + 2; // 5 sections + sim + quiz
+  const pct = Math.min(100, Math.round((openCount / total) * 100));
+  document.getElementById('prog').style.width = pct + '%';
+}
+
+function fmt(n) {
+  return Math.round(n).toLocaleString('fr-FR') + ' FCFA';
+}
+
+function calcBudget() {
+  const rev = parseFloat(document.getElementById('rev').value) || 0;
+  const loyer = parseFloat(document.getElementById('loyer').value) || 0;
+  const nourriture = parseFloat(document.getElementById('nourriture').value) || 0;
+  const transport = parseFloat(document.getElementById('transport').value) || 0;
+  const autres = parseFloat(document.getElementById('autres').value) || 0;
+  if (rev === 0) return alert('Entre d\'abord tes revenus mensuels.');
+  const dep = loyer + nourriture + transport + autres;
+  const reste = rev - dep;
+  const epargne = rev * 0.10;
+  const res = document.getElementById('res');
+  res.classList.add('show');
+  document.getElementById('r-rev').textContent = fmt(rev);
+  document.getElementById('r-dep').textContent = fmt(dep);
+  const rr = document.getElementById('r-reste');
+  rr.textContent = fmt(reste);
+  rr.className = 'rv ' + (reste > epargne ? 'green' : reste > 0 ? 'orange' : 'red');
+  document.getElementById('r-epargne').textContent = fmt(epargne);
+  const adv = document.getElementById('r-advice');
+  const pctDep = dep / rev;
+  if (reste < 0) {
+    adv.className = 'result-advice bad';
+    adv.textContent = '⚠️ Tes dépenses dépassent tes revenus. Identifie les postes variables (nourriture, transport) où tu peux réduire dès ce mois-ci.';
+  } else if (pctDep > 0.85) {
+    adv.className = 'result-advice warn';
+    adv.textContent = '⚡ Tes dépenses représentent plus de 85% de tes revenus. Tu travailles mais tu ne gardes presque rien. Essaie de réduire un poste de 10% ce mois-ci.';
+  } else if (reste >= epargne) {
+    adv.className = 'result-advice ok';
+    adv.textContent = '✅ Tu as une marge positive. Maintenant, mets ' + fmt(epargne) + ' de côté dès aujourd\'hui — avant de toucher au reste.';
+  } else {
+    adv.className = 'result-advice warn';
+    adv.textContent = '📌 Tu as un reste positif mais inférieur à l\'objectif d\'épargne. Commence avec ce que tu peux : même ' + fmt(reste * 0.5) + ' mis de côté régulièrement fait une différence.';
+  }
+  openCount = Math.max(openCount, 6);
+  updateProgress();
+}
+
+function submitQuiz() {
+  let answered = true;
+  for (let i = 0; i < 5; i++) {
+    if (!document.querySelector('[name="q' + i + '"]:checked')) { answered = false; break; }
+  }
+  if (!answered) return alert('Réponds à toutes les questions avant de valider.');
+  let score = 0;
+  CORRECT.forEach((correct, qi) => {
+    const options = document.querySelectorAll('.question')[qi].querySelectorAll('.option');
+    const selected = document.querySelector('[name="q' + qi + '"]:checked');
+    options.forEach((opt, oi) => {
+      opt.style.cursor = 'default';
+      if (oi === correct) opt.classList.add('correct');
+      else if (selected && parseInt(selected.value) === oi) opt.classList.add('wrong');
+    });
+    if (selected && parseInt(selected.value) === correct) score++;
+  });
+  const box = document.getElementById('scoreBox');
+  box.classList.add('show');
+  document.getElementById('scoreNum').textContent = score + '/5';
+  let msg;
+  if (score >= 4) msg = '🎉 Excellent ! Tu maîtrises les fondamentaux de la gestion d\'argent.';
+  else if (score === 3) msg = '👍 Bien ! Relis les sections sur les points que tu as manqués.';
+  else msg = '📚 Continue d\'apprendre — relis les sections et retente le quiz.';
+  document.getElementById('scoreMsg').textContent = msg;
+  document.getElementById('quizBtn').disabled = true;
+  if (score >= 3) {
+    document.getElementById('certSection').classList.add('show');
+    setTimeout(() => document.getElementById('certSection').scrollIntoView({behavior:'smooth'}), 400);
+  }
+  openCount = Math.max(openCount, 7);
+  updateProgress();
+}
+
+function generateCert() {
+  const name = document.getElementById('certNameInput').value.trim();
+  if (!name) return alert('Entre ton prénom ou ton nom complet.');
+  document.getElementById('certName').textContent = name;
+  document.getElementById('certDate').textContent = 'Délivré le ' + new Date().toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'});
+  const cert = document.getElementById('certDiv');
+  cert.classList.add('show');
+  setTimeout(() => cert.scrollIntoView({behavior:'smooth'}), 200);
+}
+</script>
+</body>
+</html>

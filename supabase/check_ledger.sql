@@ -1,0 +1,1 @@
+SELECT wl.amount, wl.transaction_type, wl.currency_type, wl.balance_after, wl.created_at FROM wallet_ledger wl JOIN wallets w ON w.id = wl.wallet_id WHERE w.user_id = (SELECT id FROM users WHERE phone = '+22997025083') ORDER BY wl.created_at DESC LIMIT 20;

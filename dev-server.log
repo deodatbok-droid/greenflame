@@ -1,0 +1,379 @@
+
+> greenflame@0.1.0 dev
+> next dev
+
+ ⚠ Port 3000 is in use by process 23240, using available port 3001 instead.
+   ▲ Next.js 15.5.18
+   - Local:        http://localhost:3001
+   - Network:      http://192.168.1.199:3001
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 3.6s
+ ○ Compiling /middleware ...
+ ✓ Compiled /middleware in 838ms (168 modules)
+ ○ Compiling /register ...
+ ✓ Compiled /register in 3.5s (722 modules)
+ GET /register 200 in 4431ms
+ ✓ Compiled in 900ms (300 modules)
+ GET /register 200 in 666ms
+ GET /register 200 in 472ms
+ ✓ Compiled in 939ms (890 modules)
+ ⨯ app\(admin)\dashboard\page.tsx
+You cannot have two parallel pages that resolve to the same path. Please check /(admin)/dashboard/page and /(consumer)/dashboard/page. Refer to the route group docs for more information: https://nextjs.org/docs/app/building-your-application/routing/route-groups
+ ○ Compiling /dashboard ...
+ ⨯ app\(admin)\dashboard\page.tsx
+You cannot have two parallel pages that resolve to the same path. Please check /(admin)/dashboard/page and /(consumer)/dashboard/page. Refer to the route group docs for more information: https://nextjs.org/docs/app/building-your-application/routing/route-groups
+ ⨯ app\(admin)\dashboard\page.tsx
+You cannot have two parallel pages that resolve to the same path. Please check /(admin)/dashboard/page and /(consumer)/dashboard/page. Refer to the route group docs for more information: https://nextjs.org/docs/app/building-your-application/routing/route-groups
+ ⨯ app\(admin)\dashboard\page.tsx
+You cannot have two parallel pages that resolve to the same path. Please check /(admin)/dashboard/page and /(consumer)/dashboard/page. Refer to the route group docs for more information: https://nextjs.org/docs/app/building-your-application/routing/route-groups
+<w> [webpack.cache.PackFileCacheStrategy] Restoring pack failed from C:\Users\finen\greenflame\.next\cache\webpack\client-development.pack.gz: Error: unexpected end of file
+ ⨯ app\(admin)\dashboard\page.tsx
+You cannot have two parallel pages that resolve to the same path. Please check /(admin)/dashboard/page and /(consumer)/dashboard/page. Refer to the route group docs for more information: https://nextjs.org/docs/app/building-your-application/routing/route-groups
+ GET /dashboard 500 in 7315ms
+ GET /dashboard 500 in 25ms
+ GET /dashboard 500 in 26ms
+ GET /dashboard 500 in 25ms
+ GET /dashboard 500 in 24ms
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ⨯ app\(admin)\dashboard\page.tsx
+You cannot have two parallel pages that resolve to the same path. Please check /(admin)/dashboard/page and /(consumer)/dashboard/page. Refer to the route group docs for more information: https://nextjs.org/docs/app/building-your-application/routing/route-groups
+ GET /dashboard 500 in 28ms
+ GET /dashboard 500 in 41ms
+'wmic' is not recognized as an internal or external command,
+operable program or batch file.
+
+Could not open page.tsx in the editor.
+
+When running on Windows, file names are checked against an access list to protect against remote code execution attacks. File names may consist only of alphanumeric characters (all languages), periods, dashes, slashes, and underscores.
+
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\Users\finen\greenflame\.next\cache\webpack\client-development\0.pack.gz_' -> 'C:\Users\finen\greenflame\.next\cache\webpack\client-development\0.pack.gz'
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ app\(admin)\dashboard\page.tsx
+You cannot have two parallel pages that resolve to the same path. Please check /(admin)/dashboard/page and /(consumer)/dashboard/page. Refer to the route group docs for more information: https://nextjs.org/docs/app/building-your-application/routing/route-groups
+ ✓ Compiled /dashboard in 538ms (1222 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\Users\finen\greenflame\.next\cache\webpack\client-development\0.pack.gz_' -> 'C:\Users\finen\greenflame\.next\cache\webpack\client-development\0.pack.gz'
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 2.1s (1135 modules)
+ GET /dashboard 200 in 5222ms
+ GET /dashboard 200 in 1493ms
+ ○ Compiling /pay ...
+ ✓ Compiled /pay in 1382ms (1194 modules)
+ GET /pay 200 in 1606ms
+ ✓ Compiled /history in 367ms (1199 modules)
+ GET /history 200 in 908ms
+ GET /dashboard 200 in 1718ms
+ ○ Compiling /network ...
+ ✓ Compiled /network in 519ms (1207 modules)
+ GET /network 200 in 2691ms
+ ✓ Compiled /wallet in 311ms (1210 modules)
+ GET /wallet 200 in 822ms
+ GET /network 200 in 1505ms
+ GET /history 200 in 449ms
+ GET /pay 200 in 35ms
+ GET /dashboard 200 in 952ms
+ ✓ Compiled in 675ms (486 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /dashboard 200 in 2414ms
+ ✓ Compiled in 1017ms (1219 modules)
+ GET /dashboard 200 in 749ms
+ ⨯ ./app/(consumer)/dashboard/page.tsx
+Error:   [31mx[0m Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+     ,-[[36;1;4mC:\Users\finen\greenflame\app\(consumer)\dashboard\page.tsx[0m:178:1]
+ [2m175[0m |       </div>
+ [2m176[0m |     </div>
+ [2m177[0m |   )
+ [2m178[0m | }
+     : [35;1m^[0m
+     `----
+  [31mx[0m Unexpected eof
+     ,-[[36;1;4mC:\Users\finen\greenflame\app\(consumer)\dashboard\page.tsx[0m:178:3]
+ [2m176[0m |     </div>
+ [2m177[0m |   )
+ [2m178[0m | }
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./app/(consumer)/dashboard/page.tsx
+ GET /dashboard 500 in 23ms
+ GET /dashboard 500 in 12ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 1055ms (1222 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /dashboard 200 in 995ms
+ ✓ Compiled /_not-found in 467ms (1213 modules)
+ GET /marketplace 404 in 590ms
+ GET /marketplace 404 in 88ms
+ GET /dashboard 200 in 1361ms
+ ✓ Compiled in 180ms (491 modules)
+ ✓ Compiled in 1391ms (1381 modules)
+ GET /dashboard 200 in 396ms
+ GET /dashboard 200 in 3785ms
+ GET /dashboard 200 in 305ms
+ ✓ Compiled in 1274ms (1227 modules)
+ GET /dashboard 200 in 631ms
+ ✓ Compiled in 3s (1222 modules)
+ GET /dashboard 200 in 880ms
+ ○ Compiling /marketplace ...
+ ✓ Compiled /marketplace in 705ms (1213 modules)
+ GET /marketplace 200 in 1317ms
+ GET /wallet 200 in 524ms
+ GET /dashboard 200 in 1108ms
+ ○ Compiling /login ...
+ ✓ Compiled /login in 782ms (1220 modules)
+ GET /login 200 in 871ms
+ GET /login 200 in 36ms
+ GET /dashboard 200 in 1404ms
+ GET /dashboard 200 in 1056ms
+ ✓ Compiled in 935ms (1201 modules)
+ GET /dashboard 200 in 402ms
+ ✓ Compiled in 649ms (1201 modules)
+ GET /dashboard 200 in 1291ms
+ ✓ Compiled in 584ms (1201 modules)
+ GET /dashboard 200 in 575ms
+ GET /marketplace 200 in 1138ms
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\Users\finen\greenflame\.next\cache\webpack\client-development\0.pack.gz_' -> 'C:\Users\finen\greenflame\.next\cache\webpack\client-development\0.pack.gz'
+ ✓ Compiled in 12.7s (1369 modules)
+ GET /marketplace 200 in 4220ms
+ GET /marketplace 200 in 65ms
+ GET /marketplace 200 in 57ms
+ ✓ Compiled in 206ms (490 modules)
+ GET /marketplace 200 in 64ms
+ ✓ Compiled in 270ms (490 modules)
+ GET /marketplace 200 in 47ms
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\Users\finen\greenflame\.next\cache\webpack\client-development\0.pack.gz_' -> 'C:\Users\finen\greenflame\.next\cache\webpack\client-development\0.pack.gz'
+ ✓ Compiled in 682ms (490 modules)
+ GET /marketplace 200 in 103ms
+ ✓ Compiled in 209ms (490 modules)
+ GET /marketplace 200 in 110ms
+ ✓ Compiled in 1127ms (1201 modules)
+ GET /marketplace 200 in 559ms
+ ✓ Compiled in 586ms (1201 modules)
+ GET /marketplace 200 in 109ms
+ GET /marketplace 200 in 955ms
+ GET /marketplace 200 in 1061ms
+ GET /dashboard 200 in 1598ms
+ ○ Compiling /admin/dashboard ...
+ ✓ Compiled /admin/dashboard in 684ms (1190 modules)
+ GET /admin/dashboard 200 in 1488ms
+ GET /admin/dashboard 200 in 918ms
+ ○ Compiling /admin/merchants ...
+ ✓ Compiled /admin/merchants in 1135ms (1192 modules)
+ GET /admin/merchants 200 in 1260ms
+ GET /admin/merchants 200 in 24ms
+ ✓ Compiled /admin/users in 378ms (1194 modules)
+ GET /admin/users 200 in 924ms
+ ✓ Compiled /admin/transactions in 340ms (1196 modules)
+ GET /admin/transactions 200 in 1157ms
+ GET /admin/transactions 200 in 415ms
+ GET /admin/users 200 in 734ms
+ GET /admin/merchants 200 in 53ms
+ GET /admin/dashboard 200 in 1585ms
+ GET /admin/dashboard 200 in 13060ms
+ GET /dashboard 200 in 2193ms
+ GET /marketplace 200 in 422ms
+ GET /dashboard 200 in 2698ms
+ GET /wallet 200 in 964ms
+ ○ Compiling /network ...
+ ✓ Compiled /network in 3.5s (715 modules)
+ GET /network 200 in 6113ms
+ GET /network 200 in 1523ms
+ ○ Compiling /pay ...
+ ✓ Compiled /pay in 776ms (743 modules)
+ GET /pay 200 in 903ms
+ GET /marketplace 200 in 1912ms
+ ✓ Compiled in 754ms (492 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 359ms (492 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\finen\greenflame\.next\prerender-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\finen\\greenflame\\.next\\prerender-manifest.json',
+  page: '/pay'
+}
+ ⨯ Error: Cannot find module './611.js'
+Require stack:
+- C:\Users\finen\greenflame\.next\server\webpack-runtime.js
+- C:\Users\finen\greenflame\.next\server\app\(consumer)\pay\page.js
+- C:\Users\finen\greenflame\node_modules\next\dist\server\require.js
+- C:\Users\finen\greenflame\node_modules\next\dist\server\load-components.js
+- C:\Users\finen\greenflame\node_modules\next\dist\build\utils.js
+- C:\Users\finen\greenflame\node_modules\next\dist\build\swc\options.js
+- C:\Users\finen\greenflame\node_modules\next\dist\build\swc\index.js
+- C:\Users\finen\greenflame\node_modules\next\dist\build\analysis\parse-module.js
+- C:\Users\finen\greenflame\node_modules\next\dist\build\analysis\get-page-static-info.js
+- C:\Users\finen\greenflame\node_modules\next\dist\server\lib\router-utils\setup-dev-bundler.js
+- C:\Users\finen\greenflame\node_modules\next\dist\server\lib\router-server.js
+- C:\Users\finen\greenflame\node_modules\next\dist\server\lib\start-server.js
+    at <unknown> (C:\Users\finen\greenflame\.next\server\pages\_document.js:1:325)
+    at Object.<anonymous> (C:\Users\finen\greenflame\.next\server\pages\_document.js:1:371) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array]
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\finen\greenflame\.next\prerender-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\finen\\greenflame\\.next\\prerender-manifest.json',
+  page: '/pay'
+}
+ ⨯ Error: Cannot find module './611.js'
+Require stack:
+- C:\Users\finen\greenflame\.next\server\webpack-runtime.js
+- C:\Users\finen\greenflame\.next\server\app\(consumer)\pay\page.js
+- C:\Users\finen\greenflame\node_modules\next\dist\server\require.js
+- C:\Users\finen\greenflame\node_modules\next\dist\server\load-components.js
+- C:\Users\finen\greenflame\node_modules\next\dist\build\utils.js
+- C:\Users\finen\greenflame\node_modules\next\dist\build\swc\options.js
+- C:\Users\finen\greenflame\node_modules\next\dist\build\swc\index.js
+- C:\Users\finen\greenflame\node_modules\next\dist\build\analysis\parse-module.js
+- C:\Users\finen\greenflame\node_modules\next\dist\build\analysis\get-page-static-info.js
+- C:\Users\finen\greenflame\node_modules\next\dist\server\lib\router-utils\setup-dev-bundler.js
+- C:\Users\finen\greenflame\node_modules\next\dist\server\lib\router-server.js
+- C:\Users\finen\greenflame\node_modules\next\dist\server\lib\start-server.js
+    at <unknown> (C:\Users\finen\greenflame\.next\server\pages\_document.js:1:325)
+    at Object.<anonymous> (C:\Users\finen\greenflame\.next\server\pages\_document.js:1:371) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array]
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\finen\greenflame\.next\prerender-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\finen\\greenflame\\.next\\prerender-manifest.json'
+}
+ GET /pay 500 in 737ms
+ GET /pay 500 in 39ms
+ ✓ Compiled in 227ms (492 modules)
+ ✓ Compiled in 145ms (492 modules)
+ ✓ Compiled in 8.9s (1229 modules)
+ ✓ Compiled in 274ms (492 modules)
+ ✓ Compiled in 344ms (492 modules)
+ ⚠ Found a change in next.config.js. Restarting the server to apply the changes...
+   ▲ Next.js 15.5.18
+   - Local:        http://localhost:3001
+   - Network:      http://192.168.1.199:3001
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 3.8s
+ ○ Compiling /middleware ...
+ ✓ Compiled /middleware in 1795ms (168 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 17s (624 modules)
+ GET / 307 in 19256ms
+ ✓ Compiled in 2.3s (233 modules)
+ ✓ Compiled in 161ms (219 modules)
+ ○ Compiling /login ...
+ ✓ Compiled /login in 6.8s (780 modules)
+ GET /login 200 in 8077ms
+ GET / 307 in 387ms
+ GET /login 200 in 187ms
+ GET / 307 in 235ms
+ GET / 307 in 82ms
+ GET /login 200 in 191ms
+ ○ Compiling /marketplace ...
+ ✓ Compiled /marketplace in 2.6s (836 modules)
+ GET /marketplace 307 in 5592ms
+ GET /login 200 in 455ms
+ GET /login 200 in 227ms
+   Reload env: .env.local
+ ✓ Compiled in 4.2s (472 modules)
+ ○ Compiling /login ...
+ ✓ Compiled /login in 4.7s (422 modules)
+ GET /login 200 in 7201ms
+ GET /login 200 in 480ms
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 3.9s (825 modules)
+ ✓ Compiled in 2.2s (321 modules)
+ GET /dashboard 200 in 738ms
+ GET /dashboard 200 in 7773ms
+ GET /dashboard 200 in 328ms
+ GET /dashboard 200 in 159ms
+ ○ Compiling /pay ...
+ ✓ Compiled /pay in 4.4s (884 modules)
+ GET /pay 200 in 7053ms
+ ○ Compiling /wallet ...
+ ✓ Compiled /wallet in 1717ms (893 modules)
+ GET /pay 200 in 197ms
+ GET /wallet 200 in 3814ms
+ ○ Compiling /network ...
+ ✓ Compiled /network in 1512ms (901 modules)
+ GET /wallet 200 in 151ms
+ GET /network 200 in 3922ms
+ GET /login 200 in 3123ms
+ GET /dashboard 200 in 1118ms
+ GET /dashboard 200 in 3156ms
+ GET /pay 200 in 1213ms
+ GET /wallet 200 in 2074ms
+ GET /network 200 in 2044ms
+ GET /login 200 in 2331ms
+ GET /dashboard 200 in 2002ms
+ GET /dashboard 200 in 1041ms
+ GET /pay 200 in 1286ms
+ GET /wallet 200 in 5214ms
+ GET /network 200 in 3778ms
+ ✓ Compiled in 14.8s (895 modules)
+ ✓ Compiled in 1628ms (895 modules)
+ ✓ Compiled in 1483ms (895 modules)
+ ✓ Compiled in 1747ms (895 modules)
+ ✓ Compiled in 1464ms (895 modules)
+ ✓ Compiled in 1420ms (895 modules)
+ ✓ Compiled in 1752ms (895 modules)
+ ✓ Compiled in 534ms (353 modules)
+ ✓ Compiled in 467ms (353 modules)
+ ✓ Compiled in 481ms (353 modules)
+ ✓ Compiled in 473ms (353 modules)
+ ✓ Compiled in 452ms (353 modules)
+ ✓ Compiled in 462ms (353 modules)
+ ✓ Compiled in 389ms (353 modules)
+ ✓ Compiled in 9.2s (895 modules)
+ ✓ Compiled in 896ms (353 modules)
+ ✓ Compiled in 7.6s (353 modules)
+ ✓ Compiled in 746ms (353 modules)
+ ✓ Compiled in 4s (1063 modules)
+ ✓ Compiled in 666ms (353 modules)
+ ✓ Compiled in 2.6s (1063 modules)
+ ✓ Compiled in 708ms (353 modules)
+ ✓ Compiled in 521ms (353 modules)
+ ✓ Compiled in 591ms (353 modules)
+ ✓ Compiled in 775ms (353 modules)
+ ✓ Compiled in 8.1s (353 modules)
+ ✓ Compiled in 665ms (353 modules)
+ ✓ Compiled in 3.7s (1063 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (101kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (231kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+ ✓ Compiled in 695ms (353 modules)
+ ✓ Compiled in 893ms (353 modules)
+ ✓ Compiled in 12.3s (1063 modules)
+ ✓ Compiled in 2.7s (1063 modules)
+ ✓ Compiled in 2.5s (1063 modules)
+ ✓ Compiled in 485ms (353 modules)
+ ✓ Compiled in 422ms (353 modules)
+ ✓ Compiled in 770ms (353 modules)
+ ✓ Compiled in 599ms (353 modules)
+   Reload env: .env.local
+ ✓ Compiled in 1154ms (1063 modules)
+   Reload env: .env.local
+ ✓ Compiled in 10.3s (1063 modules)
+ ✓ Compiled in 8.3s (353 modules)
+ ✓ Compiled in 1056ms (353 modules)
+ ✓ Compiled in 877ms (353 modules)
+ ✓ Compiled in 641ms (353 modules)
+ ✓ Compiled in 630ms (353 modules)
+   Reload env: .env.local
+ ✓ Compiled in 12.6s (1063 modules)
+ ✓ Compiled in 13.4s (1063 modules)
+ ✓ Compiled in 936ms (353 modules)
+ ✓ Compiled in 610ms (353 modules)

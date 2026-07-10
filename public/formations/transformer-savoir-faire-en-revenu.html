@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transformer ce que tu sais faire en revenu — Mini-formation GreenFlame</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--g:#16a34a;--gd:#14532d;--f:#f97316;--bg:#fff7ed;--card:#fff;--text:#111827;--muted:#6b7280}
+body{font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.65;max-width:600px;margin:0 auto;padding-bottom:60px}
+.header{background:linear-gradient(140deg,#7c2d12 0%,#f97316 100%);color:#fff;padding:28px 20px 24px;text-align:center}
+.header .emoji{font-size:56px;display:block;margin-bottom:10px;line-height:1}
+.header h1{font-size:21px;font-weight:800;line-height:1.3;margin-bottom:6px}
+.header .meta{font-size:11px;opacity:.7;text-transform:uppercase;letter-spacing:.1em;margin-bottom:16px}
+.header .steps{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.header .step{background:rgba(255,255,255,.2);border-radius:20px;padding:5px 12px;font-size:12px;font-weight:600}
+.progress-bar{height:5px;background:rgba(0,0,0,.1)}
+.progress-fill{height:5px;background:var(--g);transition:width .5s ease;width:0%}
+.section-wrap{margin:14px 12px 0;border-radius:16px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.07)}
+.section-header{background:var(--card);padding:15px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none}
+.section-header:active{background:#f9fafb}
+.section-num{width:30px;height:30px;border-radius:50%;background:var(--f);color:#fff;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.section-title{flex:1;font-weight:600;font-size:14px;line-height:1.35}
+.section-toggle{font-size:22px;color:var(--f);line-height:1;transition:transform .25s;flex-shrink:0}
+.section-toggle.open{transform:rotate(45deg)}
+.section-body{background:var(--card);overflow:hidden;max-height:0;transition:max-height .35s ease}
+.section-body.open{max-height:3000px}
+.section-inner{padding:4px 16px 18px}
+.section-inner p{margin-bottom:11px;color:#374151;font-size:14px}
+.section-inner h3{font-size:14px;font-weight:700;color:#9a3412;margin:16px 0 8px;display:flex;align-items:center;gap:6px}
+.section-inner ul,.section-inner ol{padding-left:18px;margin-bottom:11px;color:#374151;font-size:14px}
+.section-inner li{margin-bottom:7px}
+.section-inner li::marker{color:var(--f)}
+.section-inner strong{color:#9a3412}
+.tip{background:#fef3c7;border-left:3px solid var(--f);border-radius:0 10px 10px 0;padding:10px 14px;margin:12px 0;font-size:13px;color:#78350f}
+.example{background:#f0fdf4;border-left:3px solid #16a34a;border-radius:0 10px 10px 0;padding:10px 14px;margin:12px 0;font-size:13px;color:#14532d}
+.sep{text-align:center;padding:22px 16px 6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
+.card{background:var(--card);margin:8px 12px 0;border-radius:16px;padding:20px;box-shadow:0 1px 6px rgba(0,0,0,.07)}
+.card h2{font-size:17px;font-weight:700;color:#9a3412;margin-bottom:4px}
+.card .sub{font-size:13px;color:var(--muted);margin-bottom:18px}
+label{display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:5px;margin-top:14px}
+label:first-of-type{margin-top:0}
+input[type=number],select{width:100%;border:1.5px solid #e5e7eb;border-radius:10px;padding:11px 13px;font-size:16px;color:var(--text);outline:none;background:#fff;-moz-appearance:textfield}
+input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
+input[type=number]:focus,select:focus{border-color:var(--f)}
+.btn{width:100%;margin-top:16px;background:var(--f);color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;transition:background .15s;-webkit-tap-highlight-color:transparent}
+.btn:active{background:#ea580c}
+.btn.green{background:var(--g)}
+.btn.green:active{background:var(--gd)}
+.btn:disabled{background:#9ca3af;cursor:default}
+.result-box{margin-top:16px;border-radius:12px;overflow:hidden;display:none;border:1.5px solid #fed7aa}
+.result-box.show{display:block}
+.result-item{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid #fef3e2}
+.result-item:last-child{border:none}
+.rl{font-size:13px;color:var(--muted)}
+.rv{font-weight:700;font-size:15px;color:#9a3412}
+.result-advice{margin:14px 0 0;padding:13px;border-radius:10px;font-size:13px;line-height:1.55;font-weight:500;background:#fff7ed;color:#78350f}
+.question{margin-bottom:22px}
+.question p{font-size:14px;font-weight:600;margin-bottom:10px;color:#111}
+.option{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:10px;margin-bottom:6px;cursor:pointer;transition:border-color .15s,background .15s;font-size:14px}
+.option:active{background:#f9fafb}
+.option input[type=radio]{margin-top:2px;accent-color:var(--f);flex-shrink:0;width:16px;height:16px}
+.option.correct{background:#f0fdf4;border-color:#16a34a}
+.option.wrong{background:#fef2f2;border-color:#ef4444}
+.score-box{margin-top:16px;border-radius:12px;padding:18px;text-align:center;display:none;background:#fff7ed;border:1.5px solid #fed7aa}
+.score-box.show{display:block}
+.score-num{font-size:48px;font-weight:900;color:var(--f);line-height:1.1}
+.score-lbl{font-size:13px;color:var(--muted);margin:4px 0 12px}
+.score-msg{font-size:14px;font-weight:600;color:#111;line-height:1.4}
+.cert-section{margin:14px 12px 0;background:var(--card);border-radius:16px;padding:20px;box-shadow:0 1px 6px rgba(0,0,0,.07);display:none}
+.cert-section.show{display:block}
+.cert-section h2{font-size:17px;font-weight:700;color:#9a3412;margin-bottom:5px}
+.cert-section .sub{font-size:13px;color:var(--muted);margin-bottom:16px}
+.cert-name-input{width:100%;border:1.5px solid #e5e7eb;border-radius:10px;padding:13px;font-size:17px;text-align:center;outline:none;margin-bottom:12px;font-weight:600}
+.cert-name-input:focus{border-color:var(--f)}
+.certificate{display:none;margin-top:16px;border:2.5px solid var(--f);border-radius:16px;padding:28px 20px;text-align:center;background:linear-gradient(160deg,#fff7ed 0%,#fff 60%)}
+.certificate.show{display:block}
+.cert-brand{font-size:13px;font-weight:800;color:var(--f);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.cert-top{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:18px}
+.cert-emoji{font-size:44px;margin-bottom:8px;display:block}
+.cert-awarded{font-size:13px;color:#374151;margin-bottom:6px}
+.cert-name{font-size:24px;font-weight:900;color:#9a3412;margin-bottom:18px;font-style:italic;word-break:break-word}
+.cert-text{font-size:14px;font-weight:600;color:#111;margin-bottom:6px;line-height:1.4}
+.cert-issuer{font-size:12px;color:var(--muted);margin-bottom:20px}
+.cert-date{font-size:11px;color:var(--muted);padding-top:14px;border-top:1px solid #fed7aa}
+@media print{
+  body>*{display:none!important}
+  .certificate{display:block!important;margin:0;border-radius:0;border-width:6px}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span class="emoji">🚀</span>
+  <div class="meta">Mini-formation · GreenFlame</div>
+  <h1>Transformer ce que tu sais faire en revenu</h1>
+  <div class="steps">
+    <span class="step">📖 5 sections</span>
+    <span class="step">🧮 Simulateur</span>
+    <span class="step">📝 Quiz · Certificat</span>
+  </div>
+</div>
+<div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+
+<!-- SECTION 1 -->
+<div class="section-wrap">
+  <div class="section-header" onclick="toggle(this)">
+    <div class="section-num">1</div>
+    <div class="section-title">Tu as déjà tout ce qu'il faut</div>
+    <div class="section-toggle">+</div>
+  </div>
+  <div class="section-body">
+    <div class="section-inner">
+      <p>Le plus grand mythe de l'entrepreneuriat : "il faut du capital pour commencer." La réalité dans nos quartiers et nos villes, c'est que des milliers de gens gagnent leur vie avec ce qu'ils <strong>savent faire</strong>, pas avec ce qu'ils ont.</p>
+      <h3>💎 Les 3 capitaux que tu possèdes déjà</h3>
+      <ul>
+        <li><strong>Capital humain</strong> — ce que tu sais faire : coudre, cuisiner, enseigner, soigner, réparer, construire, coiffer, photographier, traduire, conduire, vendre...</li>
+        <li><strong>Capital relationnel</strong> — les personnes que tu connais, ton quartier, ta famille, ton école, ton église, ton association.</li>
+        <li><strong>Capital temps</strong> — même avec un emploi, il y a souvent du temps récupérable (week-ends, soirées, pauses) pour démarrer une activité secondaire.</li>
+      </ul>
+      <p>La question n'est pas "est-ce que j'ai les ressources ?" mais "est-ce que je regarde mes ressources existantes de la bonne façon ?"</p>
+      <div class="tip">Pose-toi cette question : "Pour quoi est-ce que les gens me demandent de l'aide ou me font des compliments ?" La réponse te donne souvent une piste sérieuse.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 2 -->
+<div class="section-wrap">
+  <div class="section-header" onclick="toggle(this)">
+    <div class="section-num">2</div>
+    <div class="section-title">7 façons de monétiser sans capital financier</div>
+    <div class="section-toggle">+</div>
+  </div>
+  <div class="section-body">
+    <div class="section-inner">
+      <p>Voici 7 modèles qui ont fait leurs preuves et qui ne nécessitent pas d'investissement initial important.</p>
+      <ol>
+        <li><strong>Service à la personne directe</strong> — coiffure à domicile, cours particuliers, garde d'enfants, aide aux personnes âgées. Tu vends ton temps et ton savoir-faire.</li>
+        <li><strong>Transformation de produits</strong> — acheter des matières premières et les transformer (pain, gâteaux, jus, fritures) pour les vendre avec une marge.</li>
+        <li><strong>Intermédiaire / Courtage</strong> — connecter des vendeurs et des acheteurs que tu connais, prendre une commission sur la mise en relation.</li>
+        <li><strong>Revente avec valeur ajoutée</strong> — acheter en gros ou en vrac, conditionner différemment, vendre au détail ou en petites portions.</li>
+        <li><strong>Formation et transmission</strong> — si tu maîtrises quelque chose (un logiciel, une langue, un instrument, un métier), tu peux l'enseigner.</li>
+        <li><strong>Service numérique</strong> — graphisme simple, saisie de texte, traduction, gestion de réseaux sociaux pour commerçants.</li>
+        <li><strong>Prestation physique récurrente</strong> — nettoyage, jardinage, livraison, service de repassage — des besoins permanents dans tout quartier.</li>
+      </ol>
+      <div class="example">💡 Exemple concret : Adjoua sait coiffer. Elle coiffait des amies "pour rendre service". Un jour, elle a commencé à facturer 2 000 FCFA par tête. 10 clientes × 2 000 = 20 000 FCFA en un week-end. Elle n'avait eu besoin d'aucun capital — juste ses mains et son peigne.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 3 -->
+<div class="section-wrap">
+  <div class="section-header" onclick="toggle(this)">
+    <div class="section-num">3</div>
+    <div class="section-title">Comment fixer ton prix (sans te brader ni faire fuir)</div>
+    <div class="section-toggle">+</div>
+  </div>
+  <div class="section-body">
+    <div class="section-inner">
+      <p>C'est la question qui bloque le plus les débutants. "Et si c'est trop cher ?" "Je ne veux pas faire payer mes proches." "Je ne sais pas combien demander."</p>
+      <h3>🔢 La formule de base</h3>
+      <p><strong>Prix de vente = Coût des matières + Ton temps (valorisé) + Marge bénéficiaire</strong></p>
+      <p>Ne fais jamais l'erreur d'oublier de compter <em>ton temps</em>. C'est la ressource non renouvelable la plus précieuse que tu engages.</p>
+      <h3>📊 3 méthodes concrètes</h3>
+      <ol>
+        <li><strong>Méthode benchmark</strong> — observe ce que font payer les autres pour le même service dans ton quartier. Positionne-toi légèrement en dessous pour commencer, puis augmente quand tu as une réputation.</li>
+        <li><strong>Méthode valeur perçue</strong> — demande-toi ce que ton service vaut pour le client. Une heure de cours particuliers qui fait passer un enfant en classe supérieure vaut infiniment plus que ton coût horaire.</li>
+        <li><strong>Méthode coût + marge</strong> — additionne tous tes coûts (matières, transport, temps), puis ajoute 30 à 50% de marge. C'est ton prix plancher.</li>
+      </ol>
+      <div class="tip">Ne sous-facture pas pour "fidéliser". Un prix trop bas crée une image de qualité médiocre — et t'épuise sans enrichir. Commence correctement ou améliore progressivement.</div>
+      <h3>🗣️ Comment annoncer son prix sans hésiter</h3>
+      <p>Dis ton prix avec calme et conviction, sans t'excuser. "C'est X FCFA" — point. Si on négocie, tu peux ajuster légèrement, mais ne soldes pas ton travail sous la pression sociale.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 4 -->
+<div class="section-wrap">
+  <div class="section-header" onclick="toggle(this)">
+    <div class="section-num">4</div>
+    <div class="section-title">Trouver ses premiers clients (sans budget marketing)</div>
+    <div class="section-toggle">+</div>
+  </div>
+  <div class="section-body">
+    <div class="section-inner">
+      <p>Les premiers clients sont souvent là, juste autour de toi. Ils n'attendent qu'une chose : que tu leur proposes clairement.</p>
+      <h3>🎯 Le cercle des 3 raisons</h3>
+      <p>Commence par lister :</p>
+      <ul>
+        <li><strong>Cercle 1 — Famille et proches :</strong> qui dans ta famille ou tes proches amis pourrait avoir besoin de ce que tu offres, ou connaît quelqu'un qui en a besoin ?</li>
+        <li><strong>Cercle 2 — Voisinage et quartier :</strong> autour de chez toi, qui paie déjà pour ce service mais pas à toi ?</li>
+        <li><strong>Cercle 3 — Communautés :</strong> ton église, ton association, ton marché, ton groupe WhatsApp.</li>
+      </ul>
+      <h3>📱 L'annonce WhatsApp simple</h3>
+      <p>Un message bien écrit dans 3 groupes WhatsApp peut te ramener tes 5 premiers clients. Structure : emoji accrocheur + ce que tu fais + prix de départ + ton numéro + "Dis-le à ceux qui cherchent 🙏".</p>
+      <div class="example">💡 Exemple : "🍽️ Je prépare des repas faits maison livrés chez vous — riz sauce, pâte rouge, plats traditionnels. À partir de 2 500 FCFA. Commande le matin pour le soir. Contact : [numéro]. Passe le message !"</div>
+      <h3>⭐ La puissance du premier témoignage</h3>
+      <p>Fais tes 2 ou 3 premières prestations pour des proches — avec soin. Demande-leur de te laisser un avis ou de te recommander activement. Un premier témoignage sincère vaut mieux que n'importe quelle publicité payante.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 5 -->
+<div class="section-wrap">
+  <div class="section-header" onclick="toggle(this)">
+    <div class="section-num">5</div>
+    <div class="section-title">Passer à l'action cette semaine — le plan en 5 jours</div>
+    <div class="section-toggle">+</div>
+  </div>
+  <div class="section-body">
+    <div class="section-inner">
+      <p>La majorité des gens pensent à lancer une activité mais n'agissent jamais. Voici un plan concret sur 5 jours pour passer du stade "j'y pense" à "j'ai mes premiers clients".</p>
+      <ul>
+        <li><strong>Jour 1 — Choisir :</strong> liste 3 choses que tu sais faire et que d'autres paient. Choisis la plus facile à démarrer immédiatement.</li>
+        <li><strong>Jour 2 — Fixer le prix :</strong> utilise l'une des 3 méthodes de la section 3. Prépare ta réponse pour quand on te demande ton prix.</li>
+        <li><strong>Jour 3 — Créer ton annonce :</strong> un message court, clair, avec emoji, service, prix et contact. Tiens-le en moins de 5 lignes.</li>
+        <li><strong>Jour 4 — Diffuser :</strong> envoie ton annonce dans au moins 3 groupes ou à 10 personnes directement. Parle-en en personne à 2 ou 3 proches.</li>
+        <li><strong>Jour 5 — Attendre et relancer :</strong> si pas de retour, rappelle ou réenvoie. La timidité commerciale est le plus grand ennemi du débutant.</li>
+      </ul>
+      <div class="tip">Tu n'as pas besoin d'un nom commercial, d'un logo ou d'un compte bancaire pour commencer. Ces choses viennent après le premier revenu — pas avant.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SIMULATEUR -->
+<div class="sep">🧮 Simule ton premier revenu</div>
+<div class="card">
+  <h2>Mon potentiel de revenu</h2>
+  <p class="sub">Estime ce que tu peux gagner avec ton service.</p>
+  <label>Type de service</label>
+  <select id="serviceType">
+    <option value="">— Sélectionne —</option>
+    <option value="cours">Cours particuliers</option>
+    <option value="couture">Couture / Retouches</option>
+    <option value="cuisine">Cuisine / Traiteur</option>
+    <option value="coiffure">Coiffure</option>
+    <option value="reparation">Réparation (mécanique, électro…)</option>
+    <option value="numerique">Service numérique (graphisme, saisie…)</option>
+    <option value="autre">Autre service</option>
+  </select>
+  <label>Tarif moyen par prestation (FCFA)</label>
+  <input type="number" id="tarif" placeholder="ex : 3 000" min="0">
+  <label>Nombre de prestations par semaine (réaliste)</label>
+  <input type="number" id="prestSem" placeholder="ex : 5" min="1" max="100">
+  <button class="btn" onclick="calcRevenu()">Calculer mon potentiel →</button>
+  <div class="result-box" id="res">
+    <div class="result-item"><span class="rl">Revenu mensuel estimé</span><span class="rv" id="r-mensuel">—</span></div>
+    <div class="result-item"><span class="rl">Revenu annuel (12 mois)</span><span class="rv" id="r-annuel">—</span></div>
+    <div class="result-item"><span class="rl">Équivalent par jour travaillé</span><span class="rv" id="r-jour">—</span></div>
+    <div class="result-advice" id="r-advice"></div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div class="sep">📝 Quiz de validation</div>
+<div class="card">
+  <h2>Teste tes connaissances</h2>
+  <p class="sub">5 questions · Score minimum 3/5 pour le certificat</p>
+
+  <div class="question">
+    <p>1. Lequel des éléments suivants est un "capital" que tu possèdes déjà sans investissement financier ?</p>
+    <label class="option"><input type="radio" name="q0" value="0"> Un local commercial</label>
+    <label class="option"><input type="radio" name="q0" value="1"> Ton savoir-faire et ton réseau de connaissances</label>
+    <label class="option"><input type="radio" name="q0" value="2"> Un compte bancaire professionnel</label>
+    <label class="option"><input type="radio" name="q0" value="3"> Une formation universitaire</label>
+  </div>
+
+  <div class="question">
+    <p>2. Quel est le premier endroit où chercher ses premiers clients ?</p>
+    <label class="option"><input type="radio" name="q1" value="0"> Les réseaux sociaux publics</label>
+    <label class="option"><input type="radio" name="q1" value="1"> La famille, les proches et le voisinage</label>
+    <label class="option"><input type="radio" name="q1" value="2"> Une publicité payante</label>
+    <label class="option"><input type="radio" name="q1" value="3"> Un site web professionnel</label>
+  </div>
+
+  <div class="question">
+    <p>3. Quand tu fixes ton prix, qu'est-ce qu'on oublie souvent d'inclure ?</p>
+    <label class="option"><input type="radio" name="q2" value="0"> Le coût des matières premières</label>
+    <label class="option"><input type="radio" name="q2" value="1"> La marge bénéficiaire</label>
+    <label class="option"><input type="radio" name="q2" value="2"> La valorisation de son propre temps</label>
+    <label class="option"><input type="radio" name="q2" value="3"> Le prix du marché</label>
+  </div>
+
+  <div class="question">
+    <p>4. Pour démarrer une activité de service, qu'est-ce qui est indispensable dès le début ?</p>
+    <label class="option"><input type="radio" name="q3" value="0"> Un logo et un nom commercial</label>
+    <label class="option"><input type="radio" name="q3" value="1"> Un compte bancaire professionnel</label>
+    <label class="option"><input type="radio" name="q3" value="2"> Une annonce claire et la volonté de proposer ses services</label>
+    <label class="option"><input type="radio" name="q3" value="3"> Une autorisation administrative</label>
+  </div>
+
+  <div class="question">
+    <p>5. Qu'est-ce qui génère le plus de confiance pour un nouveau prestataire ?</p>
+    <label class="option"><input type="radio" name="q4" value="0"> Une belle carte de visite</label>
+    <label class="option"><input type="radio" name="q4" value="1"> Un témoignage sincère d'un client satisfait</label>
+    <label class="option"><input type="radio" name="q4" value="2"> Des prix très bas</label>
+    <label class="option"><input type="radio" name="q4" value="3"> Beaucoup de likes sur les réseaux sociaux</label>
+  </div>
+
+  <button class="btn" id="quizBtn" onclick="submitQuiz()">Valider mes réponses →</button>
+  <div class="score-box" id="scoreBox">
+    <div class="score-num" id="scoreNum"></div>
+    <div class="score-lbl">Score</div>
+    <div class="score-msg" id="scoreMsg"></div>
+  </div>
+</div>
+
+<!-- CERTIFICAT -->
+<div class="cert-section" id="certSection">
+  <h2>🎓 Ton certificat de complétion</h2>
+  <p class="sub">Tu as validé la mini-formation. Entre ton nom pour générer ton certificat.</p>
+  <input type="text" class="cert-name-input" id="certNameInput" placeholder="Ton prénom et nom" maxlength="50">
+  <button class="btn" onclick="generateCert()">Générer mon certificat 🎓</button>
+  <div class="certificate" id="certDiv">
+    <div class="cert-brand">🔥 GreenFlame</div>
+    <div class="cert-top">Certificat de complétion</div>
+    <span class="cert-emoji">🚀</span>
+    <div class="cert-awarded">Ce certificat est décerné à</div>
+    <div class="cert-name" id="certName">—</div>
+    <div class="cert-text">Mini-formation<br><strong>Transformer ce que tu sais déjà faire en revenu</strong></div>
+    <div class="cert-issuer">GreenFlame — Commerce communautaire pan-africain</div>
+    <div class="cert-date" id="certDate">—</div>
+    <button class="btn green" style="margin-top:14px;font-size:13px;padding:10px" onclick="window.print()">📥 Imprimer / Télécharger</button>
+  </div>
+</div>
+
+<script>
+const CORRECT = [1, 1, 2, 2, 1];
+let openCount = 0;
+
+function toggle(header) {
+  const body = header.nextElementSibling;
+  const icon = header.querySelector('.section-toggle');
+  if (!body.classList.contains('open')) openCount++;
+  else openCount = Math.max(0, openCount - 1);
+  body.classList.toggle('open');
+  icon.classList.toggle('open');
+  updateProgress();
+}
+
+function updateProgress() {
+  const pct = Math.min(100, Math.round((openCount / 7) * 100));
+  document.getElementById('prog').style.width = pct + '%';
+}
+
+function fmt(n) {
+  return Math.round(n).toLocaleString('fr-FR') + ' FCFA';
+}
+
+function calcRevenu() {
+  const tarif = parseFloat(document.getElementById('tarif').value) || 0;
+  const prestSem = parseFloat(document.getElementById('prestSem').value) || 0;
+  if (tarif === 0 || prestSem === 0) return alert('Entre un tarif et un nombre de prestations par semaine.');
+  const mensuel = tarif * prestSem * 4;
+  const annuel = mensuel * 12;
+  const parJour = tarif * prestSem / 6;
+  const res = document.getElementById('res');
+  res.classList.add('show');
+  document.getElementById('r-mensuel').textContent = fmt(mensuel);
+  document.getElementById('r-annuel').textContent = fmt(annuel);
+  document.getElementById('r-jour').textContent = fmt(parJour);
+  const adv = document.getElementById('r-advice');
+  if (mensuel < 10000) {
+    adv.textContent = '📌 C\'est un début encourageant. Augmente progressivement ton nombre de clients — même +2 prestations/semaine fait une grande différence.';
+  } else if (mensuel < 50000) {
+    adv.textContent = '💪 Un revenu complémentaire sérieux. En continuant, tu pourrais en faire une activité principale en quelques mois.';
+  } else {
+    adv.textContent = '🎉 Excellent potentiel. À ce rythme, cette activité peut dépasser un salaire moyen. Investis dans ta qualité et ta réputation.';
+  }
+  openCount = Math.max(openCount, 6);
+  updateProgress();
+}
+
+function submitQuiz() {
+  let answered = true;
+  for (let i = 0; i < 5; i++) {
+    if (!document.querySelector('[name="q' + i + '"]:checked')) { answered = false; break; }
+  }
+  if (!answered) return alert('Réponds à toutes les questions avant de valider.');
+  let score = 0;
+  CORRECT.forEach((correct, qi) => {
+    const options = document.querySelectorAll('.question')[qi].querySelectorAll('.option');
+    const selected = document.querySelector('[name="q' + qi + '"]:checked');
+    options.forEach((opt, oi) => {
+      opt.style.cursor = 'default';
+      if (oi === correct) opt.classList.add('correct');
+      else if (selected && parseInt(selected.value) === oi) opt.classList.add('wrong');
+    });
+    if (selected && parseInt(selected.value) === correct) score++;
+  });
+  const box = document.getElementById('scoreBox');
+  box.classList.add('show');
+  document.getElementById('scoreNum').textContent = score + '/5';
+  let msg;
+  if (score >= 4) msg = '🎉 Excellent ! Tu as les bases pour te lancer cette semaine.';
+  else if (score === 3) msg = '👍 Bien ! Relis les sections sur les points que tu as manqués.';
+  else msg = '📚 Continue d\'apprendre — relis les sections et retente le quiz.';
+  document.getElementById('scoreMsg').textContent = msg;
+  document.getElementById('quizBtn').disabled = true;
+  if (score >= 3) {
+    document.getElementById('certSection').classList.add('show');
+    setTimeout(() => document.getElementById('certSection').scrollIntoView({behavior:'smooth'}), 400);
+  }
+  openCount = Math.max(openCount, 7);
+  updateProgress();
+}
+
+function generateCert() {
+  const name = document.getElementById('certNameInput').value.trim();
+  if (!name) return alert('Entre ton prénom ou ton nom complet.');
+  document.getElementById('certName').textContent = name;
+  document.getElementById('certDate').textContent = 'Délivré le ' + new Date().toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'});
+  const cert = document.getElementById('certDiv');
+  cert.classList.add('show');
+  setTimeout(() => cert.scrollIntoView({behavior:'smooth'}), 200);
+}
+</script>
+</body>
+</html>

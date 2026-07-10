@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GreenFlame — Tracker Dépenses</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --brand:    #166534;
+    --brand-md: #16a34a;
+    --brand-lt: #dcfce7;
+    --brand-dk: #14532d;
+    --accent:   #4ade80;
+    --red:      #dc2626;
+    --yellow:   #fbbf24;
+    --bg:       #f9fafb;
+    --card:     #ffffff;
+    --border:   #e5e7eb;
+    --text:     #111827;
+    --muted:    #6b7280;
+    --radius:   10px;
+  }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* ── HEADER ── */
+  header { background: linear-gradient(135deg, var(--brand-dk) 0%, var(--brand) 100%); color: #fff; padding: 18px 32px; display: flex; align-items: center; gap: 14px; }
+  header h1 { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.3px; }
+  header p { font-size: 0.82rem; opacity: 0.75; margin-top: 2px; }
+  .flame { font-size: 1.8rem; }
+
+  /* ── LAYOUT ── */
+  .container { max-width: 1200px; margin: 0 auto; padding: 24px 20px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+  @media (max-width: 800px) { .grid-2 { grid-template-columns: 1fr; } .grid-4 { grid-template-columns: repeat(2, 1fr); } }
+
+  /* ── CARDS ── */
+  .card { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: 0 1px 4px rgba(0,0,0,.06); overflow: hidden; }
+  .card-header { background: var(--brand); color: #fff; padding: 12px 18px; font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; justify-content: space-between; }
+  .card-body { padding: 18px; }
+
+  /* ── KPI ── */
+  .kpi { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); padding: 18px 20px; }
+  .kpi-label { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .kpi-value { font-size: 1.7rem; font-weight: 700; color: var(--brand); line-height: 1; }
+  .kpi-value.danger { color: var(--red); }
+  .kpi-value.warn   { color: var(--yellow); }
+  .kpi-sub  { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
+
+  /* ── FORM ── */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
+  label { font-size: 0.8rem; font-weight: 600; color: var(--muted); display: block; margin-bottom: 4px; }
+  input, select, textarea {
+    width: 100%; padding: 9px 12px; border: 1.5px solid var(--border); border-radius: 7px;
+    font-size: 0.92rem; font-family: inherit; background: #fff; transition: border 0.15s;
+  }
+  input:focus, select:focus { outline: none; border-color: var(--brand-md); box-shadow: 0 0 0 3px rgba(22,163,74,.12); }
+  .btn { padding: 10px 24px; border-radius: 7px; font-size: 0.92rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; }
+  .btn-primary { background: var(--brand); color: #fff; }
+  .btn-primary:hover { background: var(--brand-dk); }
+  .btn-sm { padding: 5px 10px; font-size: 0.78rem; border-radius: 5px; }
+  .btn-danger { background: #fee2e2; color: var(--red); border: 1px solid #fca5a5; }
+  .btn-danger:hover { background: #fca5a5; }
+  .col-span-2 { grid-column: span 2; }
+  @media (max-width: 600px) { .col-span-2 { grid-column: span 1; } }
+
+  /* ── FILTERS ── */
+  .filters { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; align-items: center; }
+  .filters select, .filters input { width: auto; min-width: 120px; font-size: 0.85rem; padding: 7px 10px; }
+
+  /* ── TABLE ── */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+  thead th { background: var(--brand); color: #fff; padding: 10px 12px; text-align: left; font-weight: 600; white-space: nowrap; }
+  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
+  tbody tr:hover { background: var(--brand-lt); }
+  tbody td { padding: 9px 12px; vertical-align: middle; }
+  .amount { font-weight: 600; font-family: monospace; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 0.75rem; font-weight: 600; }
+  .empty-row td { text-align: center; padding: 32px; color: var(--muted); font-style: italic; }
+
+  /* ── BUDGET TABLE ── */
+  .budget-cat { display: flex; align-items: center; gap: 10px; }
+  .gauge-bar { flex: 1; height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden; }
+  .gauge-fill { height: 100%; border-radius: 4px; transition: width 0.4s; }
+
+  /* ── MONTH TABS ── */
+  .month-select { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+  .month-btn { padding: 6px 14px; border-radius: 99px; font-size: 0.82rem; cursor: pointer; border: 1.5px solid var(--border); background: #fff; color: var(--muted); font-weight: 500; transition: all 0.15s; }
+  .month-btn.active { background: var(--brand); color: #fff; border-color: var(--brand); }
+
+  /* ── BUDGET INPUT ── */
+  .budget-input { width: 110px; text-align: right; font-size: 0.85rem; padding: 5px 8px; }
+
+  /* ── TOAST ── */
+  #toast { position: fixed; bottom: 24px; right: 24px; background: var(--brand); color: #fff; padding: 12px 20px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 9999; }
+  #toast.show { opacity: 1; }
+
+  /* ── SECTION TITLE ── */
+  .section-title { font-size: 1rem; font-weight: 700; color: var(--brand-dk); margin-bottom: 14px; padding-bottom: 8px; border-bottom: 2px solid var(--brand-lt); }
+
+  .mt-20 { margin-top: 20px; }
+  .text-right { text-align: right; }
+  .text-center { text-align: center; }
+  .font-mono { font-family: monospace; }
+  .text-muted { color: var(--muted); }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="flame">🔥</span>
+  <div>
+    <h1>GreenFlame — Tracker Dépenses</h1>
+    <p>Suivi des dépenses opérationnelles et budget par catégorie</p>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- KPIs -->
+  <div class="grid-4" id="kpi-row"></div>
+
+  <!-- Sélecteur de mois -->
+  <div class="section-title">Période</div>
+  <div class="month-select" id="month-tabs"></div>
+
+  <div class="grid-2">
+
+    <!-- Formulaire saisie -->
+    <div class="card">
+      <div class="card-header">
+        ➕ Nouvelle dépense
+        <span style="font-size:0.78rem;opacity:0.8;font-weight:400">* champs obligatoires</span>
+      </div>
+      <div class="card-body">
+        <div class="form-grid">
+          <div>
+            <label>Date *</label>
+            <input type="date" id="f-date">
+          </div>
+          <div>
+            <label>Catégorie *</label>
+            <select id="f-cat">
+              <option value="">— choisir —</option>
+              <option>Infrastructure &amp; Hébergement</option>
+              <option>Outils &amp; Logiciels</option>
+              <option>Légal &amp; Juridique</option>
+              <option>Marketing &amp; Communication</option>
+              <option>Terrain &amp; Commercial</option>
+              <option>Personnel &amp; Associé</option>
+              <option>Divers</option>
+            </select>
+          </div>
+          <div class="col-span-2">
+            <label>Description *</label>
+            <input type="text" id="f-desc" placeholder="Ex: Vercel Pro — juin 2026">
+          </div>
+          <div>
+            <label>Montant (FCFA) *</label>
+            <input type="number" id="f-amount" min="0" placeholder="0">
+          </div>
+          <div>
+            <label>Mode de paiement</label>
+            <select id="f-mode">
+              <option value="">— optionnel —</option>
+              <option>MoMo</option>
+              <option>Espèces</option>
+              <option>Virement</option>
+              <option>Carte</option>
+              <option>Autre</option>
+            </select>
+          </div>
+          <div class="col-span-2">
+            <label>Notes</label>
+            <input type="text" id="f-notes" placeholder="Optionnel">
+          </div>
+          <div class="col-span-2 text-right">
+            <button class="btn btn-primary" onclick="addExpense()">Enregistrer la dépense</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Graphique -->
+    <div class="card">
+      <div class="card-header">📊 Budget vs Réalisé — mois sélectionné</div>
+      <div class="card-body" style="height:280px;position:relative;">
+        <canvas id="chart-budget"></canvas>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Budget par catégorie -->
+  <div class="card mt-20">
+    <div class="card-header">
+      🎯 Budget mensuel par catégorie
+      <span style="font-size:0.78rem;opacity:0.8;font-weight:400">Modifiez les budgets directement — sauvegardés automatiquement</span>
+    </div>
+    <div class="card-body">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Catégorie</th>
+              <th class="text-right">Budget (FCFA)</th>
+              <th class="text-right">Réalisé (FCFA)</th>
+              <th class="text-right">Écart (FCFA)</th>
+              <th>% Consommé</th>
+              <th>Jauge</th>
+            </tr>
+          </thead>
+          <tbody id="budget-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Liste des dépenses -->
+  <div class="card mt-20">
+    <div class="card-header">
+      📋 Dépenses — mois sélectionné
+      <span id="count-badge" style="font-size:0.78rem;opacity:0.8;font-weight:400"></span>
+    </div>
+    <div class="card-body">
+      <div class="filters">
+        <select id="fil-cat" onchange="renderExpenses()">
+          <option value="">Toutes catégories</option>
+          <option>Infrastructure &amp; Hébergement</option>
+          <option>Outils &amp; Logiciels</option>
+          <option>Légal &amp; Juridique</option>
+          <option>Marketing &amp; Communication</option>
+          <option>Terrain &amp; Commercial</option>
+          <option>Personnel &amp; Associé</option>
+          <option>Divers</option>
+        </select>
+        <input type="text" id="fil-search" placeholder="Rechercher…" oninput="renderExpenses()" style="min-width:180px">
+        <button class="btn btn-sm" onclick="exportCSV()">⬇ Exporter CSV</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Catégorie</th>
+              <th>Description</th>
+              <th class="text-right">Montant (FCFA)</th>
+              <th>Mode</th>
+              <th>Notes</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="expenses-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────
+const CATS = [
+  "Infrastructure & Hébergement",
+  "Outils & Logiciels",
+  "Légal & Juridique",
+  "Marketing & Communication",
+  "Terrain & Commercial",
+  "Personnel & Associé",
+  "Divers",
+];
+const CAT_COLORS = ["#166534","#16a34a","#15803d","#4ade80","#86efac","#bbf7d0","#dcfce7"];
+
+const DEFAULT_BUDGETS = {
+  "Infrastructure & Hébergement": 25000,
+  "Outils & Logiciels": 15000,
+  "Légal & Juridique": 75000,
+  "Marketing & Communication": 30000,
+  "Terrain & Commercial": 20000,
+  "Personnel & Associé": 0,
+  "Divers": 10000,
+};
+
+let expenses = JSON.parse(localStorage.getItem("gf_expenses") || "[]");
+let budgets  = JSON.parse(localStorage.getItem("gf_budgets")  || "{}");
+let selMonth = localStorage.getItem("gf_month") || currentMonthKey();
+let chart    = null;
+
+function save() {
+  localStorage.setItem("gf_expenses", JSON.stringify(expenses));
+  localStorage.setItem("gf_budgets",  JSON.stringify(budgets));
+  localStorage.setItem("gf_month",    selMonth);
+}
+
+function currentMonthKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+}
+
+function monthLabel(key) {
+  const [y, m] = key.split("-");
+  return new Date(+y, +m-1, 1).toLocaleDateString("fr-FR", {month:"long", year:"numeric"});
+}
+
+function getBudget(cat) {
+  return budgets[cat] ?? DEFAULT_BUDGETS[cat] ?? 0;
+}
+
+function fmt(n) {
+  return Math.round(n).toLocaleString("fr-FR") + " FCFA";
+}
+
+// ── MONTHS ───────────────────────────────────────────────────────────────
+function getAvailableMonths() {
+  const keys = new Set(expenses.map(e => e.date.slice(0,7)));
+  keys.add(currentMonthKey());
+  return [...keys].sort().reverse().slice(0, 12);
+}
+
+function renderMonthTabs() {
+  const months = getAvailableMonths();
+  const el = document.getElementById("month-tabs");
+  el.innerHTML = months.map(m =>
+    `<button class="month-btn ${m===selMonth?'active':''}" onclick="selectMonth('${m}')">${monthLabel(m)}</button>`
+  ).join("");
+}
+
+function selectMonth(key) {
+  selMonth = key;
+  save();
+  renderAll();
+}
+
+// ── EXPENSES FOR SELECTED MONTH ───────────────────────────────────────────
+function getMonthExpenses() {
+  return expenses.filter(e => e.date.startsWith(selMonth));
+}
+
+function getCatTotal(cat, monthKey) {
+  return expenses.filter(e => e.date.startsWith(monthKey||selMonth) && e.cat === cat)
+    .reduce((s,e) => s + e.amount, 0);
+}
+
+function getTotalMonth(monthKey) {
+  return expenses.filter(e => e.date.startsWith(monthKey||selMonth))
+    .reduce((s,e) => s + e.amount, 0);
+}
+
+function getTotalBudget() {
+  return CATS.reduce((s, c) => s + getBudget(c), 0);
+}
+
+// ── KPIs ─────────────────────────────────────────────────────────────────
+function renderKPIs() {
+  const totalBud = getTotalBudget();
+  const totalSpt = getTotalMonth();
+  const solde    = totalBud - totalSpt;
+  const pct      = totalBud > 0 ? (totalSpt / totalBud) : 0;
+
+  const kpis = [
+    { label: "Budget mensuel total", value: fmt(totalBud), sub: "toutes catégories", cls: "" },
+    { label: "Total dépensé", value: fmt(totalSpt), sub: monthLabel(selMonth), cls: pct>1?"danger":pct>.85?"warn":"" },
+    { label: "Solde restant", value: fmt(solde), sub: solde>=0?"Dans le budget":"Dépassement !", cls: solde<0?"danger":"" },
+    { label: "Taux de consommation", value: (pct*100).toFixed(1)+"%", sub: pct>=1?"⚠ Budget dépassé":"en cours de mois", cls: pct>=1?"danger":pct>=.85?"warn":"" },
+  ];
+  document.getElementById("kpi-row").innerHTML = kpis.map(k =>
+    `<div class="kpi">
+      <div class="kpi-label">${k.label}</div>
+      <div class="kpi-value ${k.cls}">${k.value}</div>
+      <div class="kpi-sub">${k.sub}</div>
+    </div>`
+  ).join("");
+}
+
+// ── BUDGET TABLE ──────────────────────────────────────────────────────────
+function renderBudgetTable() {
+  const tb = document.getElementById("budget-tbody");
+  let totalBud = 0, totalSpt = 0;
+  tb.innerHTML = CATS.map((cat, i) => {
+    const bud = getBudget(cat);
+    const spt = getCatTotal(cat);
+    const ecart = bud - spt;
+    const pct = bud > 0 ? Math.min(spt/bud, 1) : (spt>0?1:0);
+    const pctDisplay = bud > 0 ? ((spt/bud)*100).toFixed(1)+"%" : spt>0?"∞":"—";
+    const gaugeColor = pct>=1?"#dc2626":pct>=.85?"#f59e0b":CAT_COLORS[i%CAT_COLORS.length];
+    totalBud += bud; totalSpt += spt;
+    return `<tr>
+      <td><strong>${cat}</strong></td>
+      <td class="text-right">
+        <input class="budget-input" type="number" value="${bud}" min="0"
+          onchange="updateBudget('${cat.replace(/'/g,"\\'")}', this.value)"
+          style="font-family:monospace;border:1.5px solid #e5e7eb;border-radius:5px;padding:4px 8px;">
+      </td>
+      <td class="text-right amount">${fmt(spt)}</td>
+      <td class="text-right amount" style="color:${ecart<0?'#dc2626':'#166534'}">${ecart<0?'('+fmt(-ecart)+')':fmt(ecart)}</td>
+      <td class="text-center" style="color:${pct>=1?'#dc2626':pct>=.85?'#f59e0b':'#166534'};font-weight:600">${pctDisplay}</td>
+      <td style="min-width:120px">
+        <div class="gauge-bar">
+          <div class="gauge-fill" style="width:${(pct*100).toFixed(1)}%;background:${gaugeColor}"></div>
+        </div>
+      </td>
+    </tr>`;
+  }).join("") +
+  `<tr style="background:#f0fdf4;font-weight:700;border-top:2px solid #166534">
+    <td>TOTAL</td>
+    <td class="text-right font-mono">${fmt(totalBud)}</td>
+    <td class="text-right font-mono">${fmt(totalSpt)}</td>
+    <td class="text-right font-mono" style="color:${totalSpt>totalBud?'#dc2626':'#166534'}">${fmt(totalBud-totalSpt)}</td>
+    <td class="text-center" style="font-weight:700">${totalBud>0?((totalSpt/totalBud)*100).toFixed(1)+"%":"—"}</td>
+    <td></td>
+  </tr>`;
+}
+
+function updateBudget(cat, val) {
+  budgets[cat] = Math.max(0, +val || 0);
+  save();
+  renderKPIs();
+  renderChart();
+}
+
+// ── EXPENSES LIST ──────────────────────────────────────────────────────────
+function renderExpenses() {
+  const cat    = document.getElementById("fil-cat").value;
+  const search = document.getElementById("fil-search").value.toLowerCase();
+  let list = getMonthExpenses()
+    .filter(e => !cat || e.cat === cat)
+    .filter(e => !search || e.desc.toLowerCase().includes(search) || (e.notes||"").toLowerCase().includes(search))
+    .sort((a,b) => b.date.localeCompare(a.date));
+
+  document.getElementById("count-badge").textContent = `${list.length} dépense${list.length>1?"s":""}`;
+
+  const tb = document.getElementById("expenses-tbody");
+  if (!list.length) {
+    tb.innerHTML = `<tr class="empty-row"><td colspan="7">Aucune dépense enregistrée pour cette période</td></tr>`;
+    return;
+  }
+  tb.innerHTML = list.map(e => {
+    const d = new Date(e.date+"T00:00:00");
+    const dfmt = d.toLocaleDateString("fr-FR");
+    return `<tr>
+      <td>${dfmt}</td>
+      <td><span class="badge" style="background:#dcfce7;color:#166534">${e.cat}</span></td>
+      <td>${e.desc}</td>
+      <td class="text-right amount">${fmt(e.amount)}</td>
+      <td class="text-muted text-center">${e.mode||"—"}</td>
+      <td class="text-muted" style="font-size:0.82rem">${e.notes||""}</td>
+      <td><button class="btn btn-sm btn-danger" onclick="deleteExpense('${e.id}')">✕</button></td>
+    </tr>`;
+  }).join("");
+}
+
+// ── CHART ─────────────────────────────────────────────────────────────────
+function renderChart() {
+  const ctx = document.getElementById("chart-budget").getContext("2d");
+  const data_bud = CATS.map(c => getBudget(c));
+  const data_spt = CATS.map(c => getCatTotal(c));
+  const shortCats = CATS.map(c => c.split(" & ")[0].split("/")[0].trim());
+
+  if (chart) chart.destroy();
+  chart = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: shortCats,
+      datasets: [
+        { label: "Budget", data: data_bud, backgroundColor: "rgba(22,101,52,0.25)", borderColor: "#166534", borderWidth: 2 },
+        { label: "Réalisé", data: data_spt, backgroundColor: "rgba(74,222,128,0.7)", borderColor: "#16a34a", borderWidth: 1 },
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: "bottom", labels: { font: { size: 11 } } } },
+      scales: {
+        x: { ticks: { font: { size: 9 }, maxRotation: 35 } },
+        y: { ticks: { callback: v => v>=1000 ? (v/1000).toFixed(0)+"k" : v } }
+      }
+    }
+  });
+}
+
+// ── ADD / DELETE ──────────────────────────────────────────────────────────
+function addExpense() {
+  const date   = document.getElementById("f-date").value;
+  const cat    = document.getElementById("f-cat").value;
+  const desc   = document.getElementById("f-desc").value.trim();
+  const amount = parseFloat(document.getElementById("f-amount").value);
+  const mode   = document.getElementById("f-mode").value;
+  const notes  = document.getElementById("f-notes").value.trim();
+
+  if (!date) { toast("Veuillez indiquer une date.", true); return; }
+  if (!cat)  { toast("Veuillez choisir une catégorie.", true); return; }
+  if (!desc) { toast("Veuillez saisir une description.", true); return; }
+  if (!amount || amount <= 0) { toast("Montant invalide.", true); return; }
+
+  expenses.push({ id: Date.now().toString(), date, cat, desc, amount, mode, notes });
+  save();
+
+  // Retour au mois de la dépense
+  selMonth = date.slice(0,7);
+
+  // Reset form
+  document.getElementById("f-desc").value = "";
+  document.getElementById("f-amount").value = "";
+  document.getElementById("f-notes").value = "";
+
+  toast("Dépense enregistrée ✓");
+  renderAll();
+}
+
+function deleteExpense(id) {
+  if (!confirm("Supprimer cette dépense ?")) return;
+  expenses = expenses.filter(e => e.id !== id);
+  save(); renderAll(); toast("Dépense supprimée.");
+}
+
+// ── EXPORT CSV ────────────────────────────────────────────────────────────
+function exportCSV() {
+  const list = getMonthExpenses().sort((a,b)=>a.date.localeCompare(b.date));
+  const rows = [["Date","Catégorie","Description","Montant (FCFA)","Mode","Notes"]];
+  list.forEach(e => rows.push([e.date, e.cat, e.desc, e.amount, e.mode||"", e.notes||""]));
+  const csv = rows.map(r => r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(",")).join("\n");
+  const a = document.createElement("a");
+  a.href = "data:text/csv;charset=utf-8,﻿" + encodeURIComponent(csv);
+  a.download = `GreenFlame_Depenses_${selMonth}.csv`;
+  a.click();
+}
+
+// ── TOAST ─────────────────────────────────────────────────────────────────
+function toast(msg, err=false) {
+  const el = document.getElementById("toast");
+  el.textContent = msg;
+  el.style.background = err ? "#dc2626" : "#166534";
+  el.classList.add("show");
+  setTimeout(() => el.classList.remove("show"), 3000);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+function renderAll() {
+  renderMonthTabs();
+  renderKPIs();
+  renderBudgetTable();
+  renderExpenses();
+  renderChart();
+}
+
+// Set today as default date
+document.getElementById("f-date").value = new Date().toISOString().slice(0,10);
+
+renderAll();
+</script>
+</body>
+</html>

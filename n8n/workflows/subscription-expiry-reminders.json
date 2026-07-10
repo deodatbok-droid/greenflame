@@ -1,0 +1,258 @@
+{
+  "name": "GreenFlame — Rappels expiration abonnements",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 * * *"
+            }
+          ]
+        }
+      },
+      "id": "trigger-daily",
+      "name": "Tous les jours à 8h",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "a1", "name": "dayWindows", "value": "={{ [7, 3, 1] }}", "type": "array" }
+          ]
+        }
+      },
+      "id": "set-windows",
+      "name": "Fenêtres J-7, J-3, J-1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "dayWindows",
+        "options": {}
+      },
+      "id": "split-windows",
+      "name": "Split par fenêtre",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $vars.GREENFLAME_URL }}/api/internal/expiring-subscriptions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{ $vars.INTERNAL_API_SECRET }}" }
+          ]
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "days", "value": "={{ $json.dayWindows }}" }
+          ]
+        },
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "fetch-expiring",
+      "name": "Récupérer marchands expirants",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.count }}",
+              "rightValue": 0,
+              "operator": { "type": "number", "operation": "gt" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "check-count",
+      "name": "Des marchands à notifier ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1120, 300]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "merchants",
+        "options": {}
+      },
+      "id": "split-merchants",
+      "name": "Split par marchand",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [1340, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $vars.GREENFLAME_URL }}/api/internal/expiring-subscriptions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{ $vars.INTERNAL_API_SECRET }}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"merchant_id\": \"{{ $json.merchant_id }}\",\n  \"days_remaining\": {{ $json.days_remaining }}\n}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "send-reminder",
+      "name": "Envoyer rappel (SMS + notif)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1560, 200]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "s1",
+              "leftValue": "={{ $json.success }}",
+              "rightValue": true,
+              "operator": { "type": "boolean", "operation": "true" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "check-success",
+      "name": "Succès ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1780, 200]
+    },
+    {
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "values": [
+            { "name": "status", "value": "ok" },
+            { "name": "merchant", "value": "={{ $json.business_name }}" },
+            { "name": "days", "value": "={{ $json.days_remaining }}" },
+            { "name": "sms", "value": "={{ $json.sms_sent }}" }
+          ]
+        }
+      },
+      "id": "log-success",
+      "name": "Log succès",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [2000, 140]
+    },
+    {
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "values": [
+            { "name": "status", "value": "error" },
+            { "name": "merchant", "value": "={{ $json.merchant_id }}" },
+            { "name": "error", "value": "={{ $json.message ?? 'Erreur inconnue' }}" }
+          ]
+        }
+      },
+      "id": "log-error",
+      "name": "Log erreur",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [2000, 280]
+    },
+    {
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "values": [
+            { "name": "status", "value": "skipped" },
+            { "name": "reason", "value": "Aucun marchand expirant dans cette fenêtre" },
+            { "name": "days", "value": "={{ $('Split par fenêtre').item.json.dayWindows }}" }
+          ]
+        }
+      },
+      "id": "log-skip",
+      "name": "Log (aucun marchand)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1340, 380]
+    }
+  ],
+  "connections": {
+    "Tous les jours à 8h": {
+      "main": [[{ "node": "Fenêtres J-7, J-3, J-1", "type": "main", "index": 0 }]]
+    },
+    "Fenêtres J-7, J-3, J-1": {
+      "main": [[{ "node": "Split par fenêtre", "type": "main", "index": 0 }]]
+    },
+    "Split par fenêtre": {
+      "main": [[{ "node": "Récupérer marchands expirants", "type": "main", "index": 0 }]]
+    },
+    "Récupérer marchands expirants": {
+      "main": [[{ "node": "Des marchands à notifier ?", "type": "main", "index": 0 }]]
+    },
+    "Des marchands à notifier ?": {
+      "main": [
+        [{ "node": "Split par marchand", "type": "main", "index": 0 }],
+        [{ "node": "Log (aucun marchand)", "type": "main", "index": 0 }]
+      ]
+    },
+    "Split par marchand": {
+      "main": [[{ "node": "Envoyer rappel (SMS + notif)", "type": "main", "index": 0 }]]
+    },
+    "Envoyer rappel (SMS + notif)": {
+      "main": [[{ "node": "Succès ?", "type": "main", "index": 0 }]]
+    },
+    "Succès ?": {
+      "main": [
+        [{ "node": "Log succès", "type": "main", "index": 0 }],
+        [{ "node": "Log erreur", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "staticData": null,
+  "tags": ["greenflame", "subscriptions", "automation"],
+  "triggerCount": 1,
+  "variables": {
+    "GREENFLAME_URL": "https://greenflame.app",
+    "INTERNAL_API_SECRET": "REPLACE_WITH_YOUR_SECRET"
+  },
+  "versionId": "1.0.0",
+  "meta": {
+    "instanceId": "greenflame-n8n",
+    "templateCredsSetupCompleted": false
+  }
+}

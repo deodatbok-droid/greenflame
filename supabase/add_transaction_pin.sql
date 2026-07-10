@@ -1,0 +1,1 @@
+ALTER TABLE public.users ADD COLUMN IF NOT EXISTS transaction_pin VARCHAR(6) DEFAULT NULL;

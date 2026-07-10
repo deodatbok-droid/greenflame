@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pourquoi tu n'arrives jamais à épargner — Mini-formation GreenFlame</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--g:#16a34a;--gd:#14532d;--f:#f97316;--blue:#2563eb;--blight:#eff6ff;--bg:#f0f9ff;--card:#fff;--text:#111827;--muted:#6b7280}
+body{font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.65;max-width:600px;margin:0 auto;padding-bottom:60px}
+.header{background:linear-gradient(140deg,#1e3a5f 0%,#2563eb 100%);color:#fff;padding:28px 20px 24px;text-align:center}
+.header .emoji{font-size:56px;display:block;margin-bottom:10px;line-height:1}
+.header h1{font-size:21px;font-weight:800;line-height:1.3;margin-bottom:6px}
+.header .meta{font-size:11px;opacity:.7;text-transform:uppercase;letter-spacing:.1em;margin-bottom:16px}
+.header .steps{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.header .step{background:rgba(255,255,255,.2);border-radius:20px;padding:5px 12px;font-size:12px;font-weight:600}
+.progress-bar{height:5px;background:rgba(0,0,0,.1)}
+.progress-fill{height:5px;background:var(--f);transition:width .5s ease;width:0%}
+.section-wrap{margin:14px 12px 0;border-radius:16px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.07)}
+.section-header{background:var(--card);padding:15px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none}
+.section-header:active{background:#f9fafb}
+.section-num{width:30px;height:30px;border-radius:50%;background:var(--blue);color:#fff;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.section-title{flex:1;font-weight:600;font-size:14px;line-height:1.35}
+.section-toggle{font-size:22px;color:var(--blue);line-height:1;transition:transform .25s;flex-shrink:0}
+.section-toggle.open{transform:rotate(45deg)}
+.section-body{background:var(--card);overflow:hidden;max-height:0;transition:max-height .35s ease}
+.section-body.open{max-height:3000px}
+.section-inner{padding:4px 16px 18px}
+.section-inner p{margin-bottom:11px;color:#374151;font-size:14px}
+.section-inner h3{font-size:14px;font-weight:700;color:#1e40af;margin:16px 0 8px}
+.section-inner ul,.section-inner ol{padding-left:18px;margin-bottom:11px;color:#374151;font-size:14px}
+.section-inner li{margin-bottom:7px}
+.section-inner li::marker{color:var(--blue)}
+.section-inner strong{color:#1e40af}
+.tip{background:#eff6ff;border-left:3px solid var(--blue);border-radius:0 10px 10px 0;padding:10px 14px;margin:12px 0;font-size:13px;color:#1e40af}
+.warn{background:#fef9ee;border-left:3px solid var(--f);border-radius:0 10px 10px 0;padding:10px 14px;margin:12px 0;font-size:13px;color:#78350f}
+.sep{text-align:center;padding:22px 16px 6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
+.card{background:var(--card);margin:8px 12px 0;border-radius:16px;padding:20px;box-shadow:0 1px 6px rgba(0,0,0,.07)}
+.card h2{font-size:17px;font-weight:700;color:#1e40af;margin-bottom:4px}
+.card .sub{font-size:13px;color:var(--muted);margin-bottom:18px}
+label{display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:5px;margin-top:14px}
+label:first-of-type{margin-top:0}
+input[type=number],select{width:100%;border:1.5px solid #e5e7eb;border-radius:10px;padding:11px 13px;font-size:16px;color:var(--text);outline:none;background:#fff;-moz-appearance:textfield}
+input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
+input[type=number]:focus,select:focus{border-color:var(--blue)}
+.btn{width:100%;margin-top:16px;background:var(--blue);color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;transition:background .15s;-webkit-tap-highlight-color:transparent}
+.btn:active{background:#1d4ed8}
+.btn.flame{background:var(--f)}
+.btn.flame:active{background:#ea580c}
+.btn.green{background:var(--g)}
+.btn.green:active{background:var(--gd)}
+.btn:disabled{background:#9ca3af;cursor:default}
+.result-box{margin-top:16px;border-radius:12px;overflow:hidden;display:none;border:1.5px solid #bfdbfe}
+.result-box.show{display:block}
+.result-item{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid #eff6ff}
+.result-item:last-child{border:none}
+.rl{font-size:13px;color:var(--muted)}
+.rv{font-weight:700;font-size:15px;color:var(--blue)}
+.rv.green{color:var(--g)}
+.rv.orange{color:var(--f)}
+.result-advice{margin:14px 0 0;padding:13px;border-radius:10px;font-size:13px;line-height:1.55;font-weight:500}
+.result-advice.ok{background:#f0fdf4;color:#166534}
+.result-advice.medium{background:#eff6ff;color:#1e40af}
+.result-advice.hard{background:#fff7ed;color:#78350f}
+.question{margin-bottom:22px}
+.question p{font-size:14px;font-weight:600;margin-bottom:10px;color:#111}
+.option{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:10px;margin-bottom:6px;cursor:pointer;transition:border-color .15s,background .15s;font-size:14px}
+.option:active{background:#f9fafb}
+.option input[type=radio]{margin-top:2px;accent-color:var(--blue);flex-shrink:0;width:16px;height:16px}
+.option.correct{background:#f0fdf4;border-color:#16a34a}
+.option.wrong{background:#fef2f2;border-color:#ef4444}
+.score-box{margin-top:16px;border-radius:12px;padding:18px;text-align:center;display:none;background:var(--blight);border:1.5px solid #bfdbfe}
+.score-box.show{display:block}
+.score-num{font-size:48px;font-weight:900;color:var(--blue);line-height:1.1}
+.score-lbl{font-size:13px;color:var(--muted);margin:4px 0 12px}
+.score-msg{font-size:14px;font-weight:600;color:#111;line-height:1.4}
+.cert-section{margin:14px 12px 0;background:var(--card);border-radius:16px;padding:20px;box-shadow:0 1px 6px rgba(0,0,0,.07);display:none}
+.cert-section.show{display:block}
+.cert-section h2{font-size:17px;font-weight:700;color:#1e40af;margin-bottom:5px}
+.cert-section .sub{font-size:13px;color:var(--muted);margin-bottom:16px}
+.cert-name-input{width:100%;border:1.5px solid #e5e7eb;border-radius:10px;padding:13px;font-size:17px;text-align:center;outline:none;margin-bottom:12px;font-weight:600}
+.cert-name-input:focus{border-color:var(--blue)}
+.certificate{display:none;margin-top:16px;border:2.5px solid var(--blue);border-radius:16px;padding:28px 20px;text-align:center;background:linear-gradient(160deg,#eff6ff 0%,#fff 60%)}
+.certificate.show{display:block}
+.cert-brand{font-size:13px;font-weight:800;color:var(--f);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.cert-top{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:18px}
+.cert-emoji{font-size:44px;margin-bottom:8px;display:block}
+.cert-awarded{font-size:13px;color:#374151;margin-bottom:6px}
+.cert-name{font-size:24px;font-weight:900;color:#1e40af;margin-bottom:18px;font-style:italic;word-break:break-word}
+.cert-text{font-size:14px;font-weight:600;color:#111;margin-bottom:6px;line-height:1.4}
+.cert-issuer{font-size:12px;color:var(--muted);margin-bottom:20px}
+.cert-date{font-size:11px;color:var(--muted);padding-top:14px;border-top:1px solid #bfdbfe}
+@media print{
+  body>*{display:none!important}
+  .certificate{display:block!important;margin:0;border-radius:0;border-width:6px}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span class="emoji">🐷</span>
+  <div class="meta">Mini-formation · GreenFlame</div>
+  <h1>Pourquoi tu n'arrives jamais à épargner</h1>
+  <div class="steps">
+    <span class="step">📖 5 sections</span>
+    <span class="step">🧮 Simulateur</span>
+    <span class="step">📝 Quiz · Certificat</span>
+  </div>
+</div>
+<div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+
+<!-- SECTION 1 -->
+<div class="section-wrap">
+  <div class="section-header" onclick="toggle(this)">
+    <div class="section-num">1</div>
+    <div class="section-title">Ce n'est pas un problème de volonté</div>
+    <div class="section-toggle">+</div>
+  </div>
+  <div class="section-body">
+    <div class="section-inner">
+      <p>"Ce mois-ci, je mets de côté." Et puis le mois se termine, et il ne reste rien. Si tu te reconnais dans cette phrase, tu n'es pas seul — c'est l'expérience de la grande majorité des gens, y compris ceux qui gagnent bien leur vie.</p>
+      <h3>🔍 Pourquoi les bonnes intentions ne suffisent pas</h3>
+      <p>L'échec de l'épargne n'est presque jamais une question de caractère. C'est une question de <strong>méthode et de structure</strong>. Voici ce qui sabote silencieusement tes efforts :</p>
+      <ul>
+        <li><strong>Piège 1 — Épargner ce qui reste.</strong> Si tu attends la fin du mois pour épargner "ce qui reste", il ne reste presque jamais rien. Les dépenses s'étendent naturellement pour remplir le budget disponible.</li>
+        <li><strong>Piège 2 — Pas d'objectif concret.</strong> "Épargner" sans but précis, c'est comme voyager sans destination. Le cerveau humain est mauvais pour se sacrifier pour un objectif flou.</li>
+        <li><strong>Piège 3 — Mélanger l'épargne et le compte courant.</strong> Quand l'épargne est au même endroit que les dépenses courantes, elle finit toujours par être dépensée.</li>
+      </ul>
+      <div class="tip">Ces pièges sont des bugs de conception, pas des défauts de caractère. Changer la méthode change le résultat — même sans changer la discipline.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 2 -->
+<div class="section-wrap">
+  <div class="section-header" onclick="toggle(this)">
+    <div class="section-num">2</div>
+    <div class="section-title">La méthode "Paie-toi en premier"</div>
+    <div class="section-toggle">+</div>
+  </div>
+  <div class="section-body">
+    <div class="section-inner">
+      <p>C'est la règle d'or de l'épargne. Simple à comprendre, transformatrice à appliquer.</p>
+      <h3>🔑 Le principe</h3>
+      <p>Dès que tu reçois ton revenu — salaire, paiement d'un client, transfert — <strong>mets immédiatement de côté ta part d'épargne, avant de payer quoi que ce soit d'autre.</strong> Loyer, nourriture, tout le reste attendra cette première action.</p>
+      <p>En traitant l'épargne comme une facture prioritaire (que tu te dois à toi-même), tu inverses le problème : au lieu d'épargner ce qui reste, tu <em>dépenses ce qui reste après épargne.</em></p>
+      <h3>📊 Combien mettre de côté ?</h3>
+      <ul>
+        <li><strong>Si tu débutes :</strong> commence par 5%, même 3%. L'habitude compte plus que le montant.</li>
+        <li><strong>Objectif intermédiaire :</strong> 10% de tes revenus nets.</li>
+        <li><strong>Objectif solide :</strong> 15 à 20% — tu construis vraiment un matelas financier.</li>
+      </ul>
+      <div class="warn">⚠️ Ne dis pas "je ne peux pas me permettre 10%". Dis plutôt "je commence par 3% et j'augmente de 1% chaque mois". En 7 mois, tu seras à 10% sans avoir ressenti de sacrifice brutal.</div>
+      <h3>🏦 Où mettre l'épargne ?</h3>
+      <p>Le plus important : <strong>physiquement séparé de ton argent courant</strong>. Options au Bénin :</p>
+      <ul>
+        <li>Un second numéro Mobile Money (MTN ou Moov) dédié uniquement à l'épargne</li>
+        <li>Une tontine fiable et maîtrisée</li>
+        <li>Un compte bancaire de type épargne (CLCAM, BOA, Ecobank…)</li>
+        <li>Une enveloppe physique chez un proche de confiance qui ne te la rend pas sur simple demande</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 3 -->
+<div class="section-wrap">
+  <div class="section-header" onclick="toggle(this)">
+    <div class="section-num">3</div>
+    <div class="section-title">Fixer un objectif d'épargne réaliste</div>
+    <div class="section-toggle">+</div>
+  </div>
+  <div class="section-body">
+    <div class="section-inner">
+      <p>Un objectif d'épargne efficace répond à 3 critères : il est <strong>concret</strong> (un chiffre précis), <strong>daté</strong> (une échéance) et <strong>utile</strong> (tu sais pourquoi tu épargnes).</p>
+      <h3>🎯 Les 3 niveaux d'objectifs</h3>
+      <ul>
+        <li><strong>Niveau 1 — Coussin d'urgence (priorité absolue)</strong> : épargner l'équivalent de 1 à 3 mois de dépenses essentielles. Cela t'évite de t'endetter à chaque imprévu. Cible : 50 000 à 150 000 FCFA selon ta situation.</li>
+        <li><strong>Niveau 2 — Objectif moyen terme</strong> : quelque chose de concret dans 6 à 18 mois — un équipement, une formation, une contribution à un projet familial. Le fait de visualiser la destination rend l'effort supportable.</li>
+        <li><strong>Niveau 3 — Investissement et avenir</strong> : une fois le coussin constitué, faire travailler l'épargne (immobilier, activité secondaire, coopérative, actifs productifs).</li>
+      </ul>
+      <h3>📅 La technique de la "date ancre"</h3>
+      <p>Associe ton objectif à une date significative : "Je veux avoir X FCFA de côté avant le 31 décembre" ou "avant que mon enfant entre au lycée". La date ancre transforme l'objectif abstrait en compte à rebours concret.</p>
+      <div class="tip">Écris ton objectif, le montant et la date quelque part que tu vois souvent. Une note sur ton téléphone, une phrase sur le mur de ta chambre. Ce qui est écrit est réel.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 4 -->
+<div class="section-wrap">
+  <div class="section-header" onclick="toggle(this)">
+    <div class="section-num">4</div>
+    <div class="section-title">Les pièges qui font déraper l'épargne</div>
+    <div class="section-toggle">+</div>
+  </div>
+  <div class="section-body">
+    <div class="section-inner">
+      <p>Même avec la meilleure méthode, certains pièges persistent. Les connaître te permet de les anticiper.</p>
+      <h3>⚠️ Piège 1 — Les "urgences" non urgentes</h3>
+      <p>Beaucoup de prélèvements sur l'épargne se font au nom d'"urgences" qui n'en sont pas vraiment. Avant de toucher à ton épargne, demande-toi honnêtement : "Est-ce vraiment une urgence, ou est-ce un désir qui ne peut pas attendre ?"</p>
+      <h3>⚠️ Piège 2 — La pression sociale</h3>
+      <p>Cérémonies, cadeaux, soutien familial — les sollicitations sont réelles et légitimes dans notre culture. Mais il faut les budgéter à l'avance (une ligne "solidarité" dans ton budget) plutôt que de les payer sur l'épargne.</p>
+      <h3>⚠️ Piège 3 — L'illusion de la tontine unique</h3>
+      <p>La tontine est un excellent outil d'épargne forcée — mais attention : ce n'est pas une alternative au coussin d'urgence liquide. Si ta seule épargne est dans une tontine, tu n'y as pas accès en cas de besoin réel.</p>
+      <h3>⚠️ Piège 4 — Abandonner après un mois raté</h3>
+      <p>Un mois où tu n'as pas pu épargner n'est pas un échec — c'est un incident. L'erreur est de considérer l'incident comme une preuve que "ça ne fonctionne pas pour toi". Reprends le mois suivant.</p>
+      <div class="warn">💡 L'épargne régulière mais imparfaite (9 mois sur 12) est infiniment plus efficace que l'épargne parfaite envisagée mais jamais commencée.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 5 -->
+<div class="section-wrap">
+  <div class="section-header" onclick="toggle(this)">
+    <div class="section-num">5</div>
+    <div class="section-title">Ton plan d'action concret — dès aujourd'hui</div>
+    <div class="section-toggle">+</div>
+  </div>
+  <div class="section-body">
+    <div class="section-inner">
+      <p>Trois actions que tu peux faire dans les prochaines 24 heures pour sortir du cycle "bonne intention → rien".</p>
+      <h3>✅ Action 1 — Crée ton "coffre" séparé</h3>
+      <p>Aujourd'hui, crée un second numéro Mobile Money (ou identifie un support séparé) qui sera exclusivement ton épargne. Donne-lui un nom mentalement : "Coussin de sécurité", "Projet école", "Mon futur".</p>
+      <h3>✅ Action 2 — Fixe ton montant minimum</h3>
+      <p>Décide d'un montant très faible mais non nul. Même 1 000 FCFA par mois. L'objectif est de créer l'habitude du geste — le montant viendra ensuite.</p>
+      <h3>✅ Action 3 — Programme ou note une alerte</h3>
+      <p>Mets une alerte sur ton téléphone le jour où tu reçois habituellement ton revenu : "Virer épargne maintenant." Ce rappel mécanique compense le fait que la volonté seule est insuffisante dans les moments chargés.</p>
+      <div class="tip">La discipline n'est pas une qualité innée — c'est un système qu'on construit. Construis ton système d'épargne et laisse-le travailler à ta place.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SIMULATEUR -->
+<div class="sep">🧮 Mon plan d'épargne personnalisé</div>
+<div class="card">
+  <h2>Calcule ton objectif épargne</h2>
+  <p class="sub">Entre ta situation pour obtenir un plan adapté.</p>
+  <label>Revenus mensuels nets (FCFA)</label>
+  <input type="number" id="rev" placeholder="ex : 80 000" min="0">
+  <label>Objectif d'épargne total (FCFA)</label>
+  <input type="number" id="objectif" placeholder="ex : 100 000 (coussin d'urgence)" min="0">
+  <label>Montant que tu peux mettre de côté par mois (FCFA)</label>
+  <input type="number" id="mensuel" placeholder="ex : 5 000" min="0">
+  <button class="btn" onclick="calcEpargne()">Voir mon plan →</button>
+  <div class="result-box" id="res">
+    <div class="result-item"><span class="rl">Effort mensuel</span><span class="rv" id="r-mensuel">—</span></div>
+    <div class="result-item"><span class="rl">% de tes revenus</span><span class="rv" id="r-pct">—</span></div>
+    <div class="result-item"><span class="rl">Temps pour atteindre l'objectif</span><span class="rv" id="r-temps">—</span></div>
+    <div class="result-advice" id="r-advice"></div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div class="sep">📝 Quiz de validation</div>
+<div class="card">
+  <h2>Teste tes connaissances</h2>
+  <p class="sub">5 questions · Score minimum 3/5 pour le certificat</p>
+
+  <div class="question">
+    <p>1. Pourquoi "épargner ce qui reste en fin de mois" ne fonctionne presque jamais ?</p>
+    <label class="option"><input type="radio" name="q0" value="0"> Parce que les gens ne sont pas disciplinés</label>
+    <label class="option"><input type="radio" name="q0" value="1"> Parce que les dépenses s'étendent naturellement pour remplir le budget disponible</label>
+    <label class="option"><input type="radio" name="q0" value="2"> Parce que les revenus sont trop faibles</label>
+    <label class="option"><input type="radio" name="q0" value="3"> Parce que les prix augmentent chaque mois</label>
+  </div>
+
+  <div class="question">
+    <p>2. Que signifie "se payer en premier" en matière d'épargne ?</p>
+    <label class="option"><input type="radio" name="q1" value="0"> Se faire plaisir avant de payer les charges</label>
+    <label class="option"><input type="radio" name="q1" value="1"> Mettre l'épargne de côté immédiatement dès réception du revenu, avant toute autre dépense</label>
+    <label class="option"><input type="radio" name="q1" value="2"> Augmenter son salaire</label>
+    <label class="option"><input type="radio" name="q1" value="3"> Payer ses factures en priorité</label>
+  </div>
+
+  <div class="question">
+    <p>3. Quel est l'objectif d'épargne "Niveau 1" — priorité absolue ?</p>
+    <label class="option"><input type="radio" name="q2" value="0"> Épargner pour un projet immobilier</label>
+    <label class="option"><input type="radio" name="q2" value="1"> Constituer un coussin d'urgence de 1 à 3 mois de dépenses essentielles</label>
+    <label class="option"><input type="radio" name="q2" value="2"> Avoir 1 000 000 FCFA en banque</label>
+    <label class="option"><input type="radio" name="q2" value="3"> Investir en bourse</label>
+  </div>
+
+  <div class="question">
+    <p>4. Pourquoi faut-il séparer physiquement l'épargne du compte courant ?</p>
+    <label class="option"><input type="radio" name="q3" value="0"> Pour payer moins de frais bancaires</label>
+    <label class="option"><input type="radio" name="q3" value="1"> Pour gagner des intérêts plus élevés</label>
+    <label class="option"><input type="radio" name="q3" value="2"> Parce que l'argent mélangé au compte courant finit toujours par être dépensé</label>
+    <label class="option"><input type="radio" name="q3" value="3"> Pour éviter les impôts</label>
+  </div>
+
+  <div class="question">
+    <p>5. Si tu rates ton objectif d'épargne un mois, la bonne attitude est :</p>
+    <label class="option"><input type="radio" name="q4" value="0"> Abandonner la méthode, elle ne fonctionne pas pour toi</label>
+    <label class="option"><input type="radio" name="q4" value="1"> Doubler l'épargne le mois suivant pour compenser</label>
+    <label class="option"><input type="radio" name="q4" value="2"> Traiter ça comme un incident et reprendre normalement le mois suivant</label>
+    <label class="option"><input type="radio" name="q4" value="3"> Attendre d'avoir plus de revenus pour recommencer</label>
+  </div>
+
+  <button class="btn" id="quizBtn" onclick="submitQuiz()">Valider mes réponses →</button>
+  <div class="score-box" id="scoreBox">
+    <div class="score-num" id="scoreNum"></div>
+    <div class="score-lbl">Score</div>
+    <div class="score-msg" id="scoreMsg"></div>
+  </div>
+</div>
+
+<!-- CERTIFICAT -->
+<div class="cert-section" id="certSection">
+  <h2>🎓 Ton certificat de complétion</h2>
+  <p class="sub">Tu as validé la mini-formation. Entre ton nom pour générer ton certificat.</p>
+  <input type="text" class="cert-name-input" id="certNameInput" placeholder="Ton prénom et nom" maxlength="50">
+  <button class="btn flame" onclick="generateCert()">Générer mon certificat 🎓</button>
+  <div class="certificate" id="certDiv">
+    <div class="cert-brand">🔥 GreenFlame</div>
+    <div class="cert-top">Certificat de complétion</div>
+    <span class="cert-emoji">🐷</span>
+    <div class="cert-awarded">Ce certificat est décerné à</div>
+    <div class="cert-name" id="certName">—</div>
+    <div class="cert-text">Mini-formation<br><strong>Pourquoi tu n'arrives jamais à épargner</strong></div>
+    <div class="cert-issuer">GreenFlame — Commerce communautaire pan-africain</div>
+    <div class="cert-date" id="certDate">—</div>
+    <button class="btn green" style="margin-top:14px;font-size:13px;padding:10px" onclick="window.print()">📥 Imprimer / Télécharger</button>
+  </div>
+</div>
+
+<script>
+const CORRECT = [1, 1, 1, 2, 2];
+let openCount = 0;
+
+function toggle(header) {
+  const body = header.nextElementSibling;
+  const icon = header.querySelector('.section-toggle');
+  if (!body.classList.contains('open')) openCount++;
+  else openCount = Math.max(0, openCount - 1);
+  body.classList.toggle('open');
+  icon.classList.toggle('open');
+  updateProgress();
+}
+
+function updateProgress() {
+  const pct = Math.min(100, Math.round((openCount / 7) * 100));
+  document.getElementById('prog').style.width = pct + '%';
+}
+
+function fmt(n) {
+  return Math.round(n).toLocaleString('fr-FR') + ' FCFA';
+}
+
+function calcEpargne() {
+  const rev = parseFloat(document.getElementById('rev').value) || 0;
+  const obj = parseFloat(document.getElementById('objectif').value) || 0;
+  const mens = parseFloat(document.getElementById('mensuel').value) || 0;
+  if (rev === 0) return alert('Entre d\'abord tes revenus mensuels.');
+  if (obj === 0) return alert('Entre ton objectif d\'épargne total.');
+  if (mens === 0) return alert('Entre le montant mensuel que tu peux mettre de côté.');
+  const pct = (mens / rev) * 100;
+  const moisNeeded = Math.ceil(obj / mens);
+  const res = document.getElementById('res');
+  res.classList.add('show');
+  document.getElementById('r-mensuel').textContent = fmt(mens);
+  document.getElementById('r-pct').textContent = pct.toFixed(1) + '%';
+  const t = document.getElementById('r-temps');
+  if (moisNeeded <= 12) {
+    t.textContent = moisNeeded + ' mois';
+    t.className = 'rv green';
+  } else if (moisNeeded <= 24) {
+    t.textContent = moisNeeded + ' mois';
+    t.className = 'rv orange';
+  } else {
+    t.textContent = moisNeeded + ' mois (' + Math.round(moisNeeded / 12 * 10) / 10 + ' ans)';
+    t.className = 'rv';
+  }
+  const adv = document.getElementById('r-advice');
+  if (pct < 5) {
+    adv.className = 'result-advice hard';
+    adv.textContent = '📌 Moins de 5% de tes revenus — c\'est peu mais c\'est un début. L\'essentiel est de ne jamais toucher ce montant une fois mis de côté. Augmente de 500 FCFA par mois dès que possible.';
+  } else if (pct < 15) {
+    adv.className = 'result-advice medium';
+    adv.textContent = '💙 Bon effort ! À ' + pct.toFixed(0) + '%, tu construis une vraie habitude. Ton objectif de ' + fmt(obj) + ' sera atteint en ' + moisNeeded + ' mois si tu maintiens cette discipline.';
+  } else {
+    adv.className = 'result-advice ok';
+    adv.textContent = '✅ Excellent taux d\'épargne ! ' + pct.toFixed(0) + '% de tes revenus mis de côté — si tu maintiens ça, tu auras constitué ton coussin et seras prêt(e) à investir dans moins de ' + moisNeeded + ' mois.';
+  }
+  openCount = Math.max(openCount, 6);
+  updateProgress();
+}
+
+function submitQuiz() {
+  let answered = true;
+  for (let i = 0; i < 5; i++) {
+    if (!document.querySelector('[name="q' + i + '"]:checked')) { answered = false; break; }
+  }
+  if (!answered) return alert('Réponds à toutes les questions avant de valider.');
+  let score = 0;
+  CORRECT.forEach((correct, qi) => {
+    const options = document.querySelectorAll('.question')[qi].querySelectorAll('.option');
+    const selected = document.querySelector('[name="q' + qi + '"]:checked');
+    options.forEach((opt, oi) => {
+      opt.style.cursor = 'default';
+      if (oi === correct) opt.classList.add('correct');
+      else if (selected && parseInt(selected.value) === oi) opt.classList.add('wrong');
+    });
+    if (selected && parseInt(selected.value) === correct) score++;
+  });
+  const box = document.getElementById('scoreBox');
+  box.classList.add('show');
+  document.getElementById('scoreNum').textContent = score + '/5';
+  let msg;
+  if (score >= 4) msg = '🎉 Excellent ! Tu as les bases pour commencer à épargner efficacement dès ce mois.';
+  else if (score === 3) msg = '👍 Bien ! Relis les sections sur les points que tu as manqués.';
+  else msg = '📚 Continue d\'apprendre — relis les sections et retente le quiz.';
+  document.getElementById('scoreMsg').textContent = msg;
+  document.getElementById('quizBtn').disabled = true;
+  if (score >= 3) {
+    document.getElementById('certSection').classList.add('show');
+    setTimeout(() => document.getElementById('certSection').scrollIntoView({behavior:'smooth'}), 400);
+  }
+  openCount = Math.max(openCount, 7);
+  updateProgress();
+}
+
+function generateCert() {
+  const name = document.getElementById('certNameInput').value.trim();
+  if (!name) return alert('Entre ton prénom ou ton nom complet.');
+  document.getElementById('certName').textContent = name;
+  document.getElementById('certDate').textContent = 'Délivré le ' + new Date().toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'});
+  const cert = document.getElementById('certDiv');
+  cert.classList.add('show');
+  setTimeout(() => cert.scrollIntoView({behavior:'smooth'}), 200);
+}
+</script>
+</body>
+</html>

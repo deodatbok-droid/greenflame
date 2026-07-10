@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GreenFlame — Checklist de test complète</title>
+<style>
+  :root{
+    --brand:#16a34a;
+    --brand-dark:#15803d;
+    --brand-darker:#166534;
+    --brand-light:#f0fdf4;
+    --brand-border:#bbf7d0;
+    --ink:#111827;
+    --muted:#6b7280;
+    --bg:#f3f4f6;
+    --card:#ffffff;
+    --danger:#dc2626;
+    --warn:#f59e0b;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+  }
+  header{
+    background:linear-gradient(135deg,var(--brand-darker),var(--brand-dark));
+    color:white;
+    padding:28px 20px 90px;
+  }
+  header .inner{max-width:920px;margin:0 auto;}
+  header h1{margin:0 0 6px;font-size:26px;display:flex;align-items:center;gap:10px;}
+  header p{margin:0;color:#bbf7d0;font-size:14px;}
+  .wrap{max-width:920px;margin:-64px auto 60px;padding:0 20px;}
+  .summary{
+    background:var(--card);
+    border-radius:16px;
+    box-shadow:0 8px 30px rgba(0,0,0,.08);
+    padding:22px 24px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:20px;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .progress-block{flex:1;min-width:240px;}
+  .progress-bar{
+    height:14px;
+    border-radius:999px;
+    background:#e5e7eb;
+    overflow:hidden;
+    margin-top:8px;
+  }
+  .progress-fill{
+    height:100%;
+    background:linear-gradient(90deg,var(--brand),var(--brand-dark));
+    width:0%;
+    transition:width .3s ease;
+    border-radius:999px;
+  }
+  .progress-text{font-size:14px;color:var(--muted);margin-top:6px;}
+  .progress-text strong{color:var(--brand-darker);font-size:18px;}
+  .actions{display:flex;gap:10px;flex-wrap:wrap;}
+  button{
+    cursor:pointer;
+    border:none;
+    border-radius:10px;
+    padding:10px 16px;
+    font-size:13px;
+    font-weight:600;
+    transition:transform .1s ease, opacity .15s ease;
+  }
+  button:active{transform:scale(.97);}
+  .btn-primary{background:var(--brand);color:white;}
+  .btn-primary:hover{background:var(--brand-dark);}
+  .btn-secondary{background:#f3f4f6;color:var(--ink);}
+  .btn-secondary:hover{background:#e5e7eb;}
+  .btn-danger{background:#fef2f2;color:var(--danger);}
+  .btn-danger:hover{background:#fee2e2;}
+
+  .toolbar{
+    margin:18px 0;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .search{
+    flex:1;
+    min-width:220px;
+    padding:12px 16px;
+    border-radius:12px;
+    border:1px solid #e5e7eb;
+    font-size:14px;
+    background:var(--card);
+  }
+  .search:focus{outline:2px solid var(--brand-border);}
+
+  .section{
+    background:var(--card);
+    border-radius:14px;
+    margin-bottom:14px;
+    box-shadow:0 2px 10px rgba(0,0,0,.04);
+    overflow:hidden;
+    border:1px solid #eef2f1;
+  }
+  .section-head{
+    padding:16px 20px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    cursor:pointer;
+    user-select:none;
+    gap:12px;
+  }
+  .section-head:hover{background:#fafafa;}
+  .section-title{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15.5px;}
+  .section-emoji{font-size:20px;}
+  .section-count{
+    font-size:12.5px;
+    font-weight:600;
+    color:var(--brand-darker);
+    background:var(--brand-light);
+    border:1px solid var(--brand-border);
+    border-radius:999px;
+    padding:3px 11px;
+    white-space:nowrap;
+  }
+  .chevron{transition:transform .2s ease;color:var(--muted);font-size:13px;}
+  .section.collapsed .chevron{transform:rotate(-90deg);}
+  .section-body{padding:0 20px 14px;}
+  .section.collapsed .section-body{display:none;}
+
+  .item{
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+    padding:11px 4px;
+    border-top:1px solid #f3f4f6;
+  }
+  .item:first-child{border-top:none;}
+  .item.hidden{display:none;}
+  .item input[type="checkbox"]{
+    width:20px;height:20px;
+    accent-color:var(--brand);
+    margin-top:2px;
+    flex-shrink:0;
+    cursor:pointer;
+  }
+  .item-text{flex:1;}
+  .item-title{
+    font-size:14.5px;
+    font-weight:600;
+    line-height:1.4;
+    cursor:pointer;
+  }
+  .item.checked .item-title{color:var(--muted);text-decoration:line-through;}
+  .item-desc{font-size:13px;color:var(--muted);margin-top:2px;line-height:1.5;}
+  .item-note{
+    margin-top:6px;
+    width:100%;
+    font-size:12.5px;
+    border:1px solid #e5e7eb;
+    border-radius:8px;
+    padding:6px 10px;
+    font-family:inherit;
+    background:#fafafa;
+    resize:vertical;
+    min-height:30px;
+  }
+  .item-note:focus{outline:2px solid var(--brand-border);background:white;}
+  .item-note::placeholder{color:#c0c5cc;}
+
+  footer{
+    text-align:center;
+    color:var(--muted);
+    font-size:12.5px;
+    padding:20px;
+  }
+  .badge-empty{
+    text-align:center;
+    color:var(--muted);
+    font-size:13.5px;
+    padding:24px;
+  }
+  @media (max-width:600px){
+    header{padding:24px 16px 90px;}
+    header h1{font-size:21px;}
+    .wrap{margin-top:-58px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="inner">
+    <h1>🔥 GreenFlame — Checklist de test complète</h1>
+    <p>Toutes les fonctionnalités et flux de l'app, organisés par espace. Coche au fur et à mesure de tes tests — ta progression est sauvegardée automatiquement sur cet appareil.</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="summary">
+    <div class="progress-block">
+      <div class="progress-text"><strong id="doneCount">0</strong> / <span id="totalCount">0</span> points testés (<span id="donePercent">0</span>%)</div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+    <div class="actions">
+      <button class="btn-secondary" id="expandAll">Tout déplier</button>
+      <button class="btn-secondary" id="collapseAll">Tout replier</button>
+      <button class="btn-danger" id="resetAll">Réinitialiser</button>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <input class="search" id="searchBox" type="text" placeholder="🔍 Rechercher un point à tester (ex: voucher, OTP, devis, USSD…)">
+  </div>
+
+  <div id="sections"></div>
+
+  <footer>
+    GreenFlame · Checklist générée pour la phase de test — les cases et notes sont enregistrées localement dans ce navigateur (localStorage).
+  </footer>
+</div>
+
+<script>
+const DATA = [
+  {
+    emoji: "🔐",
+    title: "Inscription & Authentification",
+    items: [
+      { t: "Créer un nouveau compte", d: "Téléphone, nom, et code de parrainage (si applicable)." },
+      { t: "Recevoir le code OTP à l'inscription", d: "Vérifier l'arrivée par WhatsApp et/ou par le relais email à Déodat." },
+      { t: "Compléter son profil après inscription", d: "Nom complet, photo, informations complémentaires." },
+      { t: "Se connecter avec téléphone + code PIN" },
+      { t: "Changer son code PIN", d: "Depuis les paramètres / le profil." },
+      { t: "Réinitialiser un PIN oublié / bloqué", d: "Vérifier aussi la notification WhatsApp 'PIN bloqué après 3 tentatives'." },
+      { t: "Voir l'écran de bienvenue au premier lancement", d: "Onboarding visuel / tutoriel d'accueil." },
+      { t: "Soumettre ses documents KYC", d: "Upload de pièce d'identité et informations." },
+      { t: "Recevoir le résultat de la vérification KYC", d: "Notification d'acceptation ou de refus (avec motif)." }
+    ]
+  },
+  {
+    emoji: "👤",
+    title: "Espace Consommateur — Tableau de bord & portefeuille",
+    items: [
+      { t: "Consulter le tableau de bord consommateur", d: "Solde, raccourcis, activité récente." },
+      { t: "Consulter le portefeuille", d: "Solde FCFA et points GFP, vérifier que les montants sont exacts." },
+      { t: "Effectuer un paiement chez un marchand", d: "Recherche du marchand par nom/slug, saisie du montant, confirmation." },
+      { t: "Vérifier la réception du cashback après paiement", d: "Le cashback doit être calculé après sélection du marchand (pas avant)." },
+      { t: "Consulter l'historique des transactions" },
+      { t: "Demander un retrait depuis le portefeuille", d: "Suivre le statut de la demande jusqu'à validation." },
+      { t: "Modifier sa photo de profil", d: "Upload + affichage agrandi." },
+      { t: "Utiliser le bouton retour sur les différentes pages" }
+    ]
+  },
+  {
+    emoji: "🌐",
+    title: "Réseau, parrainage & démo",
+    items: [
+      { t: "Parcourir son réseau de parrainage", d: "Vérifier l'arborescence des filleuls sur les différents niveaux (L1 à L5)." },
+      { t: "Partager son code de parrainage" },
+      { t: "Vérifier le nombre exact de filleuls affichés", d: "Comparer avec les inscriptions réelles." },
+      { t: "Visiter la page Démo / simulation réseau", d: "Simulation de croissance du réseau, walkthrough pédagogique." }
+    ]
+  },
+  {
+    emoji: "🛍️",
+    title: "Marketplace, Hub & boutiques",
+    items: [
+      { t: "Parcourir les catégories de la marketplace" },
+      { t: "Ouvrir une fiche produit", d: "Vérifier les infos, photos, et le contact du marchand." },
+      { t: "Effectuer un achat depuis la marketplace" },
+      { t: "Vérifier l'affichage du nombre de produits d'un marchand", d: "Le compteur doit refléter les produits réellement publiés." },
+      { t: "Visiter le GreenFlame Hub", d: "Abonnements et services proposés par la plateforme." },
+      { t: "Visiter la boutique publique (vitrine) d'un marchand", d: "Page /boutique/[slug] accessible sans connexion." }
+    ]
+  },
+  {
+    emoji: "🎁",
+    title: "Vouchers & cadeaux",
+    items: [
+      { t: "Acheter un voucher / bon cadeau" },
+      { t: "Utiliser (racheter) un code voucher reçu", d: "Vérifier la saisie du téléphone du destinataire et les frais appliqués." },
+      { t: "Annuler un voucher" },
+      { t: "Vérifier le tier VIP sur les frais de voucher", d: "Comparer les frais appliqués selon le tier du marchand émetteur." }
+    ]
+  },
+  {
+    emoji: "🤝",
+    title: "Tontines",
+    items: [
+      { t: "Créer ou rejoindre une tontine" },
+      { t: "Effectuer une cotisation et suivre son statut" },
+      { t: "Consulter une tontine via le lien public partageable", d: "Page accessible sans connexion (token public)." }
+    ]
+  },
+  {
+    emoji: "🏪",
+    title: "Espace Marchand — Général",
+    items: [
+      { t: "Activer son compte marchand", d: "Renseigner les infos commerciales et finaliser via une première vente." },
+      { t: "Consulter le tableau de bord marchand", d: "Ventes, solde, raccourcis vers les outils." },
+      { t: "Ajouter / modifier / supprimer un produit du catalogue" },
+      { t: "Vérifier la limite de 10 produits en tier gratuit" },
+      { t: "Encaisser un paiement client", d: "Génération/scan de QR code ou saisie de code." },
+      { t: "Régénérer son QR code de paiement" },
+      { t: "Consulter l'historique des transactions du marchand" },
+      { t: "Créer et gérer des vouchers pour ses clients" },
+      { t: "Ajouter / gérer des caissiers", d: "Fonction multi-caissier — droits d'accès, suivi des opérations." },
+      { t: "Effectuer des opérations d'agent (dépôt / retrait espèces)", d: "Service Agent — cash-in / cash-out." },
+      { t: "Tester la commande vocale marchand" }
+    ]
+  },
+  {
+    emoji: "🧾",
+    title: "Devis & Factures (documents persistés)",
+    items: [
+      { t: "Générer un devis et l'imprimer en PDF" },
+      { t: "Consulter l'historique des devis et leurs statuts", d: "Brouillon → envoyé → accepté/annulé." },
+      { t: "Convertir un devis accepté en facture", d: "Vérifier la création automatique de la facture liée et le changement de statut du devis." },
+      { t: "Générer une facture et vérifier le tampon « PAYÉ »", d: "Le tampon ne doit apparaître QUE si le statut du document est réellement 'payé'." },
+      { t: "Faire évoluer le statut d'un document", d: "Envoyé → accepté/payé/en retard → annulé, selon le type (devis ou facture)." },
+      { t: "Réimprimer une facture depuis l'historique", d: "Le PDF régénéré doit refléter le statut actuel." },
+      { t: "Vérifier la limite de 5 documents/mois en tier gratuit" }
+    ]
+  },
+  {
+    emoji: "🍲",
+    title: "Module Restauration / Traiteur",
+    items: [
+      { t: "Gérer les stocks et ingrédients", d: "Saisie des coûts unitaires." },
+      { t: "Créer une recette", d: "Vérifier le calcul automatique du coût et de la marge (et le code couleur)." },
+      { t: "Configurer le menu du jour" },
+      { t: "Gérer la fiche client", d: "Suivi des visites et des dépenses." },
+      { t: "Gérer une commande", d: "Suivre le cycle en cours → servi → payé." },
+      { t: "Créer un devis traiteur", d: "Vérifier l'agrégation des ingrédients et la suggestion de prix à marge 50%." }
+    ]
+  },
+  {
+    emoji: "✂️",
+    title: "Module Coiffure & Beauté",
+    items: [
+      { t: "Gérer les services et prestations proposés" },
+      { t: "Gérer les produits utilisés" },
+      { t: "Suivre les prestations réalisées" }
+    ]
+  },
+  {
+    emoji: "🪡",
+    title: "Module Couture & Mode",
+    items: [
+      { t: "Gérer la fiche client" },
+      { t: "Créer et suivre une commande (mesures, délais, statut)" }
+    ]
+  },
+  {
+    emoji: "🏗️",
+    title: "Module BTP & Artisans",
+    items: [
+      { t: "Créer et suivre un chantier" },
+      { t: "Gérer les matériaux et leurs coûts" },
+      { t: "Utiliser l'estimation IA des coûts de chantier" }
+    ]
+  },
+  {
+    emoji: "💳",
+    title: "Abonnements, upgrade & paiements",
+    items: [
+      { t: "Lancer la procédure de mise à niveau Pro / VIP" },
+      { t: "Tester le paiement par MTN MoMo" },
+      { t: "Tester le paiement par Moov Money" },
+      { t: "Tester l'option de paiement en espèces (au Hub)", d: "Vérifier le statut 'en attente' jusqu'à confirmation." },
+      { t: "Vérifier l'activation automatique de l'abonnement après paiement Momo" },
+      { t: "Vérifier le déverrouillage des fonctionnalités Pro", d: "Analytics, devis/factures illimités, modules sectoriels, etc." },
+      { t: "Vérifier la bannière d'incitation à l'upgrade", d: "Visible uniquement pour les comptes en tier gratuit." },
+      { t: "Recevoir la confirmation d'activation d'abonnement", d: "Par WhatsApp et par email (admin + marchand)." },
+      { t: "Consulter le dashboard analytics Pro", d: "Graphiques, marges, compte de résultat simplifié." }
+    ]
+  },
+  {
+    emoji: "📞",
+    title: "USSD (téléphones simples / sans Internet)",
+    items: [
+      { t: "Composer le code USSD et naviguer dans le menu" },
+      { t: "Consulter son solde via USSD" },
+      { t: "Effectuer un paiement via USSD" }
+    ]
+  },
+  {
+    emoji: "🛡️",
+    title: "Administration",
+    items: [
+      { t: "Se connecter à l'espace admin", d: "Accès via mot de passe / PIN admin depuis l'interface user/marchand." },
+      { t: "Examiner et traiter une soumission KYC", d: "Approuver ou rejeter avec motif." },
+      { t: "Gérer la liste des utilisateurs", d: "Promotion, réinitialisation de PIN, crédit du portefeuille." },
+      { t: "Gérer la liste des marchands", d: "Activer/désactiver, accéder au kit d'onboarding imprimable (PDF)." },
+      { t: "Traiter une demande de retrait" },
+      { t: "Consulter le tableau global des transactions" },
+      { t: "Consulter le tableau de bord des revenus / commissions", d: "Vérifier la redistribution automatique des commissions." },
+      { t: "Utiliser le dashboard de réconciliation", d: "Suivi du float et des paiements en espèces en attente." },
+      { t: "Modérer les produits de la marketplace" },
+      { t: "Gérer les catégories de la marketplace" },
+      { t: "Utiliser les outils d'export de données" },
+      { t: "Déclencher manuellement le digest quotidien (IA)" }
+    ]
+  },
+  {
+    emoji: "🔔",
+    title: "Notifications & automatisations (WhatsApp, email, cron)",
+    items: [
+      { t: "Recevoir l'OTP par WhatsApp", d: "À l'inscription ET à la connexion — avec un numéro qui n'a jamais interagi avec le compte Wasender." },
+      { t: "Recevoir l'email de bienvenue (Brevo)", d: "Au moment de la création du compte." },
+      { t: "Recevoir les notifications de paiement", d: "Côté acheteur ET côté marchand — par WhatsApp et par email." },
+      { t: "Recevoir l'alerte d'abonnement", d: "Côté admin et côté marchand, pour un paiement Momo et pour une demande en espèces." },
+      { t: "Vérifier la réception du digest quotidien admin", d: "Tâche cron à 7h — compte-rendu généré et envoyé." },
+      { t: "Vérifier les rappels d'expiration d'abonnement", d: "J-7, J-3 et J-1 avant expiration — notification + SMS." },
+      { t: "Vérifier le recalcul nocturne des profils IA", d: "Tâche cron à 2h — scores de risque de désengagement, potentiel de recrutement, etc." },
+      { t: "Tester la messagerie professionnelle Zoho", d: "Envoyer et recevoir un email via une adresse @greenflameafrica.com." }
+    ]
+  }
+];
+
+const STORAGE_KEY = "gf_checklist_v1";
+
+function loadState(){
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+  catch { return {}; }
+}
+function saveState(state){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+let state = loadState();
+const sectionsEl = document.getElementById("sections");
+let totalItems = 0;
+
+DATA.forEach((section, sIdx) => {
+  const sectionId = "s" + sIdx;
+  const sectionEl = document.createElement("div");
+  sectionEl.className = "section";
+  sectionEl.dataset.id = sectionId;
+
+  const head = document.createElement("div");
+  head.className = "section-head";
+  head.innerHTML = `
+    <div class="section-title"><span class="section-emoji">${section.emoji}</span> ${section.title}</div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span class="section-count" data-count="${sectionId}">0 / ${section.items.length}</span>
+      <span class="chevron">▾</span>
+    </div>`;
+  head.addEventListener("click", () => sectionEl.classList.toggle("collapsed"));
+
+  const body = document.createElement("div");
+  body.className = "section-body";
+
+  section.items.forEach((item, iIdx) => {
+    totalItems++;
+    const itemId = sectionId + "_i" + iIdx;
+    const saved = state[itemId] || {};
+
+    const row = document.createElement("div");
+    row.className = "item" + (saved.checked ? " checked" : "");
+    row.dataset.id = itemId;
+    row.dataset.search = (item.t + " " + (item.d || "")).toLowerCase();
+
+    row.innerHTML = `
+      <input type="checkbox" id="cb_${itemId}" ${saved.checked ? "checked" : ""}>
+      <div class="item-text">
+        <div class="item-title">${item.t}</div>
+        ${item.d ? `<div class="item-desc">${item.d}</div>` : ""}
+        <textarea class="item-note" placeholder="Note de test (optionnel) — bug observé, remarque, date…">${saved.note ? escapeHtml(saved.note) : ""}</textarea>
+      </div>`;
+
+    const cb = row.querySelector("input[type=checkbox]");
+    const title = row.querySelector(".item-title");
+    const note = row.querySelector(".item-note");
+
+    function toggle(){
+      cb.checked = !cb.checked;
+      onCheck();
+    }
+    function onCheck(){
+      row.classList.toggle("checked", cb.checked);
+      state[itemId] = state[itemId] || {};
+      state[itemId].checked = cb.checked;
+      saveState(state);
+      updateCounts();
+    }
+    cb.addEventListener("change", onCheck);
+    title.addEventListener("click", toggle);
+    note.addEventListener("input", () => {
+      state[itemId] = state[itemId] || {};
+      state[itemId].note = note.value;
+      saveState(state);
+    });
+
+    body.appendChild(row);
+  });
+
+  sectionEl.appendChild(head);
+  sectionEl.appendChild(body);
+  sectionsEl.appendChild(sectionEl);
+});
+
+document.getElementById("totalCount").textContent = totalItems;
+
+function escapeHtml(s){
+  return s.replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+
+function updateCounts(){
+  let done = 0;
+  DATA.forEach((section, sIdx) => {
+    const sectionId = "s" + sIdx;
+    let sectionDone = 0;
+    section.items.forEach((item, iIdx) => {
+      const itemId = sectionId + "_i" + iIdx;
+      if (state[itemId] && state[itemId].checked) { sectionDone++; done++; }
+    });
+    const countEl = document.querySelector(`[data-count="${sectionId}"]`);
+    if (countEl) countEl.textContent = `${sectionDone} / ${section.items.length}`;
+  });
+  const pct = totalItems ? Math.round((done / totalItems) * 100) : 0;
+  document.getElementById("doneCount").textContent = done;
+  document.getElementById("donePercent").textContent = pct;
+  document.getElementById("progressFill").style.width = pct + "%";
+}
+updateCounts();
+
+// Toolbar actions
+document.getElementById("expandAll").addEventListener("click", () => {
+  document.querySelectorAll(".section").forEach(s => s.classList.remove("collapsed"));
+});
+document.getElementById("collapseAll").addEventListener("click", () => {
+  document.querySelectorAll(".section").forEach(s => s.classList.add("collapsed"));
+});
+document.getElementById("resetAll").addEventListener("click", () => {
+  if (!confirm("Réinitialiser toute la checklist ? Toutes les cases et notes seront effacées.")) return;
+  state = {};
+  saveState(state);
+  document.querySelectorAll(".item").forEach(row => {
+    row.classList.remove("checked");
+    row.querySelector("input[type=checkbox]").checked = false;
+    row.querySelector(".item-note").value = "";
+  });
+  updateCounts();
+});
+
+// Search
+document.getElementById("searchBox").addEventListener("input", (e) => {
+  const q = e.target.value.trim().toLowerCase();
+  document.querySelectorAll(".section").forEach(section => {
+    let visibleCount = 0;
+    section.querySelectorAll(".item").forEach(row => {
+      const match = !q || row.dataset.search.includes(q);
+      row.classList.toggle("hidden", !match);
+      if (match) visibleCount++;
+    });
+    section.style.display = visibleCount === 0 && q ? "none" : "";
+    if (q && visibleCount > 0) section.classList.remove("collapsed");
+  });
+});
+</script>
+
+</body>
+</html>
