@@ -190,15 +190,17 @@ export default function LandingPage({ isLoggedIn = false }: { isLoggedIn?: boole
               {t('landing.heroDemo')}
             </Link>
           </div>
-          <div className="mt-4 flex justify-center">
-            <Link href="/telecharger" className="inline-flex items-center gap-2 text-green-200 text-sm hover:text-white transition-colors pointer-events-auto">
-              <span>🔥</span>
-              <span>Télécharger l&apos;app Android</span>
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
-              </svg>
-            </Link>
-          </div>
+          {showInstall && (
+            <div className="mt-4 flex justify-center">
+              <button onClick={handleInstall} className="inline-flex items-center gap-2 text-green-200 text-sm hover:text-white transition-colors pointer-events-auto">
+                <span>📲</span>
+                <span>Installer l&apos;application</span>
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+                </svg>
+              </button>
+            </div>
+          )}
 
           {isLoggedIn && (
             <p className="mt-5 text-green-300 text-sm">
@@ -431,7 +433,6 @@ export default function LandingPage({ isLoggedIn = false }: { isLoggedIn?: boole
             <Link href="/terms" className="hover:text-gray-600 transition-colors">{t('landing.footerTerms')}</Link>
             <Link href="/privacy" className="hover:text-gray-600 transition-colors">{t('landing.footerPrivacy')}</Link>
             <Link href="/demo" className="hover:text-gray-600 transition-colors">{t('landing.navDemo')}</Link>
-            <Link href="/telecharger" className="hover:text-gray-600 transition-colors">🔥 App Android</Link>
           </div>
         </div>
       </footer>
