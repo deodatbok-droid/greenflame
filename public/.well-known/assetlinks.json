@@ -1,0 +1,10 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.greenflameafrica.twa",
+    "sha256_cert_fingerprints": [
+      "83:96:CA:16:1B:41:BE:3D:67:55:83:06:18:BB:23:41:4C:35:01:A9:7E:2D:81:29:98:47:D2:0B:3F:88:E2:EE"
+    ]
+  }
+}]
