@@ -57,7 +57,7 @@ export default function LandingPage({ isLoggedIn = false }: { isLoggedIn?: boole
       <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-gray-100 shadow-sm">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5 font-semibold text-lg">
-            <div className="w-[72px] h-[72px] rounded-xl flex-shrink-0">
+            <div className="w-10 h-10 rounded-xl flex-shrink-0">
               <Image src="/logo-transparent.png" alt="GreenFlame" width={72} height={72} className="object-contain w-full h-full" priority />
             </div>
             <span className="text-green-700">GreenFlame</span>
@@ -124,8 +124,8 @@ export default function LandingPage({ isLoggedIn = false }: { isLoggedIn?: boole
       </nav>
 
       {/* ── HERO ── */}
-      <section className="relative overflow-hidden text-white">
-        <div className="absolute inset-0">
+      <section className="relative z-0 overflow-hidden text-white">
+        <div className="absolute inset-0 pointer-events-none">
           <Image
             src="/images/hero.jpg"
             alt={t('landing.heroAlt')}
@@ -141,7 +141,7 @@ export default function LandingPage({ isLoggedIn = false }: { isLoggedIn?: boole
         <div className="absolute top-1/2 left-1/4 w-32 h-32 bg-emerald-400/10 rounded-full pointer-events-none" />
 
         <div className="relative max-w-6xl mx-auto px-4 pt-44 pb-20 md:pt-52 md:pb-28 text-center">
-          <div className="absolute top-8 inset-x-0 flex justify-center">
+          <div className="absolute top-8 inset-x-0 flex justify-center pointer-events-none">
             <div className="inline-flex items-center gap-2 bg-white/15 text-white text-xs font-medium px-4 py-1.5 rounded-full border border-white/20 backdrop-blur-sm">
               {t('landing.heroBadge')}
             </div>
