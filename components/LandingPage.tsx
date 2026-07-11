@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useLocale } from '@/components/providers/LocaleProvider'
@@ -8,7 +8,34 @@ import LangToggle from '@/components/ui/LangToggle'
 
 export default function LandingPage({ isLoggedIn = false }: { isLoggedIn?: boolean }) {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [showInstall, setShowInstall] = useState(false)
   const { t } = useLocale()
+
+  useEffect(() => {
+    // Afficher le bandeau PWA si l'événement d'installation est disponible
+    const checkInstall = () => {
+      if (typeof window !== 'undefined' && window.__gf_pwa_prompt) {
+        setShowInstall(true)
+      }
+    }
+    // Vérifier immédiatement puis à intervalles (l'événement peut arriver après le rendu)
+    checkInstall()
+    const interval = setInterval(checkInstall, 1000)
+    // Aussi écouter l'event directement ici pour les cas où SW s'enregistre vite
+    const handler = () => setTimeout(checkInstall, 200)
+    window.addEventListener('beforeinstallprompt', handler)
+    return () => {
+      clearInterval(interval)
+      window.removeEventListener('beforeinstallprompt', handler)
+    }
+  }, [])
+
+  async function handleInstall() {
+    if (typeof window !== 'undefined' && window.__gf_pwa_install) {
+      const accepted = await window.__gf_pwa_install()
+      if (accepted) setShowInstall(false)
+    }
+  }
 
   const STEPS = [
     { num: '01', title: t('landing.step1Title'), desc: t('landing.step1Desc'), icon: '🛒', color: 'bg-green-600' },
@@ -54,7 +81,7 @@ export default function LandingPage({ isLoggedIn = false }: { isLoggedIn?: boole
     <div className="min-h-screen bg-white text-gray-900 font-sans">
 
       {/* ── NAVBAR ── */}
-      <nav className="sticky top-0 z-[200] bg-white/95 backdrop-blur border-b border-gray-100 shadow-sm">
+      <nav className="fixed top-0 left-0 right-0 z-[200] bg-white border-b border-gray-100 shadow-sm">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5 font-semibold text-lg">
             <div className="w-10 h-10 rounded-xl flex-shrink-0">
@@ -64,8 +91,8 @@ export default function LandingPage({ isLoggedIn = false }: { isLoggedIn?: boole
           </Link>
 
           <div className="hidden md:flex items-center gap-6 text-sm text-gray-600">
-            <Link href="#comment" className="hover:text-green-700 transition-colors">{t('landing.navHow')}</Link>
-            <Link href="#valeurs" className="hover:text-green-700 transition-colors">{t('landing.navWhy')}</Link>
+            <a href="#comment" className="hover:text-green-700 transition-colors">{t('landing.navHow')}</a>
+            <a href="#valeurs" className="hover:text-green-700 transition-colors">{t('landing.navWhy')}</a>
             <Link href="/demo" className="hover:text-green-700 transition-colors">{t('landing.navDemo')}</Link>
           </div>
 
@@ -99,8 +126,8 @@ export default function LandingPage({ isLoggedIn = false }: { isLoggedIn?: boole
 
         {menuOpen && (
           <div className="md:hidden border-t border-gray-100 bg-white px-4 py-4 flex flex-col gap-4 text-sm">
-            <Link href="#comment" className="text-gray-600" onClick={() => setMenuOpen(false)}>{t('landing.navHow')}</Link>
-            <Link href="#valeurs" className="text-gray-600" onClick={() => setMenuOpen(false)}>{t('landing.navWhy')}</Link>
+            <a href="#comment" className="text-gray-600" onClick={() => setMenuOpen(false)}>{t('landing.navHow')}</a>
+            <a href="#valeurs" className="text-gray-600" onClick={() => setMenuOpen(false)}>{t('landing.navWhy')}</a>
             <Link href="/demo" className="text-gray-600" onClick={() => setMenuOpen(false)}>{t('landing.navDemo')}</Link>
             <LangToggle className="text-gray-500 self-start" />
             <hr className="border-gray-100" />
@@ -164,7 +191,7 @@ export default function LandingPage({ isLoggedIn = false }: { isLoggedIn?: boole
             </Link>
           </div>
           <div className="mt-4 flex justify-center">
-            <Link href="/telecharger" className="inline-flex items-center gap-2 text-green-200 text-sm hover:text-white transition-colors">
+            <Link href="/telecharger" className="inline-flex items-center gap-2 text-green-200 text-sm hover:text-white transition-colors pointer-events-auto">
               <span>🔥</span>
               <span>Télécharger l&apos;app Android</span>
               <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
@@ -214,7 +241,7 @@ export default function LandingPage({ isLoggedIn = false }: { isLoggedIn?: boole
       </section>
 
       {/* ── COMMENT ÇA MARCHE ── */}
-      <section id="comment" className="max-w-6xl mx-auto px-4 py-14 md:py-24">
+      <section id="comment" className="max-w-6xl mx-auto px-4 py-14 md:py-24 scroll-mt-20">
         <div className="text-center mb-14">
           <span className="text-xs font-bold text-green-600 tracking-widest uppercase">{t('landing.sectionSystem')}</span>
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mt-2 mb-4">
@@ -308,7 +335,7 @@ export default function LandingPage({ isLoggedIn = false }: { isLoggedIn?: boole
       </section>
 
       {/* ── VALEURS ── */}
-      <section id="valeurs" className="max-w-6xl mx-auto px-4 py-14 md:py-24">
+      <section id="valeurs" className="max-w-6xl mx-auto px-4 py-14 md:py-24 scroll-mt-20">
         <div className="text-center mb-14">
           <span className="text-xs font-bold text-green-600 tracking-widest uppercase">{t('landing.promiseLabel')}</span>
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mt-2 mb-4">
@@ -359,6 +386,36 @@ export default function LandingPage({ isLoggedIn = false }: { isLoggedIn?: boole
           </div>
         </div>
       </section>
+
+      {/* ── BANDEAU INSTALL PWA ── */}
+      {showInstall && (
+        <div className="fixed bottom-0 left-0 right-0 z-50 bg-green-700 text-white px-4 py-3 flex items-center justify-between gap-3 shadow-xl">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-9 h-9 rounded-xl overflow-hidden flex-shrink-0 border border-white/20">
+              <Image src="/logo-transparent.png" alt="GreenFlame" width={36} height={36} className="object-contain w-full h-full" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-semibold leading-tight">Installer GreenFlame</p>
+              <p className="text-xs text-green-200 truncate">Accès rapide depuis l&apos;écran d&apos;accueil</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <button
+              onClick={handleInstall}
+              className="bg-white text-green-700 text-xs font-bold px-3 py-1.5 rounded-lg hover:bg-green-50 transition-colors"
+            >
+              Installer
+            </button>
+            <button
+              onClick={() => setShowInstall(false)}
+              className="text-green-300 hover:text-white text-xl leading-none p-1"
+              aria-label="Fermer"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* ── FOOTER ── */}
       <footer className="border-t border-gray-100 py-10 bg-gray-50">
