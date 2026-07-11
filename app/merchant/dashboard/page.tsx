@@ -149,6 +149,7 @@ export default async function MerchantDashboard() {
           commission_rate: merchant.commission_rate,
           total_gmv: merchant.total_gmv,
           qr_code_url: merchant.qr_code_url ?? null,
+          banner_url: merchant.banner_url ?? null,
           subscription_tier: merchant.subscription_tier ?? 'free',
           subscription_expires_at: merchant.subscription_expires_at ?? null,
           agent_service_active: merchant.agent_service_active ?? false,
