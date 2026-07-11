@@ -54,7 +54,7 @@ export default function LandingPage({ isLoggedIn = false }: { isLoggedIn?: boole
     <div className="min-h-screen bg-white text-gray-900 font-sans">
 
       {/* ── NAVBAR ── */}
-      <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-gray-100 shadow-sm">
+      <nav className="sticky top-0 z-[200] bg-white/95 backdrop-blur border-b border-gray-100 shadow-sm">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5 font-semibold text-lg">
             <div className="w-10 h-10 rounded-xl flex-shrink-0">
@@ -124,7 +124,7 @@ export default function LandingPage({ isLoggedIn = false }: { isLoggedIn?: boole
       </nav>
 
       {/* ── HERO ── */}
-      <section className="relative z-0 overflow-hidden text-white">
+      <section className="relative z-0 overflow-hidden text-white pointer-events-none">
         <div className="absolute inset-0 pointer-events-none">
           <Image
             src="/images/hero.jpg"
@@ -156,10 +156,10 @@ export default function LandingPage({ isLoggedIn = false }: { isLoggedIn?: boole
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link href="/register" className="bg-white text-green-700 px-8 py-4 rounded-xl font-semibold text-base hover:bg-green-50 transition-colors shadow-lg">
+            <Link href="/register" className="bg-white text-green-700 px-8 py-4 rounded-xl font-semibold text-base hover:bg-green-50 transition-colors shadow-lg pointer-events-auto">
               {t('landing.heroStart')}
             </Link>
-            <Link href="/demo" className="border border-white/40 text-white px-8 py-4 rounded-xl font-semibold text-base hover:bg-white/10 transition-colors">
+            <Link href="/demo" className="border border-white/40 text-white px-8 py-4 rounded-xl font-semibold text-base hover:bg-white/10 transition-colors pointer-events-auto">
               {t('landing.heroDemo')}
             </Link>
           </div>
@@ -176,7 +176,7 @@ export default function LandingPage({ isLoggedIn = false }: { isLoggedIn?: boole
           {isLoggedIn && (
             <p className="mt-5 text-green-300 text-sm">
               {t('landing.heroMember')}{' '}
-              <Link href="/dashboard" className="text-white font-semibold underline underline-offset-2 hover:text-amber-300 transition-colors">
+              <Link href="/dashboard" className="text-white font-semibold underline underline-offset-2 hover:text-amber-300 transition-colors pointer-events-auto">
                 {t('landing.heroDashboard')}
               </Link>
             </p>
@@ -351,7 +351,7 @@ export default function LandingPage({ isLoggedIn = false }: { isLoggedIn?: boole
               {t('landing.ctaJoin')}
             </Link>
             <div className="mt-5">
-              <Link href="/telecharger" className="inline-flex items-center gap-2 text-green-200 text-sm hover:text-white transition-colors">
+              <Link href="/telecharger" className="inline-flex items-center gap-2 text-green-200 text-sm hover:text-white transition-colors pointer-events-auto">
                 <span>🔥</span>
                 <span>Télécharger l&apos;app Android (.apk)</span>
               </Link>
