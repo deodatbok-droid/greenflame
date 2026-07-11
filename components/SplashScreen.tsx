@@ -33,7 +33,7 @@ export default function SplashScreen() {
         backgroundColor: '#16a34a',
         transition:      'opacity 0.5s ease',
         opacity:         fading ? 0 : 1,
-        pointerEvents:   fading ? 'none' : 'auto',
+        pointerEvents:   'none',
       }}
     >
       {/* Logo */}
