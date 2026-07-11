@@ -134,11 +134,11 @@ export default function LandingPage({ isLoggedIn = false }: { isLoggedIn?: boole
             priority
           />
         </div>
-        <div className="absolute inset-0 bg-green-900/85" />
-        <div className="absolute inset-0 bg-gradient-to-br from-green-700/30 via-transparent to-green-900/30" />
-        <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-amber-400/10 rounded-full translate-y-1/2 -translate-x-1/2" />
-        <div className="absolute top-1/2 left-1/4 w-32 h-32 bg-emerald-400/10 rounded-full" />
+        <div className="absolute inset-0 bg-green-900/85 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-br from-green-700/30 via-transparent to-green-900/30 pointer-events-none" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-amber-400/10 rounded-full translate-y-1/2 -translate-x-1/2 pointer-events-none" />
+        <div className="absolute top-1/2 left-1/4 w-32 h-32 bg-emerald-400/10 rounded-full pointer-events-none" />
 
         <div className="relative max-w-6xl mx-auto px-4 pt-44 pb-20 md:pt-52 md:pb-28 text-center">
           <div className="absolute top-8 inset-x-0 flex justify-center">
@@ -147,10 +147,8 @@ export default function LandingPage({ isLoggedIn = false }: { isLoggedIn?: boole
             </div>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold leading-tight mb-6 mx-auto flex items-center justify-center gap-3 md:gap-6">
-            <Image src="/logo-transparent.png" alt="" width={128} height={128} className="object-contain drop-shadow-lg flex-shrink-0 w-32 h-32 hidden md:block" />
+          <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold leading-tight mb-6 mx-auto">
             <span>{t('landing.heroTitle1')}{' '}<span className="text-amber-300">{t('landing.heroTitle2')}</span>{' '}{t('landing.heroTitle3')}</span>
-            <Image src="/logo-transparent.png" alt="" width={128} height={128} className="object-contain drop-shadow-lg flex-shrink-0 w-32 h-32 hidden md:block" />
           </h1>
 
           <p className="text-lg md:text-xl text-green-100 max-w-xl mx-auto mb-10 leading-relaxed">
@@ -337,8 +335,8 @@ export default function LandingPage({ isLoggedIn = false }: { isLoggedIn?: boole
       {/* ── CTA FINAL ── */}
       <section className="max-w-6xl mx-auto px-4 pb-16 md:pb-24 text-center">
         <div className="relative overflow-hidden bg-green-700 rounded-3xl px-8 py-16 text-white">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-amber-400/10 rounded-full translate-y-1/2 -translate-x-1/2" />
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-amber-400/10 rounded-full translate-y-1/2 -translate-x-1/2 pointer-events-none" />
           <div className="relative">
             <div className="w-16 h-16 mx-auto mb-6 rounded-2xl overflow-hidden shadow-xl border border-white/20">
               <Image src="/logo-transparent.png" alt="GreenFlame" width={64} height={64} className="object-contain w-full h-full" />
