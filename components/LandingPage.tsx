@@ -190,17 +190,15 @@ export default function LandingPage({ isLoggedIn = false }: { isLoggedIn?: boole
               {t('landing.heroDemo')}
             </Link>
           </div>
-          {showInstall && (
-            <div className="mt-4 flex justify-center">
-              <button onClick={handleInstall} className="inline-flex items-center gap-2 text-green-200 text-sm hover:text-white transition-colors pointer-events-auto">
-                <span>📲</span>
-                <span>Installer l&apos;application</span>
-                <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
-                </svg>
-              </button>
-            </div>
-          )}
+          <div className="mt-4 flex justify-center">
+            <button onClick={handleInstall} className="inline-flex items-center gap-2 text-green-200 text-sm hover:text-white transition-colors pointer-events-auto">
+              <span>📲</span>
+              <span>Installer l&apos;application</span>
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+              </svg>
+            </button>
+          </div>
 
           {isLoggedIn && (
             <p className="mt-5 text-green-300 text-sm">
@@ -379,14 +377,12 @@ export default function LandingPage({ isLoggedIn = false }: { isLoggedIn?: boole
             <Link href="/register" className="inline-block bg-white text-green-700 px-8 py-4 rounded-xl font-semibold text-base hover:bg-green-50 transition-colors shadow-lg">
               {t('landing.ctaJoin')}
             </Link>
-            {showInstall && (
-              <div className="mt-5">
-                <button onClick={handleInstall} className="inline-flex items-center gap-2 text-green-200 text-sm hover:text-white transition-colors pointer-events-auto">
-                  <span>🔥</span>
-                  <span>Télécharger l&apos;app Android (.apk)</span>
-                </button>
-              </div>
-            )}
+            <div className="mt-5">
+              <button onClick={handleInstall} className="inline-flex items-center gap-2 text-green-200 text-sm hover:text-white transition-colors pointer-events-auto">
+                <span>🔥</span>
+                <span>Télécharger l&apos;app Android (.apk)</span>
+              </button>
+            </div>
           </div>
         </div>
       </section>
