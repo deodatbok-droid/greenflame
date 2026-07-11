@@ -379,12 +379,14 @@ export default function LandingPage({ isLoggedIn = false }: { isLoggedIn?: boole
             <Link href="/register" className="inline-block bg-white text-green-700 px-8 py-4 rounded-xl font-semibold text-base hover:bg-green-50 transition-colors shadow-lg">
               {t('landing.ctaJoin')}
             </Link>
-            <div className="mt-5">
-              <Link href="/telecharger" className="inline-flex items-center gap-2 text-green-200 text-sm hover:text-white transition-colors pointer-events-auto">
-                <span>🔥</span>
-                <span>Télécharger l&apos;app Android (.apk)</span>
-              </Link>
-            </div>
+            {showInstall && (
+              <div className="mt-5">
+                <button onClick={handleInstall} className="inline-flex items-center gap-2 text-green-200 text-sm hover:text-white transition-colors pointer-events-auto">
+                  <span>🔥</span>
+                  <span>Télécharger l&apos;app Android (.apk)</span>
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </section>
