@@ -18,7 +18,7 @@ export async function GET() {
 
   const { data, error } = await svc
     .from('users')
-    .select('id, full_name, phone')
+    .select('id, full_name, phone, ucp_unlocked')
     .order('full_name')
     .limit(500)
 

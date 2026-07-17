@@ -46,7 +46,7 @@ export default async function ProfilePage() {
   const [profileRes, walletRes, txCountRes, referralCountRes, careerRankRes] = await Promise.all([
     supabase
       .from('users')
-      .select('full_name, referral_code, role, kyc_level, created_at, phone, email, transaction_pin, avatar_url')
+      .select('full_name, referral_code, role, kyc_level, created_at, phone, email, transaction_pin, avatar_url, ucp_unlocked')
       .eq('id', user.id)
       .single(),
     supabase
@@ -83,8 +83,9 @@ export default async function ProfilePage() {
   const appUrl     = process.env.NEXT_PUBLIC_APP_URL ?? 'https://greenflame.africa'
   const referralUrl = `${appUrl}/register?ref=${profile?.referral_code}`
 
-  const isMerchant = profile?.role?.includes('merchant')
-  const isAdmin    = profile?.role?.includes('admin') || profile?.role?.includes('platform_upline')
+  const isMerchant  = profile?.role?.includes('merchant')
+  const isAdmin     = profile?.role?.includes('admin') || profile?.role?.includes('platform_upline')
+  const ucpUnlocked = isAdmin || !!profile?.ucp_unlocked
 
   const badges = [
     { label: t('profile.badgeFirstPurchase'),       icon: '🛍️', earned: txCount >= 1 },
@@ -268,16 +269,29 @@ export default async function ProfilePage() {
         </div>
 
         {/* Droits UCP */}
-        <Link href="/ucp" className="card flex items-center justify-between hover:bg-gray-50 transition-colors">
-          <div className="flex items-center gap-3">
-            <span className="text-2xl">📜</span>
-            <div>
-              <p className="font-semibold text-gray-900 text-sm">Ubuntu Capital Plan</p>
-              <p className="text-xs text-gray-500">Vos bulletins de souscription UCP</p>
+        {ucpUnlocked ? (
+          <Link href="/ucp" className="card flex items-center justify-between hover:bg-gray-50 transition-colors">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">📜</span>
+              <div>
+                <p className="font-semibold text-gray-900 text-sm">Ubuntu Capital Plan</p>
+                <p className="text-xs text-gray-500">Vos bulletins de souscription UCP</p>
+              </div>
             </div>
+            <span className="text-gray-400 text-sm">→</span>
+          </Link>
+        ) : (
+          <div className="card flex items-center justify-between opacity-40 grayscale cursor-not-allowed select-none">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">📜</span>
+              <div>
+                <p className="font-semibold text-gray-400 text-sm">Ubuntu Capital Plan</p>
+                <p className="text-xs text-gray-400">Sur invitation uniquement</p>
+              </div>
+            </div>
+            <span className="text-gray-400 text-sm">🔒</span>
           </div>
-          <span className="text-gray-400 text-sm">→</span>
-        </Link>
+        )}
 
         {/* Récompenses */}
         <div className="card">

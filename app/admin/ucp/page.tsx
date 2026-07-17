@@ -267,6 +267,8 @@ function BsdPreview({
 
 // ── Composant principal ───────────────────────────────────────────────────────
 
+interface InvitedUser { id: string; full_name: string; phone: string | null; ucp_unlocked: boolean }
+
 export default function AdminUcpPage() {
   const [entries,      setEntries]      = useState<RegistryEntry[]>([])
   const [users,        setUsers]        = useState<UserOption[]>([])
@@ -278,6 +280,13 @@ export default function AdminUcpPage() {
   const [showPreview,  setShowPreview]  = useState(false)
   const [busy,         setBusy]         = useState(false)
   const [msg,          setMsg]          = useState<{ text: string; ok: boolean } | null>(null)
+
+  // Gestion des accès UCP
+  const [inviteUserId,   setInviteUserId]   = useState('')
+  const [inviteMsg,      setInviteMsg]      = useState<{ text: string; ok: boolean } | null>(null)
+  const [invitedUsers,   setInvitedUsers]   = useState<InvitedUser[]>([])
+  const [inviteBusy,     setInviteBusy]     = useState(false)
+  const [showInvitePanel, setShowInvitePanel] = useState(false)
 
   // Formulaire émission
   const [form, setForm] = useState({
@@ -301,10 +310,48 @@ export default function AdminUcpPage() {
 
     if ((usersRes as Response).ok) {
       const ud = await (usersRes as Response).json()
-      setUsers(ud.users ?? [])
+      const allUsers: UserOption[] = ud.users ?? []
+      setUsers(allUsers)
+      setInvitedUsers(
+        (allUsers as (UserOption & { ucp_unlocked?: boolean })[])
+          .filter(u => u.ucp_unlocked)
+          .map(u => ({ id: u.id, full_name: u.full_name, phone: u.phone ?? null, ucp_unlocked: true }))
+      )
     }
     setLoading(false)
   }, [])
+
+  async function grantUcpAccess() {
+    if (!inviteUserId) return
+    setInviteBusy(true); setInviteMsg(null)
+    try {
+      const res  = await fetch('/api/admin/ucp/invite', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ user_id: inviteUserId }),
+      })
+      const data = await res.json()
+      if (!res.ok) { setInviteMsg({ text: data.error ?? 'Erreur', ok: false }); return }
+      setInviteMsg({ text: 'Accès UCP accordé.', ok: true })
+      setInviteUserId('')
+      load()
+    } finally { setInviteBusy(false) }
+  }
+
+  async function revokeUcpAccess(userId: string) {
+    setInviteBusy(true); setInviteMsg(null)
+    try {
+      const res  = await fetch('/api/admin/ucp/invite', {
+        method:  'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ user_id: userId }),
+      })
+      const data = await res.json()
+      if (!res.ok) { setInviteMsg({ text: data.error ?? 'Erreur', ok: false }); return }
+      setInviteMsg({ text: 'Accès UCP retiré.', ok: true })
+      load()
+    } finally { setInviteBusy(false) }
+  }
 
   useEffect(() => { load() }, [load])
 
@@ -413,6 +460,90 @@ export default function AdminUcpPage() {
             <p className="text-gray-400 text-xs mt-0.5">{k.label}</p>
           </div>
         ))}
+      </div>
+
+      {/* ── Accès UCP ── */}
+      <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
+        <button
+          onClick={() => setShowInvitePanel(p => !p)}
+          className="w-full flex items-center justify-between px-5 py-4 hover:bg-gray-750 transition-colors"
+        >
+          <div className="flex items-center gap-3">
+            <span className="text-lg">🔑</span>
+            <div className="text-left">
+              <p className="font-semibold text-white text-sm">Accès UCP — Sur invitation</p>
+              <p className="text-gray-400 text-xs">
+                {invitedUsers.length} membre{invitedUsers.length > 1 ? 's' : ''} avec accès
+              </p>
+            </div>
+          </div>
+          <span className="text-gray-400 text-sm">{showInvitePanel ? '▲' : '▼'}</span>
+        </button>
+
+        {showInvitePanel && (
+          <div className="border-t border-gray-700 px-5 py-4 space-y-4">
+
+            {/* Formulaire invitation */}
+            <div className="flex gap-2">
+              <select
+                value={inviteUserId}
+                onChange={e => setInviteUserId(e.target.value)}
+                className="flex-1 bg-gray-700 border border-gray-600 rounded-xl px-3 py-2.5 text-white text-sm focus:outline-none focus:border-brand-400"
+              >
+                <option value="">— Sélectionner un membre —</option>
+                {users
+                  .filter(u => !invitedUsers.find(i => i.id === u.id))
+                  .map(u => (
+                    <option key={u.id} value={u.id}>
+                      {u.full_name}{u.phone ? ` — ${u.phone}` : ''}
+                    </option>
+                  ))
+                }
+              </select>
+              <button
+                onClick={grantUcpAccess}
+                disabled={!inviteUserId || inviteBusy}
+                className="px-4 py-2.5 bg-brand-600 hover:bg-brand-500 text-white font-semibold text-sm rounded-xl transition-colors disabled:opacity-40 whitespace-nowrap"
+              >
+                {inviteBusy ? '…' : '+ Inviter'}
+              </button>
+            </div>
+
+            {inviteMsg && (
+              <p className={`text-xs font-medium ${inviteMsg.ok ? 'text-green-400' : 'text-red-400'}`}>
+                {inviteMsg.text}
+              </p>
+            )}
+
+            {/* Liste des membres invités */}
+            {invitedUsers.length > 0 && (
+              <div className="space-y-2">
+                <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">Membres avec accès</p>
+                {invitedUsers.map(u => (
+                  <div key={u.id} className="flex items-center justify-between bg-gray-700/50 rounded-xl px-3 py-2.5">
+                    <div>
+                      <p className="text-white text-sm font-medium">{u.full_name}</p>
+                      {u.phone && <p className="text-gray-400 text-xs">{u.phone}</p>}
+                    </div>
+                    <button
+                      onClick={() => revokeUcpAccess(u.id)}
+                      disabled={inviteBusy}
+                      className="text-xs text-red-400 hover:text-red-300 px-2 py-1 rounded-lg bg-red-900/20 hover:bg-red-900/40 transition-colors disabled:opacity-40"
+                    >
+                      Retirer
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {invitedUsers.length === 0 && (
+              <p className="text-sm text-gray-500 text-center py-2">
+                Aucun membre invité pour l&apos;instant
+              </p>
+            )}
+          </div>
+        )}
       </div>
 
       {/* ── Formulaire émission ── */}
