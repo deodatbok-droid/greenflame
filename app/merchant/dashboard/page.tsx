@@ -23,7 +23,7 @@ export default async function MerchantDashboard() {
   const startOfDay = new Date()
   startOfDay.setHours(0, 0, 0, 0)
 
-  const [personalWalletRes, merchantWalletRes, monthTxRes, todayTxRes, userRes, allTimeTxRes] = await Promise.all([
+  const [personalWalletRes, merchantWalletRes, monthTxRes, todayTxRes, userRes, allTimeTxRes, productCountRes] = await Promise.all([
     // Wallet perso : cashback + commissions réseau + GFP
     supabase
       .from('wallets')
@@ -59,6 +59,11 @@ export default async function MerchantDashboard() {
       .select('amount_fcfa, payment_method')
       .eq('merchant_id', merchant.id)
       .eq('status', 'completed'),
+    // Checklist activation : nombre de produits listés
+    supabase
+      .from('products')
+      .select('id', { count: 'exact', head: true })
+      .eq('merchant_id', merchant.id),
   ])
 
   const personalWallet  = personalWalletRes.data
@@ -66,6 +71,12 @@ export default async function MerchantDashboard() {
   const monthTxs        = monthTxRes.data ?? []
   const todayTxs        = todayTxRes.data ?? []
   const allTimeTxs      = allTimeTxRes.data ?? []
+
+  const activationSteps = {
+    hasProducts:  (productCountRes.count ?? 0) > 0,
+    hasQrSaved:   !!merchant.qr_code_url,
+    hasFirstSale: merchant.total_gmv > 0,
+  }
 
   const monthGmv        = monthTxs.reduce((s, t) => s + t.amount_fcfa, 0)
   const monthCommission = monthTxs.reduce((s, t) => s + t.commission_total, 0)
@@ -173,6 +184,7 @@ export default async function MerchantDashboard() {
         referralUrl={referralUrl}
         merchantUserId={user.id}
         isAdmin={isAdmin ?? false}
+        activationSteps={activationSteps}
       />
     </>
   )

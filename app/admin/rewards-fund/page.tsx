@@ -125,9 +125,9 @@ export default function RewardsFundPage() {
 
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-white">🎁 Fonds Récompenses / Événements</h1>
+        <h1 className="text-2xl font-bold text-white">🎉 Pool Événements GreenFlame</h1>
         <p className="text-sm text-gray-400 mt-1">
-          3% prélevé sur chaque commission marchande — 30% récompenses · 70% événements
+          3% prélevé sur chaque commission marchande — ⚡ Override (1/3) · 🎉 Imprévus, Événements &amp; Divers (2/3)
         </p>
       </div>
 
@@ -138,8 +138,8 @@ export default function RewardsFundPage() {
           {/* KPI Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <KpiCard label="Solde disponible global"   value={fmt(soldGlobal)}  accent="emerald" />
-            <KpiCard label="Pool Récompenses (30%)"    value={fmt(soldeRecomp)} sub={`/${fmt(summary?.total_pool_recompenses ?? 0)} accumulé`} accent="amber" />
-            <KpiCard label="Pool Événements (70%)"     value={fmt(soldeEvenem)} sub={`/${fmt(summary?.total_pool_evenements ?? 0)} accumulé`}  accent="violet" />
+            <KpiCard label="Override (1/3)"              value={fmt(soldeRecomp)} sub={`/${fmt(summary?.total_pool_recompenses ?? 0)} accumulé`} accent="amber" />
+            <KpiCard label="Imprévus, Événements & Divers (2/3)" value={fmt(soldeEvenem)} sub={`/${fmt(summary?.total_pool_evenements ?? 0)} accumulé`} accent="violet" />
             <KpiCard label="Transactions créditantes"  value={String(summary?.nb_transactions ?? 0)} accent="sky" />
           </div>
 
@@ -164,25 +164,25 @@ export default function RewardsFundPage() {
           {tab === 'apercu' && (
             <div className="grid md:grid-cols-2 gap-6">
 
-              {/* Pool Récompenses */}
+              {/* Override */}
               <div className="bg-gray-800 rounded-xl p-5 border border-gray-700">
-                <h2 className="text-amber-400 font-semibold mb-3">🏆 Pool Récompenses</h2>
+                <h2 className="text-amber-400 font-semibold mb-3">⚡ Override (1/3)</h2>
                 <Row label="Accumulé total"   value={fmt(summary?.total_pool_recompenses ?? 0)} />
                 <Row label="Distribué"        value={fmt(summary?.total_distribue_recompenses ?? 0)} />
                 <Row label="Solde disponible" value={fmt(soldeRecomp)} bold accent="amber" />
                 <p className="text-xs text-gray-500 mt-3">
-                  Utilisé pour les récompenses individuelles (paliers de carrière, tirages cagnotte, etc.)
+                  Décisions discrétionnaires de la direction — ajustements, situations exceptionnelles, cas non couverts.
                 </p>
               </div>
 
-              {/* Pool Événements */}
+              {/* Imprévus, Événements & Divers */}
               <div className="bg-gray-800 rounded-xl p-5 border border-gray-700">
-                <h2 className="text-violet-400 font-semibold mb-3">🎉 Pool Événements</h2>
+                <h2 className="text-violet-400 font-semibold mb-3">🎉 Imprévus, Événements &amp; Divers</h2>
                 <Row label="Accumulé total"   value={fmt(summary?.total_pool_evenements ?? 0)} />
                 <Row label="Distribué"        value={fmt(summary?.total_distribue_evenements ?? 0)} />
                 <Row label="Solde disponible" value={fmt(soldeEvenem)} bold accent="violet" />
                 <p className="text-xs text-gray-500 mt-3">
-                  Utilisé pour les événements collectifs (conférences nationales, cérémonies, etc.)
+                  Conférences nationales, cérémonies, frais divers, activités collectives GreenFlame.
                 </p>
               </div>
 
@@ -198,8 +198,8 @@ export default function RewardsFundPage() {
                         onChange={e => setForm(f => ({ ...f, pool_type: e.target.value as 'recompenses' | 'evenements' }))}
                         className="w-full bg-gray-900 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white"
                       >
-                        <option value="recompenses">🏆 Récompenses</option>
-                        <option value="evenements">🎉 Événements</option>
+                        <option value="recompenses">⚡ Override</option>
+                        <option value="evenements">🎉 Imprévus, Événements &amp; Divers</option>
                       </select>
                     </div>
                     <div>
@@ -262,8 +262,8 @@ export default function RewardsFundPage() {
                     <tr className="border-b border-gray-700 text-gray-400 text-xs uppercase">
                       <th className="px-4 py-3 text-left">Date</th>
                       <th className="px-4 py-3 text-right">Total</th>
-                      <th className="px-4 py-3 text-right">Récompenses</th>
-                      <th className="px-4 py-3 text-right">Événements</th>
+                      <th className="px-4 py-3 text-right">Override</th>
+                      <th className="px-4 py-3 text-right">Événements &amp; Divers</th>
                       <th className="px-4 py-3 text-left">Ref. transaction</th>
                     </tr>
                   </thead>
@@ -274,7 +274,7 @@ export default function RewardsFundPage() {
                       <tr key={e.id} className="border-b border-gray-700/50 hover:bg-gray-700/30 transition-colors">
                         <td className="px-4 py-3 text-gray-300 whitespace-nowrap">{fmtDate(e.created_at)}</td>
                         <td className="px-4 py-3 text-white text-right font-mono">{fmt(e.amount_fcfa)}</td>
-                        <td className="px-4 py-3 text-amber-400 text-right font-mono">{fmt(e.pool_recompenses)}</td>
+                        <td className="px-4 py-3 text-amber-400 text-right font-mono tabular-nums">{fmt(e.pool_recompenses)}</td>
                         <td className="px-4 py-3 text-violet-400 text-right font-mono">{fmt(e.pool_evenements)}</td>
                         <td className="px-4 py-3 text-gray-500 font-mono text-xs">{e.transaction_id.slice(0, 8).toUpperCase()}…</td>
                       </tr>
@@ -311,7 +311,7 @@ export default function RewardsFundPage() {
                               ? 'bg-amber-900/40 text-amber-300'
                               : 'bg-violet-900/40 text-violet-300'
                           }`}>
-                            {d.pool_type === 'recompenses' ? '🏆 Récompenses' : '🎉 Événements'}
+                            {d.pool_type === 'recompenses' ? '⚡ Override' : '🎉 Événements & Divers'}
                           </span>
                         </td>
                         <td className="px-4 py-3 text-white text-right font-mono font-semibold">{fmt(d.amount_fcfa)}</td>

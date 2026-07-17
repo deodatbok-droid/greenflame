@@ -65,7 +65,7 @@ export default function AdminMerchantsPage() {
       body: JSON.stringify({ merchantId, isActive: !current }),
     })
     if (!res.ok) { toast.error('Erreur'); return }
-    toast.success(current ? 'Marchand desactive' : 'Marchand active')
+    toast.success(current ? 'Marchand désactivé' : 'Marchand activé')
     loadMerchants()
   }
 
@@ -103,7 +103,7 @@ export default function AdminMerchantsPage() {
 
     if (!res.ok) { toast.error(data.error ?? 'Erreur'); return }
 
-    toast.success('Marchand enrole avec succes !')
+    toast.success('Marchand enrôlé avec succès !')
     setShowEnroll(false)
     setForm({ phone: '', businessName: '', category: '', address: '' })
     loadMerchants()
@@ -116,10 +116,15 @@ export default function AdminMerchantsPage() {
 
   return (
     <div className="max-w-6xl space-y-6">
+      <div className="flex items-center gap-3">
+        <Link href="/admin/dashboard" className="text-gray-400 hover:text-white text-sm">← Dashboard</Link>
+        <span className="text-gray-600">/</span>
+        <span className="text-gray-400 text-sm">Marchands</span>
+      </div>
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-white">Marchands</h1>
-          <p className="text-gray-400 text-sm mt-1">{merchants.length} marchand(s) enregistre(s)</p>
+          <p className="text-gray-400 text-sm mt-1">{merchants.length} marchand(s) enregistré(s)</p>
         </div>
         <button
           onClick={() => setShowEnroll(true)}
@@ -133,10 +138,10 @@ export default function AdminMerchantsPage() {
       {showEnroll && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
           <div className="bg-gray-800 rounded-2xl p-6 w-full max-w-md">
-            <h2 className="font-bold text-xl text-white mb-4">Enroler un marchand</h2>
+            <h2 className="font-bold text-xl text-white mb-4">Enrôler un marchand</h2>
             <form onSubmit={enrollMerchant} className="space-y-4">
               <div>
-                <label className="text-gray-300 text-sm block mb-1">Téléphone du proprietaire</label>
+                <label className="text-gray-300 text-sm block mb-1">Téléphone du propriétaire</label>
                 <PhoneInput
                   value={form.phone}
                   onChange={v => setForm(f => ({ ...f, phone: v }))}
@@ -154,13 +159,13 @@ export default function AdminMerchantsPage() {
                 />
               </div>
               <div>
-                <label className="text-gray-300 text-sm block mb-1">Categorie</label>
+                <label className="text-gray-300 text-sm block mb-1">Catégorie</label>
                 <select
                   value={form.category}
                   onChange={e => setForm(f => ({ ...f, category: e.target.value }))}
                   className="w-full bg-gray-700 text-white px-4 py-3 rounded-xl border border-gray-600 focus:border-brand-500 focus:outline-none"
                 >
-                  <option value="">Selectionner...</option>
+                  <option value="">Sélectionner...</option>
                   {categories.map(c => (
                     <option key={c.code} value={c.code}>
                       {c.name_fr} ({(c.commission_rate * 100).toLocaleString('fr-FR', { maximumFractionDigits: 4 })}%)
@@ -180,7 +185,7 @@ export default function AdminMerchantsPage() {
               </div>
               <div className="flex gap-3 pt-2">
                 <button type="submit" disabled={enrollLoading} className="flex-1 bg-brand-600 text-white py-3 rounded-xl font-medium">
-                  {enrollLoading ? 'Enrolement...' : 'Enroler'}
+                  {enrollLoading ? 'Enrôlement...' : 'Enrôler'}
                 </button>
                 <button type="button" onClick={() => setShowEnroll(false)} className="flex-1 bg-gray-700 text-gray-300 py-3 rounded-xl">
                   Annuler
@@ -205,7 +210,7 @@ export default function AdminMerchantsPage() {
         <table className="min-w-full w-full">
           <thead className="border-b border-gray-700">
             <tr>
-              {['Commerce', 'Categorie', 'Commission', 'GMV total', 'Statut', 'Actions'].map(h => (
+              {['Commerce', 'Catégorie', 'Commission', 'GMV total', 'Statut', 'Actions'].map(h => (
                 <th key={h} className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">
                   {h}
                 </th>

@@ -8,7 +8,7 @@ import CartFab from '@/components/consumer/CartFab'
 import ChatWidget from '@/components/ChatWidget'
 
 // Routes within the consumer group that are publicly accessible (no auth required)
-const PUBLIC_PATHS = ['/demo', '/marketplace']
+const PUBLIC_PATHS = ['/demo', '/marketplace', '/panier']
 
 export default async function ConsumerLayout({ children }: { children: React.ReactNode }) {
   const h = await headers()

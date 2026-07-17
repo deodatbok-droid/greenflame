@@ -10,15 +10,12 @@ import BackButton from '@/components/ui/BackButton'
 type Step = 'plans' | 'payment' | 'processing' | 'success' | 'cash' | 'cash_sent'
 type Operator = 'mtn_momo' | 'moov_money'
 type Tier = 'vip' | 'agent'
-type VipBilling = 'monthly' | 'annual'
-
-const TIER_PRICES: Record<Tier, number> = { vip: 5000, agent: 10000 }
-const VIP_PRICES: Record<VipBilling, number> = { monthly: 5000, annual: 50000 }
+const TIER_PRICES: Record<Tier, number> = { vip: 15000, agent: 10000 }
 
 const STANDARD_FEATURES = [
   { icon: '📦', label: '10 produits en vitrine' },
   { icon: '🧾', label: 'Factures & devis illimités' },
-  { icon: '📊', label: 'Analytics avancés' },
+  { icon: '📈', label: 'Stats du mois & du jour' },
   { icon: '🔗', label: 'Lien de paiement QR' },
   { icon: '💬', label: 'Support communauté' },
   { icon: '🎯', label: 'Score marchand GreenFlame' },
@@ -28,7 +25,10 @@ const VIP_FEATURES = [
   { icon: '✅', label: 'Tout le Standard inclus' },
   { icon: '🏪', label: 'Vitrine publique en ligne' },
   { icon: '👥', label: 'Multi-caissiers' },
-  { icon: '📈', label: 'Gestion d\'entreprise' },
+  { icon: '📊', label: 'Analytics avancés' },
+  { icon: '🧾', label: 'POS + Stock + Livre de caisse' },
+  { icon: '🛠️', label: '1 outil sectoriel (1 an)' },
+  { icon: '🏦', label: 'Service Agent inclus' },
   { icon: '⭐', label: 'Mise en avant 7 jours' },
   { icon: '👑', label: 'Badge VIP marchand' },
 ]
@@ -44,7 +44,7 @@ const SERVICES = [
   {
     icon: '🛠️',
     title: 'Outils sectoriels',
-    price: '5 000/mois · 50 000/an',
+    price: '10 000 FCFA/an',
     desc: 'Couture, BTP, Restauration, Tontines… Outils métier spécialisés selon votre secteur d\'activité.',
     action: 'Découvrir',
     href: '/merchant/tools',
@@ -83,11 +83,11 @@ export default function UpgradePage() {
   const searchParams = useSearchParams()
   const [step, setStep] = useState<Step>('plans')
   const [selectedTier, setSelectedTier] = useState<Tier>('vip')
-  const [vipBilling, setVipBilling] = useState<VipBilling>('monthly')
   const [phone, setPhone] = useState('')
   const [operator, setOperator] = useState<Operator>('mtn_momo')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [agentActivating, setAgentActivating] = useState(false)
   const [cashPhone, setCashPhone] = useState('')
   const [cashError, setCashError] = useState('')
   const [cashLoading, setCashLoading] = useState(false)
@@ -108,8 +108,8 @@ export default function UpgradePage() {
   const isVipActive = currentTier === 'vip' && tierExpires && new Date(tierExpires) > new Date()
   const isAgentActive = currentTier === 'agent'
 
-  const effectiveTier = selectedTier === 'vip' && vipBilling === 'annual' ? 'vip_annual' : selectedTier
-  const amount = selectedTier === 'vip' ? VIP_PRICES[vipBilling] : TIER_PRICES[selectedTier]
+  const effectiveTier = selectedTier === 'vip' ? 'vip_annual' : selectedTier
+  const amount = TIER_PRICES[selectedTier]
 
   function selectPlan(tier: Tier, goToCash = false) {
     setSelectedTier(tier)
@@ -165,6 +165,29 @@ export default function UpgradePage() {
     }
   }
 
+  async function activateAgentFree() {
+    setAgentActivating(true)
+    setError('')
+    try {
+      const res = await fetch('/api/merchants/upgrade', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tier: 'agent', payment_method: 'vip_free' }),
+      })
+      const data = await res.json()
+      if (data.success) {
+        setSelectedTier('agent')
+        setStep('success')
+      } else {
+        setError(data.error ?? 'Erreur lors de l\'activation')
+      }
+    } catch {
+      setError('Erreur réseau')
+    } finally {
+      setAgentActivating(false)
+    }
+  }
+
   const TIER_LABELS: Record<Tier, string> = { vip: 'VIP', agent: 'Service Agent' }
 
   return (
@@ -216,35 +239,9 @@ export default function UpgradePage() {
               )}
               <h2 className="text-xl font-bold text-gray-900">👑 VIP</h2>
 
-              {/* Billing toggle */}
-              <div className="flex gap-1.5 mt-2 mb-3 bg-amber-100 rounded-xl p-1">
-                <button
-                  onClick={() => setVipBilling('monthly')}
-                  className={`flex-1 py-2 px-3 rounded-lg text-xs font-semibold transition-all ${vipBilling === 'monthly' ? 'bg-white shadow-sm text-amber-900' : 'text-amber-600 hover:text-amber-800'}`}
-                >
-                  5 000 FCFA/mois
-                </button>
-                <button
-                  onClick={() => setVipBilling('annual')}
-                  className={`flex-1 py-2 px-3 rounded-lg text-xs font-semibold transition-all ${vipBilling === 'annual' ? 'bg-white shadow-sm text-amber-900' : 'text-amber-600 hover:text-amber-800'}`}
-                >
-                  50 000 FCFA/an
-                  {vipBilling === 'annual' && (
-                    <span className="block text-xs font-normal text-green-600">économisez 10 000 FCFA</span>
-                  )}
-                  {vipBilling !== 'annual' && (
-                    <span className="block text-xs font-normal text-green-600">−10 000 FCFA</span>
-                  )}
-                </button>
-              </div>
-
-              <div className="flex items-baseline gap-1 mb-4">
-                <span className="text-3xl font-bold text-amber-700">
-                  {vipBilling === 'annual' ? '50 000' : '5 000'}
-                </span>
-                <span className="text-gray-500 text-sm">
-                  FCFA / {vipBilling === 'annual' ? 'an' : 'mois'}
-                </span>
+              <div className="flex items-baseline gap-1 mt-2 mb-4">
+                <span className="text-3xl font-bold text-amber-700">15 000</span>
+                <span className="text-gray-500 text-sm">FCFA / an</span>
               </div>
               <div className="grid grid-cols-2 gap-2 mb-5">
                 {VIP_FEATURES.map(f => (
@@ -256,9 +253,7 @@ export default function UpgradePage() {
               {!isVipActive && (
                 <div className="flex flex-col gap-2">
                   <button onClick={() => selectPlan('vip')} className="w-full bg-gradient-to-r from-amber-600 to-amber-800 text-white font-bold py-3 rounded-xl hover:opacity-90 transition-opacity">
-                    {vipBilling === 'annual'
-                      ? 'Passer au VIP — 50 000 FCFA / an'
-                      : 'Passer au VIP — 5 000 FCFA / mois'}
+                    Passer au VIP — 15 000 FCFA / an
                   </button>
                   <button onClick={() => selectPlan('vip', true)} className="w-full bg-white border-2 border-amber-300 text-amber-700 font-semibold py-2.5 rounded-xl hover:bg-amber-50 transition-colors">
                     Payer en espèces
@@ -276,10 +271,10 @@ export default function UpgradePage() {
               )}
               <h2 className="text-xl font-bold text-gray-900">🏦 Service Agent</h2>
               <div className="flex items-baseline gap-1 mt-1 mb-1">
-                <span className="text-3xl font-bold text-blue-700">10 000</span>
-                <span className="text-gray-500 text-sm">FCFA · activation unique</span>
+                <span className="text-3xl font-bold text-blue-700">Gratuit</span>
+                <span className="text-gray-500 text-sm ml-1">· avec le plan VIP</span>
               </div>
-              <p className="text-xs text-blue-700 mb-1 font-medium">⚠️ Conditions particulières — Float requis (Wallet GreenFlame)</p>
+              <p className="text-xs text-blue-700 mb-1 font-medium">⚠️ Float initial requis — montant défini à l&apos;activation</p>
               <p className="text-xs text-amber-700 mb-4 font-medium">👑 Plan VIP requis pour activer et maintenir ce service</p>
               <div className="grid grid-cols-2 gap-2 mb-5">
                 {AGENT_FEATURES.map(f => (
@@ -291,16 +286,14 @@ export default function UpgradePage() {
               {!isAgentActive && (
                 isVipActive ? (
                   <div className="flex flex-col gap-2">
-                    <button onClick={() => selectPlan('agent')} className="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition-colors">
-                      Activer le Service Agent — 10 000 FCFA
+                    <button onClick={activateAgentFree} disabled={agentActivating} className="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition-colors disabled:opacity-60">
+                      {agentActivating ? 'Activation en cours…' : 'Activer gratuitement — inclus dans votre VIP'}
                     </button>
-                    <button onClick={() => selectPlan('agent', true)} className="w-full bg-white border-2 border-blue-300 text-blue-700 font-semibold py-2.5 rounded-xl hover:bg-blue-50 transition-colors">
-                      Payer en espèces
-                    </button>
+                    {error && <p className="text-red-600 text-xs text-center">{error}</p>}
                   </div>
                 ) : (
                   <button onClick={() => setSelectedTier('vip')} className="w-full bg-amber-600 text-white font-bold py-3 rounded-xl hover:bg-amber-700 transition-colors">
-                    Souscrire au VIP d'abord →
+                    Souscrire au VIP d&apos;abord →
                   </button>
                 )
               )}
@@ -361,9 +354,7 @@ export default function UpgradePage() {
               <p className="text-sm text-gray-500 mt-1">
                 {TIER_LABELS[selectedTier]}
                 {selectedTier === 'vip' && (
-                  <span className="ml-1 text-amber-700 font-medium">
-                    ({vipBilling === 'annual' ? 'annuel' : 'mensuel'})
-                  </span>
+                  <span className="ml-1 text-amber-700 font-medium">(annuel)</span>
                 )}
                 {' · '}<strong>{amount.toLocaleString('fr-FR')} FCFA</strong>
               </p>
@@ -452,9 +443,7 @@ export default function UpgradePage() {
           <p className="text-sm text-gray-500">
             {TIER_LABELS[selectedTier]}
             {selectedTier === 'vip' && (
-              <span className="ml-1 text-amber-700 font-medium">
-                ({vipBilling === 'annual' ? 'annuel' : 'mensuel'})
-              </span>
+              <span className="ml-1 text-amber-700 font-medium">(annuel)</span>
             )}
             {' · '}<strong>{amount.toLocaleString('fr-FR')} FCFA</strong>
           </p>
@@ -521,7 +510,7 @@ export default function UpgradePage() {
             <p className="text-2xl font-bold text-gray-900">Plan {TIER_LABELS[selectedTier]} activé !</p>
             <p className="text-sm text-gray-500 mt-2 leading-relaxed">
               {selectedTier === 'vip'
-                ? 'Votre vitrine publique, multi-caissiers et gestion d\'entreprise sont maintenant débloqués.'
+                ? 'Vitrine, multi-caissiers, analytics avancés, POS, Stock, Livre de caisse et outil sectoriel sont débloqués.'
                 : 'Vous pouvez maintenant effectuer des dépôts et retraits d\'espèces pour vos clients.'}
             </p>
           </div>

@@ -1,6 +1,8 @@
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import MessagesCompose from '@/components/consumer/MessagesCompose'
+import InvitationCard from '@/components/consumer/InvitationCard'
 
 export const revalidate = 0
 
@@ -47,13 +49,18 @@ export default async function MessagesInboxPage() {
 
   if (convList.length === 0) {
     return (
-      <div className="max-w-lg mx-auto px-4 py-8">
-        <h1 className="text-xl font-bold text-gray-900 mb-6">Mes conversations</h1>
-        <div className="text-center py-16 space-y-3">
+      <div className="max-w-lg mx-auto px-4 py-8 space-y-4">
+        <div className="flex items-center justify-between">
+          <h1 className="text-xl font-bold text-gray-900">Mes conversations</h1>
+          <MessagesCompose />
+        </div>
+        <div className="text-center py-12 space-y-3">
           <p className="text-4xl">💬</p>
-          <p className="text-gray-500 font-medium">Aucune conversation pour l'instant</p>
-          <p className="text-gray-400 text-sm">Les conversations s'ouvrent depuis vos commandes, tontines ou votre communauté.</p>
-          <div className="flex flex-col gap-2 pt-4 max-w-xs mx-auto">
+          <p className="text-gray-500 font-medium">Aucune conversation pour l&apos;instant</p>
+          <p className="text-gray-400 text-sm">
+            Utilise le bouton <span className="font-semibold text-brand-600">+</span> pour inviter un membre à discuter, ou ouvre une conversation depuis une commande, une tontine ou ta communauté.
+          </p>
+          <div className="flex flex-col gap-2 pt-2 max-w-xs mx-auto">
             <Link href="/mes-achats" className="text-brand-600 text-sm font-medium hover:underline">→ Mes achats</Link>
             <Link href="/network"    className="text-brand-600 text-sm font-medium hover:underline">→ Ma communauté</Link>
             <Link href="/tontine"    className="text-brand-600 text-sm font-medium hover:underline">→ Mes tontines</Link>
@@ -104,6 +111,22 @@ export default async function MessagesInboxPage() {
     }
   }
 
+  // ── Invitations reçues en attente ──────────────────────────────────────
+
+  const { data: pendingInvs } = await svc
+    .from('conversation_invitations')
+    .select('id, from_user_id')
+    .eq('to_user_id', user.id)
+    .eq('status', 'en_attente')
+    .order('created_at', { ascending: false })
+
+  const senderIds = (pendingInvs ?? []).map(i => i.from_user_id as string)
+  let senderNames: Record<string, string> = {}
+  if (senderIds.length > 0) {
+    const { data: senders } = await svc.from('users').select('id, full_name').in('id', senderIds)
+    senderNames = Object.fromEntries((senders ?? []).map(u => [u.id as string, u.full_name as string]))
+  }
+
   // ── Construction de la liste enrichie ──────────────────────────────────
 
   const enriched = convList.map(conv => {
@@ -126,8 +149,26 @@ export default async function MessagesInboxPage() {
   })
 
   return (
-    <div className="max-w-lg mx-auto px-4 py-6">
-      <h1 className="text-xl font-bold text-gray-900 mb-4">Mes conversations</h1>
+    <div className="max-w-lg mx-auto px-4 py-6 space-y-4">
+
+      {/* En-tête */}
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl font-bold text-gray-900">Mes conversations</h1>
+        <MessagesCompose />
+      </div>
+
+      {/* Invitations reçues en attente */}
+      {(pendingInvs ?? []).length > 0 && (
+        <div className="space-y-2">
+          {(pendingInvs ?? []).map(inv => (
+            <InvitationCard
+              key={inv.id as string}
+              id={inv.id as string}
+              senderName={senderNames[inv.from_user_id as string] ?? 'Membre GreenFlame'}
+            />
+          ))}
+        </div>
+      )}
 
       <div className="divide-y divide-gray-100 bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
         {enriched.map(conv => (
@@ -166,6 +207,7 @@ export default async function MessagesInboxPage() {
           </Link>
         ))}
       </div>
+
     </div>
   )
 }

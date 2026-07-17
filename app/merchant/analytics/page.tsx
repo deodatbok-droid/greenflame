@@ -57,8 +57,8 @@ export default async function AnalyticsPage() {
   const isHub = merchant.is_platform_hub ?? false
   const tier = merchant.subscription_tier ?? 'free'
   const expires = merchant.subscription_expires_at ? new Date(merchant.subscription_expires_at) : null
-  const isPro = isHub || (tier !== 'free' && expires !== null && expires > new Date())
-  if (!isPro) redirect('/merchant/upgrade')
+  const isVip = isHub || (tier === 'vip' && expires !== null && expires > new Date())
+  if (!isVip) redirect('/merchant/upgrade')
 
   const { t, locale } = await getServerT()
   const localeCode = locale === 'en' ? 'en-US' : 'fr-FR'
@@ -226,7 +226,7 @@ export default async function AnalyticsPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <span className="bg-amber-100 text-amber-700 text-xs font-bold px-2 py-1 rounded-full">PRO</span>
+          <span className="bg-amber-100 text-amber-700 text-xs font-bold px-2 py-1 rounded-full">VIP</span>
           <Link href="/merchant/tools" className="text-brand-600 text-sm">
             {t('merchant.analytics.backToTools')}
           </Link>

@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { formatFcfa, formatCashback } from '@/lib/utils/format'
 import { GOVERNANCE } from '@/lib/commission-engine/constants'
+import BuyButton from '@/components/consumer/BuyButton'
 
 const CATEGORY_META: Record<string, { label: string; emoji: string; bg: string }> = {
   ALIMENTATION:         { label: 'Alimentation',        emoji: '🛒', bg: 'bg-amber-50'  },
@@ -129,7 +130,7 @@ export default async function MerchantProfilePage({
             </button>
           </Link>
         ) : (
-          <Link href="/register">
+          <Link href={`/register?next=/marketplace/${id}`}>
             <button className="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-4 rounded-2xl text-base transition-all">
               Créer un compte pour acheter 🔥
             </button>
@@ -217,21 +218,25 @@ export default async function MerchantProfilePage({
                               </p>
                             )}
                           </div>
-                          <Link
-                            href={
-                              user
-                                ? `/pay?merchant_id=${m.id}&amount=${p.price_fcfa}&product_id=${p.id}`
-                                : '/register'
-                            }
-                            className="mt-2.5"
-                          >
-                            <button
-                              disabled={outOfStock}
-                              className="w-full bg-brand-600 hover:bg-brand-700 active:scale-95 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed text-white text-xs font-semibold py-2 rounded-xl transition-all"
-                            >
-                              {outOfStock ? 'Indisponible' : user ? 'Acheter 🔥' : 'Créer un compte'}
-                            </button>
-                          </Link>
+                          <div className="mt-2.5">
+                            {user ? (
+                              <BuyButton
+                                productId={p.id}
+                                merchantId={m.id}
+                                merchantName={m.business_name}
+                                name={p.name}
+                                price_fcfa={p.price_fcfa}
+                                emoji={p.emoji ?? undefined}
+                                outOfStock={outOfStock}
+                              />
+                            ) : (
+                              <Link href={`/register?next=/marketplace/${id}`}>
+                                <button className="w-full bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold py-2 rounded-xl transition-all">
+                                  Créer un compte
+                                </button>
+                              </Link>
+                            )}
+                          </div>
                         </div>
                       </div>
                     )

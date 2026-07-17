@@ -136,6 +136,7 @@ export default function ProductsClient({ tier, productLimit, isHub = false }: Pr
     resetForm()
     setStep('category')
     setShowForm(true)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   function openEdit(p: Product) {
@@ -154,6 +155,7 @@ export default function ProductsClient({ tier, productLimit, isHub = false }: Pr
     setAiReason(null)
     setStep('form')
     setShowForm(true)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   function selectCategory(id: string) {

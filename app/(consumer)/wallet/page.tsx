@@ -168,22 +168,29 @@ export default async function WalletPage() {
         )}
 
         {/* Earnings breakdown */}
-        <div className="grid grid-cols-3 gap-3">
-          <div className="card text-center">
-            <p className="text-xs text-gray-500 mb-1">{t('wallet.totalEarned')}</p>
-            <p className="font-bold text-gray-900 text-base">{formatFcfa(totalEarned)}</p>
-            <p className="text-xs text-gray-400">FCFA</p>
+        <div className="space-y-2">
+          <div className="grid grid-cols-3 gap-3">
+            <div className="card text-center">
+              <p className="text-xs text-gray-500 mb-1">{t('wallet.totalEarned')}</p>
+              <p className="font-bold text-gray-900 text-base">{formatFcfa(totalEarned)}</p>
+              <p className="text-xs text-gray-400">FCFA</p>
+            </div>
+            <div className="card text-center">
+              <p className="text-xs text-gray-500 mb-1">{t('wallet.directCashback')}</p>
+              <p className="font-bold text-brand-600 text-base">{formatFcfa(totalCashback)}</p>
+              <p className="text-xs text-gray-400">12% par achat</p>
+            </div>
+            <div className="card text-center">
+              <p className="text-xs text-gray-500 mb-1">{t('wallet.networkDividend')}</p>
+              <p className="font-bold text-indigo-600 text-base">{formatFcfa(totalNetwork)}</p>
+              <p className="text-xs text-gray-400">Cercles 1→5</p>
+            </div>
           </div>
-          <div className="card text-center">
-            <p className="text-xs text-gray-500 mb-1">{t('wallet.directCashback')}</p>
-            <p className="font-bold text-brand-600 text-base">{formatFcfa(totalCashback)}</p>
-            <p className="text-xs text-gray-400">FCFA</p>
-          </div>
-          <div className="card text-center">
-            <p className="text-xs text-gray-500 mb-1">{t('wallet.networkDividend')}</p>
-            <p className="font-bold text-indigo-600 text-base">{formatFcfa(totalNetwork)}</p>
-            <p className="text-xs text-gray-400">FCFA</p>
-          </div>
+          {totalEarned === 0 && (
+            <p className="text-xs text-gray-400 text-center leading-snug px-2">
+              Tu gagnes 12 % en cashback sur chaque achat, et des revenus partagés sur les achats de ta communauté jusqu'au Cercle 5.
+            </p>
+          )}
         </div>
 
         {/* Origine de vos revenus */}
@@ -233,11 +240,25 @@ export default async function WalletPage() {
 
         {/* Transaction history */}
         <div>
-          <h2 className="font-semibold text-gray-900 mb-3">{t('wallet.history')}</h2>
+          <div className="flex items-start justify-between mb-3">
+            <div>
+              <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wide leading-none">{t('wallet.history')}</h2>
+              <p className="text-xs text-gray-400 mt-0.5 leading-snug">Chaque achat chez un marchand GreenFlame génère un cashback crédit immédiat ici.</p>
+            </div>
+          </div>
           {ledger.length === 0 ? (
-            <div className="card text-center py-8 text-gray-400">
-              <p className="text-3xl mb-2">📋</p>
-              <p className="text-sm font-medium text-gray-600">{t('wallet.noTransactions')}</p>
+            <div className="card text-center py-12">
+              <p className="text-3xl mb-3">💳</p>
+              <p className="text-sm font-bold text-gray-800">Aucun mouvement pour l'instant</p>
+              <p className="text-xs text-gray-400 mt-1.5 mb-5 max-w-xs mx-auto leading-relaxed">
+                Dès ton premier achat chez un marchand GreenFlame, ton cashback (12 % du montant payé) apparaîtra ici automatiquement.
+              </p>
+              <a
+                href="/pay"
+                className="inline-block px-5 py-2.5 bg-brand-600 text-white text-sm rounded-xl font-semibold hover:bg-brand-700 transition-colors"
+              >
+                Payer chez un marchand
+              </a>
             </div>
           ) : (
             <div className="space-y-2">

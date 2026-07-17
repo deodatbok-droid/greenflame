@@ -26,10 +26,14 @@ export default async function AdminWithdrawalsPage() {
 
   return (
     <div className="max-w-4xl space-y-6">
-      <div className="flex items-center gap-3">
-        <Link href="/admin/dashboard" className="text-gray-400 hover:text-white text-sm">← Dashboard</Link>
-        <span className="text-gray-600">/</span>
-        <span className="text-white font-medium">Retraits en attente</span>
+      <div>
+        <div className="flex items-center gap-3 mb-3">
+          <Link href="/admin/dashboard" className="text-gray-400 hover:text-white text-sm">← Dashboard</Link>
+          <span className="text-gray-600">/</span>
+          <span className="text-gray-400 text-sm">Retraits</span>
+        </div>
+        <h1 className="text-2xl font-bold text-white">Retraits en attente</h1>
+        <p className="text-gray-400 text-sm mt-1">Traitez les demandes de retrait Mobile Money.</p>
       </div>
 
       {/* Stats */}
@@ -43,7 +47,7 @@ export default async function AdminWithdrawalsPage() {
           <p className="text-2xl font-bold text-white mt-1">{formatFcfa(total)} FCFA</p>
         </div>
         <div className="bg-gray-800 rounded-xl p-5">
-          <p className="text-gray-400 text-sm">Traites recemment</p>
+          <p className="text-gray-400 text-sm">Traités récemment</p>
           <p className="text-3xl font-bold text-green-400 mt-1">{(recent ?? []).filter(r => r.status === 'completed').length}</p>
         </div>
       </div>
@@ -52,13 +56,13 @@ export default async function AdminWithdrawalsPage() {
       <div className="bg-gray-800 rounded-xl overflow-hidden">
         <div className="px-5 py-4 border-b border-gray-700 flex items-center justify-between">
           <h2 className="font-semibold text-white">En attente ({pendingList.length})</h2>
-          <p className="text-xs text-gray-500">A traiter manuellement via MoMo Business</p>
+          <p className="text-xs text-gray-500">À traiter manuellement via MoMo Business</p>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="border-b border-gray-700">
               <tr>
-                {['Utilisateur', 'Montant', 'Operateur', 'Numero', 'Date', 'Action'].map(h => (
+                {['Utilisateur', 'Montant', 'Opérateur', 'Numéro', 'Date', 'Action'].map(h => (
                   <th key={h} className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">{h}</th>
                 ))}
               </tr>
@@ -107,7 +111,7 @@ export default async function AdminWithdrawalsPage() {
       {(recent ?? []).length > 0 && (
         <div className="bg-gray-800 rounded-xl overflow-hidden">
           <div className="px-5 py-4 border-b border-gray-700">
-            <h2 className="font-semibold text-white">Traites recemment</h2>
+            <h2 className="font-semibold text-white">Traités récemment</h2>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">

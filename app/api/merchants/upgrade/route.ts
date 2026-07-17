@@ -6,12 +6,11 @@ import { insertNotification } from '@/lib/utils/notify'
 import { sendSubscriptionAlertEmail } from '@/lib/email'
 
 const TIER_PRICES: Record<string, number> = {
-  standard:     0,
-  vip:       5000,
-  vip_annual: 50000,
-  agent:    10000,
-  // Kept for backwards compatibility
-  pro:      10000,
+  standard:    0,
+  vip:         15000,
+  vip_annual:  15000,
+  agent:       0,
+  pro:         10000,
   vip_upgrade: 5000,
 }
 
@@ -31,15 +30,16 @@ export async function POST(req: NextRequest) {
       tier: 'pro' | 'vip' | 'vip_annual' | 'vip_upgrade' | 'agent'
       operator?: 'mtn_momo' | 'moov_money'
       phone?: string
-      payment_method?: 'mtn_momo' | 'moov_money' | 'cash'
+      payment_method?: 'mtn_momo' | 'moov_money' | 'cash' | 'vip_free'
     }
 
     const isCash = payment_method === 'cash'
+    const isVipFree = payment_method === 'vip_free'
 
     if (!['standard', 'vip', 'vip_annual', 'agent', 'pro', 'vip_upgrade'].includes(tier)) {
       return NextResponse.json({ error: 'Tier non disponible' }, { status: 400 })
     }
-    if (!isCash && !['mtn_momo', 'moov_money'].includes(operator ?? '')) {
+    if (!isCash && !isVipFree && !['mtn_momo', 'moov_money'].includes(operator ?? '')) {
       return NextResponse.json({ error: 'Opérateur invalide' }, { status: 400 })
     }
 
@@ -79,6 +79,36 @@ export async function POST(req: NextRequest) {
           error: 'Le Service Agent nécessite un abonnement VIP actif. Souscrivez d\'abord au plan VIP.',
         }, { status: 400 })
       }
+    }
+
+    // Free agent activation for VIP merchants
+    if (isVipFree && tier === 'agent') {
+      const isVipActiveForAgent = merchant.subscription_tier === 'vip'
+        && merchant.subscription_expires_at !== null
+        && new Date(merchant.subscription_expires_at) > now
+      if (!isVipActiveForAgent && !merchant.is_platform_hub) {
+        return NextResponse.json({ error: 'Plan VIP requis pour l\'activation gratuite du Service Agent.' }, { status: 400 })
+      }
+      const service = createServiceClient()
+      await service.rpc('activate_agent_service', { p_merchant_id: merchant.id })
+      const { data: upline } = await service
+        .from('users')
+        .select('id')
+        .contains('role', ['platform_upline'])
+        .single()
+      if (upline) {
+        void insertNotification({
+          userId: upline.id,
+          type:   'subscription_paid',
+          title:  '🏦 Service Agent activé (VIP)',
+          body:   `${merchant.business_name} a activé le Service Agent gratuitement (plan VIP).`,
+          referenceId: merchant.id,
+        })
+      }
+      return NextResponse.json({
+        success: true,
+        message: 'Service Agent activé ! Vous pouvez maintenant effectuer des dépôts et retraits pour vos clients.',
+      })
     }
 
     const amount = TIER_PRICES[tier]

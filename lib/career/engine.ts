@@ -12,65 +12,125 @@ import { createServiceClient } from '@/lib/supabase/server'
 // Configuration des rangs
 // ─────────────────────────────────────────────────────────────
 
-// Récompenses par rang — ce que l'utilisateur débloque en atteignant ce rang
-export const CAREER_REWARDS: Record<number, string[]> = {
-  0: [
-    'Portefeuille digital GreenFlame',
-    'Dashboard basique',
-    'Accès Académie — module découverte',
-  ],
-  1: [
-    'Badge Étincelle (numérique)',
-    'SMS personnalisé GreenFlame',
-    '500 GFP bonus',
-    'Cashback personnel actif',
-  ],
-  2: [
-    'Badge numérique Créateur',
-    'Formation Créateur — GF Academy (certification obligatoire)',
-    'Kit démarrage physique (cartes de visite, affiche GreenFlame)',
-    'Certificat digital signé GreenFlame',
-  ],
-  3: [
-    'Pocket wifi (20 000 – 25 000 FCFA) + forfait Internet illimité',
-    'Formation Builder — GF Academy',
-    'Badge Builder dans l\'application',
-    'Profil public sur la plateforme GreenFlame',
-  ],
-  4: [
-    'Smartphone (valeur ~70 000 FCFA)',
-    'Formation Leader Flamme — GF Academy',
-    'Reconnaissance publique — featured app & site communauté',
-    'Badge Leader Flamme (numérique)',
-  ],
-  5: [
-    '100 000 FCFA en espèces',
-    'Tablette + abonnement Internet illimité 1 mois',
-    'Badge / pins Leader Brasier (identification physique)',
-    'Formation Leader Brasier — GF Academy',
-  ],
-  6: [
-    '150 000 FCFA en espèces',
-    'Smart TV + Réfrigérateur (valeur ~350 000 FCFA)',
-    'Trophée / distinction Ambassadeur',
-    'Formation Ambassadeur — GF Academy',
-    'Accès Conférence Nationale GreenFlame + prise de parole',
-  ],
-  7: [
-    'Moto OU ordinateur + 200 000 FCFA (choix du leader)',
-    'Formation exclusive Kingmaker — GF Academy',
-    'Citation permanente — plateforme GreenFlame & siège',
-    'Distinction officielle à un événement GreenFlame',
-    'UCP éligible — Ubuntu Capital Plan',
-    'Accès cercle Fondateurs — sessions stratégiques',
-  ],
-  8: [
-    'Espèces — montant exceptionnel (défini par Comité GreenFlame)',
-    'Accès actionnariat préférentiel — UCP prioritaire',
-    'Distinction continentale — Cérémonie Convention annuelle',
-    'Keynote speaker officiel GreenFlame',
-    'Reconnaissance pan-africaine',
-  ],
+// ─────────────────────────────────────────────────────────────
+// Poids Fibonacci pour le Fonds de Reconnaissance (R3 → R7)
+// Part = Fonds × (poids × volume_communauté / Σ scores)
+// ─────────────────────────────────────────────────────────────
+export const FONDS_POIDS: Record<number, number> = {
+  3: 3,
+  4: 5,
+  5: 8,
+  6: 13,
+  7: 21,
+}
+
+// ─────────────────────────────────────────────────────────────
+// Récompenses par rang — deux blocs :
+//   Bloc A : débloquées garanties à chaque changement de palier (non-physiques)
+//   Bloc B : récompenses physiques/cash financées par le Fonds de Reconnaissance
+//            (null pour les rangs sans Bloc B, c.-à-d. R0-R2)
+// ─────────────────────────────────────────────────────────────
+export interface CareerRewardEntry {
+  blocA: string[]
+  blocB: { poids: number; items: string[] } | null
+}
+
+export const CAREER_REWARDS: Record<number, CareerRewardEntry> = {
+  0: {
+    blocA: [
+      'Portefeuille digital GreenFlame',
+      'Dashboard basique',
+      'Accès Académie — module découverte',
+    ],
+    blocB: null,
+  },
+  1: {
+    blocA: [
+      'Badge Étincelle (numérique)',
+      'SMS personnalisé GreenFlame',
+      '500 GFP bonus',
+      'Cashback personnel actif',
+    ],
+    blocB: null,
+  },
+  2: {
+    blocA: [
+      'Badge numérique Créateur',
+      'Formation Créateur — GF Academy (certification obligatoire)',
+      'Kit démarrage physique (cartes de visite, affiche GreenFlame)',
+      'Certificat digital signé GreenFlame',
+    ],
+    blocB: null,
+  },
+  3: {
+    blocA: [
+      'Formation Builder — GF Academy',
+      'Badge Builder dans l\'application',
+      'Profil public sur la plateforme GreenFlame',
+    ],
+    blocB: {
+      poids: FONDS_POIDS[3],  // 3
+      items: ['Pocket wifi (20 000 – 25 000 FCFA) + forfait Internet illimité 1 mois'],
+    },
+  },
+  4: {
+    blocA: [
+      'Formation Leader Flamme — GF Academy',
+      'Reconnaissance publique — featured app & site communauté',
+      'Badge Leader Flamme (numérique)',
+    ],
+    blocB: {
+      poids: FONDS_POIDS[4],  // 5
+      items: ['Smartphone (valeur ~70 000 FCFA)'],
+    },
+  },
+  5: {
+    blocA: [
+      'Badge / pins Leader Brasier (identification physique)',
+      'Formation Leader Brasier — GF Academy',
+    ],
+    blocB: {
+      poids: FONDS_POIDS[5],  // 8
+      items: ['100 000 FCFA en espèces', 'Tablette + abonnement Internet illimité 1 mois'],
+    },
+  },
+  6: {
+    blocA: [
+      'Trophée / distinction Ambassadeur',
+      'Formation Ambassadeur — GF Academy',
+      'Accès Conférence Nationale GreenFlame + prise de parole',
+    ],
+    blocB: {
+      poids: FONDS_POIDS[6],  // 13
+      items: ['150 000 FCFA en espèces', 'Smart TV + Réfrigérateur (valeur ~350 000 FCFA)'],
+    },
+  },
+  7: {
+    blocA: [
+      'Formation exclusive Kingmaker — GF Academy',
+      'Citation permanente — plateforme GreenFlame & siège',
+      'Distinction officielle à un événement GreenFlame',
+      'UCP éligible — Ubuntu Capital Plan',
+      'Accès cercle Fondateurs — sessions stratégiques',
+    ],
+    blocB: {
+      poids: FONDS_POIDS[7],  // 21
+      items: ['Moto OU ordinateur + 200 000 FCFA (choix du leader)'],
+    },
+  },
+  8: {
+    blocA: [
+      'Accès actionnariat préférentiel — UCP prioritaire',
+      'Distinction continentale — Cérémonie Convention annuelle',
+      'Keynote speaker officiel GreenFlame',
+      'Reconnaissance pan-africaine',
+    ],
+    // Bloc B Elder : délibération Comité, hors formule Fibonacci
+    blocB: {
+      poids: 0,
+      items: ['Espèces — montant exceptionnel (défini par Comité GreenFlame)'],
+    },
+  },
 }
 
 export const CAREER_RANKS = [
@@ -117,7 +177,6 @@ export const CAREER_RANKS = [
       tauxActivite: { scopeNiveaux: 2, pctRequis: 0.10, seuilDepenseFcfa: 20_000 },
       marchandsDirects: 2,
       marchandsReseau: 0,
-      ancienneteRangPrecedentMois: 2,
     },
   },
   {

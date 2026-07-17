@@ -130,14 +130,15 @@ export default async function ProfilePage() {
                 <span className="inline-flex items-center gap-0.5 text-[10px] font-bold bg-amber-400/20 text-amber-300 rounded-full px-2 py-0.5 whitespace-nowrap">
                   ★ {t('dashboard.level')} {niveau} / 5
                 </span>
-                {/* Rang Carrière Leader */}
+                {/* Rang Carrière Leader — cliquable vers /carriere */}
                 {careerRankInfo && careerRank > 0 && (
-                  <span
-                    className="text-[10px] font-bold rounded-full px-2 py-0.5 whitespace-nowrap"
+                  <Link
+                    href="/carriere"
+                    className="text-[10px] font-bold rounded-full px-2 py-0.5 whitespace-nowrap hover:opacity-80 transition-opacity"
                     style={{ backgroundColor: `${careerRankInfo.color}33`, color: careerRankInfo.color, border: `1px solid ${careerRankInfo.color}55` }}
                   >
-                    {careerRankInfo.name}
-                  </span>
+                    {careerRankInfo.name} ›
+                  </Link>
                 )}
                 {isMerchant && (
                   <span className="text-[10px] font-bold bg-brand-500 text-white rounded-full px-2 py-0.5 whitespace-nowrap">
@@ -194,19 +195,26 @@ export default async function ProfilePage() {
       <div className="px-4 mt-4 space-y-4">
 
         {/* Stats rapides */}
-        <div className="grid grid-cols-3 gap-3">
-          <div className="card text-center">
-            <p className="text-2xl font-bold text-gray-900">{txCount}</p>
-            <p className="text-[10px] text-gray-500 mt-0.5">{t('profile.purchases')}</p>
+        <div className="space-y-2">
+          <div className="grid grid-cols-3 gap-3">
+            <div className="card text-center">
+              <p className="text-2xl font-bold text-gray-900">{txCount}</p>
+              <p className="text-[10px] text-gray-500 mt-0.5">{t('profile.purchases')}</p>
+            </div>
+            <div className="card text-center">
+              <p className="text-sm font-bold text-brand-600 truncate">{formatFcfa(totalEarned)}</p>
+              <p className="text-[10px] text-gray-500 mt-0.5">{t('profile.fcfaEarned')}</p>
+            </div>
+            <div className="card text-center">
+              <p className="text-2xl font-bold text-indigo-600">{referralCount}</p>
+              <p className="text-[10px] text-gray-500 mt-0.5">Affiliés</p>
+            </div>
           </div>
-          <div className="card text-center">
-            <p className="text-sm font-bold text-brand-600 truncate">{formatFcfa(totalEarned)}</p>
-            <p className="text-[10px] text-gray-500 mt-0.5">{t('profile.fcfaEarned')}</p>
-          </div>
-          <div className="card text-center">
-            <p className="text-2xl font-bold text-indigo-600">{referralCount}</p>
-            <p className="text-[10px] text-gray-500 mt-0.5">{t('profile.referrals')}</p>
-          </div>
+          {txCount === 0 && (
+            <p className="text-xs text-gray-400 text-center leading-snug px-2">
+              Effectue ton premier achat chez un marchand GreenFlame pour débloquer ton lien d'invitation et commencer à cumuler des gains.
+            </p>
+          )}
         </div>
 
         {/* Flamme + Rang */}
@@ -214,6 +222,50 @@ export default async function ProfilePage() {
 
         {/* Plan de Carrière Leader */}
         <CareerPlanWidget />
+
+        {/* ── Accès rapide — pages Leader ── */}
+        <div className="space-y-2">
+          <Link href="/carriere">
+            <div className="card flex items-center justify-between gap-3 hover:bg-gray-50 transition-colors">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">🚀</span>
+                <div>
+                  <p className="font-semibold text-gray-900 text-sm">Mon Parcours Leader</p>
+                  <p className="text-xs text-gray-500">Paliers · Récompenses · Plan complet</p>
+                </div>
+              </div>
+              <span className="text-gray-400 text-sm">→</span>
+            </div>
+          </Link>
+          <Link href="/network">
+            <div className="card flex items-center justify-between gap-3 hover:bg-gray-50 transition-colors">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">🌐</span>
+                <div>
+                  <p className="font-semibold text-gray-900 text-sm">Ma Communauté</p>
+                  <p className="text-xs text-gray-500">Arborescence · Membres N1–N5 · Chiffres</p>
+                </div>
+              </div>
+              <span className="text-gray-400 text-sm">→</span>
+            </div>
+          </Link>
+          <Link href="/fonds-reconnaissance">
+            <div className="card flex items-center justify-between gap-3 hover:bg-gray-50 transition-colors">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">🏆</span>
+                <div>
+                  <p className="font-semibold text-gray-900 text-sm">Fonds de Reconnaissance</p>
+                  <p className="text-xs text-gray-500">
+                    {careerRank >= 3
+                      ? 'Sous-pool Fibonacci · Estimations · Historique'
+                      : 'Bonus de palier · Disponible dès R3 Builder'}
+                  </p>
+                </div>
+              </div>
+              <span className="text-gray-400 text-sm">{careerRank >= 3 ? '→' : '🔒'}</span>
+            </div>
+          </Link>
+        </div>
 
         {/* Droits UCP */}
         <Link href="/ucp" className="card flex items-center justify-between hover:bg-gray-50 transition-colors">
@@ -229,7 +281,10 @@ export default async function ProfilePage() {
 
         {/* Récompenses */}
         <div className="card">
-          <p className="font-semibold text-gray-900 mb-3">{t('profile.rewards')}</p>
+          <div className="mb-3">
+            <p className="font-semibold text-gray-900">{t('profile.rewards')}</p>
+            <p className="text-xs text-gray-400 mt-0.5">Décroche des badges en utilisant GreenFlame.</p>
+          </div>
           <div className="grid grid-cols-2 gap-2">
             {badges.map((badge, i) => (
               <div
@@ -237,32 +292,43 @@ export default async function ProfilePage() {
                 className={`rounded-xl p-3 flex items-center gap-2 ${
                   badge.earned
                     ? BADGE_COLORS[i % BADGE_COLORS.length]
-                    : 'bg-gray-50 text-gray-400 opacity-60'
+                    : 'bg-gray-50 text-gray-400'
                 }`}
               >
-                <span className="text-xl">{badge.icon}</span>
-                <p className="text-xs font-semibold leading-tight">{badge.label}</p>
-                {badge.earned && <span className="ml-auto text-xs">✓</span>}
+                <span className={`text-xl ${badge.earned ? '' : 'grayscale opacity-40'}`}>{badge.icon}</span>
+                <p className={`text-xs font-semibold leading-tight ${badge.earned ? '' : 'opacity-60'}`}>{badge.label}</p>
+                {badge.earned ? (
+                  <span className="ml-auto text-xs">✓</span>
+                ) : (
+                  <span className="ml-auto text-[10px] opacity-40">à débloquer</span>
+                )}
               </div>
             ))}
           </div>
         </div>
 
         {/* KYC */}
-        <div className="card flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="text-xl">{kycLabel.icon}</span>
-            <div>
-              <p className={`font-medium text-sm ${kycLabel.color}`}>{kycLabel.text}</p>
-              {profile?.phone && (
-                <p className="text-xs text-gray-400">{profile.phone}</p>
-              )}
+        <div className="card">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="text-xl">{kycLabel.icon}</span>
+              <div>
+                <p className={`font-medium text-sm ${kycLabel.color}`}>{kycLabel.text}</p>
+                {profile?.phone && (
+                  <p className="text-xs text-gray-400">{profile.phone}</p>
+                )}
+              </div>
             </div>
+            {(!profile?.kyc_level || profile.kyc_level === 0) && (
+              <Link href="/kyc" className="text-xs text-brand-600 font-semibold bg-brand-50 px-3 py-1.5 rounded-lg hover:bg-brand-100 transition-colors">
+                {t('profile.verifyLink')}
+              </Link>
+            )}
           </div>
           {(!profile?.kyc_level || profile.kyc_level === 0) && (
-            <Link href="/kyc" className="text-xs text-brand-600 font-semibold bg-brand-50 px-3 py-1.5 rounded-lg hover:bg-brand-100 transition-colors">
-              {t('profile.verifyLink')}
-            </Link>
+            <p className="text-xs text-gray-400 mt-2 leading-snug">
+              La vérification débloque les retraits jusqu'à 500 000 FCFA/mois. Sans vérification, le plafond est 50 000 FCFA/mois.
+            </p>
           )}
         </div>
 

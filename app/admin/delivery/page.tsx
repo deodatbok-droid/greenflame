@@ -46,6 +46,11 @@ export default async function AdminDeliveryPage() {
 
   return (
     <div className="space-y-8">
+      <div className="flex items-center gap-3">
+        <Link href="/admin/dashboard" className="text-gray-400 hover:text-white text-sm">← Dashboard</Link>
+        <span className="text-gray-600">/</span>
+        <span className="text-gray-400 text-sm">Livraisons</span>
+      </div>
       <div>
         <h1 className="text-2xl font-bold text-white">GreenFlame Delivery</h1>
         <p className="text-gray-400 text-sm mt-1">Supervision des livraisons, livreurs et escrows</p>

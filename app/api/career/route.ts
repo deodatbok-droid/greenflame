@@ -3,7 +3,7 @@
  */
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { getCareerRankState, checkEligibility, CAREER_RANKS, CAREER_REWARDS, getSlotInfo, SLOT_BY_RANK, SLOT_GATE_PCT } from '@/lib/career/engine'
+import { getCareerRankState, checkEligibility, CAREER_RANKS, CAREER_REWARDS, FONDS_POIDS, getSlotInfo, SLOT_BY_RANK, SLOT_GATE_PCT } from '@/lib/career/engine'
 
 export async function GET() {
   const supabase = await createClient()
@@ -27,12 +27,13 @@ export async function GET() {
       slug:  rankConfig.slug,
       color: rankConfig.color,
     } : null,
+    fondsPoidsTable: FONDS_POIDS,
     allRanks: CAREER_RANKS.map(r => ({
       rank:    r.rank,
       name:    r.name,
       slug:    r.slug,
       color:   r.color,
-      rewards: CAREER_REWARDS[r.rank] ?? [],
+      rewards: CAREER_REWARDS[r.rank] ?? { blocA: [], blocB: null },
       conditions: r.conditions ? {
         affiliesDircts:          r.conditions.affiliesDirectsReqis,
         affiliesAuRangPrecedent: 'affiliesAuRangPrecedent' in r.conditions

@@ -3,7 +3,7 @@ import { formatFcfa } from '@/lib/utils/format'
 import Link from 'next/link'
 import { getServerT } from '@/lib/i18n/server'
 
-export const revalidate = 300
+export const dynamic = 'force-dynamic'
 
 export const metadata = {
   title: 'GreenFlame Hub — Abonnements & Services',

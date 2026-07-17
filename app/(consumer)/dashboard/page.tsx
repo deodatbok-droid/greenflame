@@ -10,6 +10,9 @@ import Logo from '@/components/Logo'
 import FormationsTicker, { type MiniFormation } from '@/components/dashboard/FormationsTicker'
 import { getServerT } from '@/lib/i18n/server'
 import CagnotteWidget from '@/components/consumer/CagnotteWidget'
+import FlammeMiniBar from '@/components/consumer/FlammeMiniBar'
+import LifeGoalsWidget from '@/components/consumer/LifeGoalsWidget'
+import { SectionHeader } from '@/components/ui/SectionHeader'
 
 export default async function ConsumerDashboard() {
   const supabase = await createClient()
@@ -54,7 +57,7 @@ export default async function ConsumerDashboard() {
       .ilike('name', '%mini-formation%')
       .order('sort_order', { ascending: true })
       .limit(3),
-    supabase.from('user_scores').select('score, niveau, bnpl_eligible').eq('user_id', user.id).single(),
+    supabase.from('user_scores').select('score, niveau').eq('user_id', user.id).single(),
   ])
 
   const wallet          = walletRes.data
@@ -100,21 +103,6 @@ export default async function ConsumerDashboard() {
   const nextTarget = [1, 5, 10, 20][level - 1] ?? null
   const levelPct   = nextTarget ? Math.min((networkSize / nextTarget) * 100, 100) : 100
 
-  const LIFE_GOALS = [
-    { name: t('dashboard.lifeGoal1'), target:  10_000, icon: '🏥' },
-    { name: t('dashboard.lifeGoal2'), target:  15_000, icon: '👕' },
-    { name: t('dashboard.lifeGoal3'), target:  20_000, icon: '💡' },
-    { name: t('dashboard.lifeGoal4'), target:  23_500, icon: '🎲' },
-    { name: t('dashboard.lifeGoal5'), target:  30_000, icon: '🚗' },
-    { name: t('dashboard.lifeGoal6'), target:  40_000, icon: '📚' },
-    { name: t('dashboard.lifeGoal7'), target:  50_000, icon: '🏠' },
-    { name: t('dashboard.lifeGoal8'), target:  70_000, icon: '🍚' },
-    { name: t('dashboard.lifeGoal9'), target: 258_500, icon: '⭐' },
-  ]
-  const AVG_INCOME_PER_MEMBER = 200
-  const BASE_GOALS_COUNT = LIFE_GOALS.length - 1
-  const coveredBaseCount = LIFE_GOALS.slice(0, BASE_GOALS_COUNT).filter(g => monthlyIncome >= g.target).length
-  const nextGoal = LIFE_GOALS.find((g, i) => monthlyIncome < g.target && (i === 0 || monthlyIncome >= LIFE_GOALS[i - 1].target)) ?? null
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -155,8 +143,10 @@ export default async function ConsumerDashboard() {
           <div className="mt-3">
             <div className="flex flex-wrap justify-between gap-x-2 text-xs text-gray-400 mb-1">
               <span className="shrink-0">{t('dashboard.level')} {level} — {levelLabel}</span>
-              {nextTarget && (
-                <span className="shrink-0">{t('dashboard.level')} {level + 1} : {nextTarget - networkSize} {nextTarget - networkSize > 1 ? t('dashboard.membersRequiredPlural') : t('dashboard.membersRequired')}</span>
+              {nextTarget ? (
+                <span className="shrink-0">{nextTarget - networkSize} onboarding{nextTarget - networkSize > 1 ? 's' : ''} pour le niveau {level + 1}</span>
+              ) : (
+                <span className="shrink-0 text-brand-500 font-medium">Niveau maximum 🏆</span>
               )}
             </div>
             <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
@@ -165,6 +155,11 @@ export default async function ConsumerDashboard() {
                 style={{ width: `${Math.max(levelPct, levelPct > 0 ? 4 : 0)}%` }}
               />
             </div>
+            <p className="text-xs text-gray-400 mt-1.5">
+              {networkSize === 0
+                ? 'Ta communauté se construit dès le premier onboarding que tu fais.'
+                : `${networkSize} membre${networkSize > 1 ? 's' : ''} dans ta communauté`}
+            </p>
           </div>
         </div>
 
@@ -218,7 +213,7 @@ export default async function ConsumerDashboard() {
                 ) : t('dashboard.academieStartCta')}
               </p>
               <p className="text-xs text-gray-400 mt-0.5">
-                {userScore?.bnpl_eligible ? t('dashboard.academieBnplEligible') : t('dashboard.academieFree')}
+                {t('dashboard.academieFree')}
               </p>
             </div>
             <span className="text-gray-300 text-lg">›</span>
@@ -245,36 +240,61 @@ export default async function ConsumerDashboard() {
           <FormationsTicker products={miniFormations} />
         )}
 
-        {/* ── PORTEFEUILLE ── */}
-        <div className="bg-brand-700 rounded-2xl p-5 text-white">
-          <p className="text-brand-200 text-xs mb-1">{t('dashboard.myWallet')}</p>
-          <p className="text-3xl font-bold mb-0.5">
-            {wallet
-              ? formatFcfa(wallet.balance_fcfa + Math.floor((wallet.balance_gfp ?? 0) * GOVERNANCE.GFP_TO_FCFA_RATE))
-              : '—'
-            } <span className="text-lg font-medium">FCFA</span>
-          </p>
-          {wallet && (wallet.balance_gfp ?? 0) > 0 && (() => {
-            const gfp = wallet.balance_gfp ?? 0
-            const fcfaTotal = wallet.balance_fcfa + Math.floor(gfp * GOVERNANCE.GFP_TO_FCFA_RATE)
-            const remainder = gfp % 10
-            return (
-              <p className="text-brand-300 text-xs mb-3">
-                {formatFcfa(fcfaTotal)} FCFA{remainder > 0 ? ` + ${remainder} GFP` : ''}
+        {/* ── PORTEFEUILLE IMMERSIF ── */}
+        <div className="relative rounded-3xl overflow-hidden text-white shadow-xl">
+          {/* Gradient de fond multi-couche */}
+          <div className="absolute inset-0 bg-gradient-to-br from-brand-800 via-brand-700 to-brand-600" />
+          {/* Cercles décoratifs flottants */}
+          <div className="absolute -top-8 -right-8 w-40 h-40 rounded-full bg-white/5" />
+          <div className="absolute -bottom-10 -left-4 w-32 h-32 rounded-full bg-flame-500/20" />
+          <div className="absolute top-1/2 right-6 w-16 h-16 rounded-full bg-white/5" />
+
+          {/* Contenu */}
+          <div className="relative z-10 p-5">
+            {/* Label */}
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-brand-200 text-xs font-medium tracking-wide uppercase">{t('dashboard.myWallet')}</p>
+              <span className="text-base opacity-60">🔥</span>
+            </div>
+
+            {/* Solde principal */}
+            <div className="mb-4">
+              <p className="text-4xl font-black tracking-tight leading-none">
+                {wallet
+                  ? formatFcfa(wallet.balance_fcfa + Math.floor((wallet.balance_gfp ?? 0) * GOVERNANCE.GFP_TO_FCFA_RATE))
+                  : '—'
+                }
               </p>
-            )
-          })()}
-          <div className="flex gap-2 mt-3">
-            <Link href="/wallet" className="flex-1">
-              <button className="w-full bg-white/20 hover:bg-white/30 transition-colors text-white text-xs font-medium py-2 rounded-lg">
-                {t('nav.wallet')} →
-              </button>
-            </Link>
-            <Link href="/pay" className="flex-1">
-              <button className="w-full bg-flame-500 hover:bg-flame-600 transition-colors text-white text-xs font-bold py-2 rounded-lg">
-                {t('dashboard.payNow')} 🔥
-              </button>
-            </Link>
+              <p className="text-brand-300 text-sm font-medium mt-1">FCFA</p>
+            </div>
+
+            {/* Détail GFP si présent */}
+            {wallet && (wallet.balance_gfp ?? 0) > 0 && (() => {
+              const gfp = wallet.balance_gfp ?? 0
+              const remainder = gfp % 10
+              return remainder > 0 ? (
+                <p className="text-brand-300/80 text-xs mb-4 bg-white/10 rounded-xl px-3 py-1.5 inline-block">
+                  + {remainder} GFP non convertis
+                </p>
+              ) : null
+            })()}
+
+            {/* Séparateur */}
+            <div className="w-full h-px bg-white/10 mb-4" />
+
+            {/* Actions */}
+            <div className="flex gap-2.5">
+              <Link href="/wallet" className="flex-1">
+                <button className="w-full bg-white/15 hover:bg-white/25 active:bg-white/30 transition-all text-white text-xs font-semibold py-2.5 rounded-2xl border border-white/20">
+                  {t('nav.wallet')} →
+                </button>
+              </Link>
+              <Link href="/pay" className="flex-1">
+                <button className="w-full bg-flame-500 hover:bg-flame-400 active:bg-flame-600 transition-all text-white text-xs font-bold py-2.5 rounded-2xl shadow-lg shadow-flame-900/30">
+                  {t('dashboard.payNow')} 🔥
+                </button>
+              </Link>
+            </div>
           </div>
         </div>
 
@@ -284,22 +304,50 @@ export default async function ConsumerDashboard() {
             <div className="bg-white rounded-xl p-3 border border-gray-100 hover:border-brand-200 transition-colors cursor-pointer">
               <p className="text-base font-bold text-brand-700">+{formatFcfa(monthlyCashback)}</p>
               <p className="text-xs text-gray-400 leading-tight mt-0.5">{t('dashboard.cashback')}</p>
-              <p className="text-xs text-brand-500 mt-1">{moisLabel}</p>
+              <p className="text-[10px] text-brand-400 mt-1 leading-tight">Tes achats ce mois</p>
             </div>
           </Link>
           <Link href="/wallet">
             <div className="bg-white rounded-xl p-3 border border-gray-100 hover:border-indigo-200 transition-colors cursor-pointer">
               <p className="text-base font-bold text-indigo-700">+{formatFcfa(monthlyNetwork)}</p>
               <p className="text-xs text-gray-400 leading-tight mt-0.5">{t('dashboard.networkDividend')}</p>
+              <p className="text-[10px] text-indigo-400 mt-1 leading-tight">Ta communauté achète</p>
             </div>
           </Link>
-          <Link href="/network">
+          <Link href="/profile">
             <div className="bg-white rounded-xl p-3 border border-gray-100 hover:border-green-200 transition-colors cursor-pointer">
               <p className="text-base font-bold text-green-700">{networkSize}</p>
-              <p className="text-xs text-gray-400 leading-tight mt-0.5">{t('dashboard.members')}</p>
+              <p className="text-xs text-gray-400 leading-tight mt-0.5">Communauté</p>
+              <p className="text-[10px] text-green-500 mt-1 leading-tight">
+                {networkSize === 0 ? 'Partage ton lien →' : `${networkSize} membre${networkSize > 1 ? 's' : ''}`}
+              </p>
             </div>
           </Link>
         </div>
+
+        {/* ── FLAMME PROGRESS BAR ── */}
+        <FlammeMiniBar />
+
+        {/* ── BUDGET — accès rapide ── */}
+        <Link href="/budget">
+          <div className="relative rounded-2xl overflow-hidden cursor-pointer group">
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-700 via-emerald-600 to-teal-500" />
+            <div className="absolute -top-5 -right-5 w-28 h-28 rounded-full bg-white/10" />
+            <div className="absolute -bottom-8 -left-3 w-24 h-24 rounded-full bg-white/5" />
+            <div className="absolute top-3 right-12 w-10 h-10 rounded-full bg-white/5" />
+            <div className="relative z-10 p-4 flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-2xl flex-shrink-0 shadow-inner">
+                💰
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-emerald-200 text-[10px] font-semibold uppercase tracking-widest mb-0.5">Gestion personnelle</p>
+                <p className="font-bold text-white text-base leading-tight">Mon Budget</p>
+                <p className="text-emerald-200/80 text-xs mt-0.5">Revenus · Dépenses · Épargne</p>
+              </div>
+              <span className="text-white/50 text-xl group-hover:translate-x-1 transition-transform">→</span>
+            </div>
+          </div>
+        </Link>
 
         {/* ── BON DE RETRAIT — raccourci ── */}
         {!isNewUser && (
@@ -351,15 +399,22 @@ export default async function ConsumerDashboard() {
 
         {/* ── ACTIVITÉ RÉCENTE ── */}
         <div>
-          <div className="flex justify-between items-center mb-3">
+          <div className="flex justify-between items-center mb-1">
             <h2 className="font-semibold text-gray-900">{t('dashboard.recentTransactions')}</h2>
             <Link href="/history" className="text-xs text-brand-600 font-medium">{t('common.viewAll')} →</Link>
           </div>
+          <p className="text-xs text-gray-400 mb-3">Chaque paiement te rapporte du cashback crédité instantanément.</p>
 
           {transactions.length === 0 ? (
-            <div className="bg-white rounded-xl border border-gray-100 text-center py-8">
+            <div className="bg-white rounded-xl border border-gray-100 p-6 text-center">
               <p className="text-3xl mb-2">🛍️</p>
-              <p className="font-medium text-gray-600">{t('dashboard.noTransactions')}</p>
+              <p className="font-semibold text-gray-700 text-sm">{t('dashboard.noTransactions')}</p>
+              <p className="text-xs text-gray-400 mt-1 mb-4">Paye chez un marchand GreenFlame pour voir ton cashback ici.</p>
+              <Link href="/pay">
+                <button className="bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl transition-colors">
+                  Payer maintenant →
+                </button>
+              </Link>
             </div>
           ) : (
             <div className="bg-white rounded-xl border border-gray-100 divide-y divide-gray-50">
@@ -404,71 +459,12 @@ export default async function ConsumerDashboard() {
         )}
 
         {/* ── OBJECTIFS DE VIE ── */}
-        <Link href="/network">
-          <div className="bg-white rounded-xl border border-gray-100 p-4 hover:border-brand-200 transition-colors cursor-pointer">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="font-semibold text-gray-900">{t('dashboard.lifeGoals')}</h2>
-              <span className="text-xs text-gray-400">
-                {coveredBaseCount > 0
-                  ? t('dashboard.lifeGoalCoveredCount').replace('{covered}', String(coveredBaseCount)).replace('{total}', String(BASE_GOALS_COUNT))
-                  : t('dashboard.lifeGoalTiers').replace('{n}', String(LIFE_GOALS.length))}
-              </span>
-            </div>
-            <div className="space-y-4">
-              {LIFE_GOALS.map((goal, i) => {
-                const pct       = Math.min((monthlyIncome / goal.target) * 100, 100)
-                const isDone    = monthlyIncome >= goal.target
-                const isNext    = !isDone && (i === 0 || monthlyIncome >= LIFE_GOALS[i - 1].target)
-                const remaining = Math.max(goal.target - monthlyIncome, 0)
-                const membersNeeded = Math.ceil(goal.target / AVG_INCOME_PER_MEMBER)
-
-                return (
-                  <div key={goal.name}>
-                    <div className="flex items-center justify-between mb-1.5">
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-base">{goal.icon}</span>
-                        <span className="text-sm font-medium text-gray-900">{goal.name}</span>
-                        {isNext && !isDone && (
-                          <span className="text-[10px] font-bold bg-brand-100 text-brand-700 rounded-full px-2 py-0.5 ml-1">{t('dashboard.lifeGoalInProgress')}</span>
-                        )}
-                        {isDone && (
-                          <span className="text-[10px] font-bold bg-green-500 text-white rounded-full px-2 py-0.5 ml-1">✓</span>
-                        )}
-                      </div>
-                      <span className="text-xs text-gray-400 flex-shrink-0">{formatFcfa(goal.target)}{t('dashboard.lifeGoalPerMonth')}</span>
-                    </div>
-                    <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                      <div
-                        className="h-full rounded-full bg-gradient-to-r from-brand-500 to-flame-500 transition-all duration-500"
-                        style={{ width: `${Math.max(pct, pct > 0 ? 2 : 0)}%` }}
-                      />
-                    </div>
-                    {!isDone && (
-                      <p className="text-[10px] text-gray-400 mt-1">
-                        {t('dashboard.lifeGoalRemaining').replace('{amount}', formatFcfa(remaining)).replace('{n}', membersNeeded.toLocaleString())}
-                      </p>
-                    )}
-                  </div>
-                )
-              })}
-            </div>
-            {monthlyIncome > 0 && nextGoal && (
-              <p className="text-xs text-brand-600 text-center mt-3 pt-3 border-t border-gray-100">
-                💡 {t('dashboard.lifeGoalNudge').replace('{goal}', nextGoal.name)}
-              </p>
-            )}
-            {monthlyIncome === 0 && (
-              <p className="text-xs text-gray-400 text-center mt-3 pt-3 border-t border-gray-100">
-                {t('dashboard.lifeGoalFirstPurchase')}
-              </p>
-            )}
-          </div>
-        </Link>
+        <LifeGoalsWidget monthlyIncome={monthlyIncome} />
 
         {/* ── CAGNOTTE COMMUNAUTAIRE ── */}
         <CagnotteWidget />
 
-        {/* ── LIEN DE PARRAINAGE ── */}
+        {/* ── LIEN D'INVITATION ── */}
         {isNewUser && !isAdmin ? (
           <div className="bg-gray-50 border border-dashed border-gray-300 rounded-xl p-4">
             <div className="flex items-center gap-3">
@@ -476,13 +472,13 @@ export default async function ConsumerDashboard() {
                 🔒
               </div>
               <div className="flex-1">
-                <p className="text-sm font-semibold text-gray-500">{t('dashboard.referralLocked')}</p>
+                <p className="text-sm font-semibold text-gray-600">Lien d'invitation verrouillé</p>
                 <p className="text-xs text-gray-400 mt-0.5">
-                  {t('dashboard.referralLockedDesc')}
+                  Fais ton premier achat pour débloquer ton lien et commencer à onboarder des membres.
                 </p>
               </div>
             </div>
-            <Link href="/marketplace">
+            <Link href="/pay">
               <button className="mt-3 w-full bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold py-2.5 rounded-xl transition-colors">
                 {t('dashboard.makeFirstPurchase')}
               </button>
@@ -490,14 +486,12 @@ export default async function ConsumerDashboard() {
           </div>
         ) : (
           <div className="bg-gradient-to-r from-brand-50 to-fuchsia-50 border border-brand-200 rounded-xl p-4">
-            <p className="text-xs text-gray-500 mb-1 font-medium">{t('dashboard.referralLink')}</p>
+            <p className="text-xs text-gray-500 mb-0.5 font-semibold uppercase tracking-wide">Ton lien d'invitation</p>
+            <p className="text-xs text-gray-400 mb-2">Chaque personne inscrite via ton lien rejoint ta communauté — tu gagnes sur ses achats jusqu'au Cercle 5.</p>
             <div className="flex items-center justify-between gap-3">
               <p className="text-xl font-bold font-mono text-brand-700">{profile?.referral_code}</p>
               <CopyReferralButton referralUrl={referralUrl} code={profile?.referral_code ?? ''} />
             </div>
-            <p className="text-xs text-gray-500 mt-2">
-              {t('dashboard.referralExplain')}
-            </p>
           </div>
         )}
 

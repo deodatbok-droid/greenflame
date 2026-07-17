@@ -27,6 +27,7 @@ interface Props {
     commission_rate: number
     total_gmv: number
     qr_code_url: string | null
+    banner_url: string | null
     subscription_tier: string
     subscription_expires_at: string | null
     agent_service_active: boolean
@@ -44,10 +45,11 @@ interface Props {
   isAdmin?: boolean
   /** Ventilation all-time par méthode de paiement (montants bruts) */
   revenueByMethod: { cash: number; walletGf: number; momo: number }
+  activationSteps: { hasProducts: boolean; hasQrSaved: boolean; hasFirstSale: boolean }
 }
 
 export default function MerchantDashboardClient({
-  merchant, merchantWallet, personalWallet, monthStats, todayStats, recentBuyers, referralUrl, merchantUserId, isAdmin, revenueByMethod,
+  merchant, merchantWallet, personalWallet, monthStats, todayStats, recentBuyers, referralUrl, merchantUserId, isAdmin, revenueByMethod, activationSteps,
 }: Props) {
   const { t, locale } = useLocale()
   const track = useTrack()
@@ -238,6 +240,14 @@ export default function MerchantDashboardClient({
 
           {/* Colonne principale */}
           <div className="space-y-4">
+
+            {/* Checklist d'activation — disparaît quand tout est fait */}
+            {Object.values(activationSteps).some(v => !v) && (
+              <OnboardingChecklist
+                steps={activationSteps}
+                onOpenQr={() => setActiveTab('qrcode')}
+              />
+            )}
 
             {/* Raccourcis outils — barre mobile uniquement */}
             <div className="md:hidden grid grid-cols-4 gap-2">
@@ -825,6 +835,88 @@ export default function MerchantDashboardClient({
           {t('merchantDash.shareToast')}
         </div>
       )}
+    </div>
+  )
+}
+
+// ── Checklist d'activation marchand ─────────────────────────────────────────
+function OnboardingChecklist({
+  steps,
+  onOpenQr,
+}: {
+  steps: { hasProducts: boolean; hasQrSaved: boolean; hasFirstSale: boolean }
+  onOpenQr: () => void
+}) {
+  const STEPS = [
+    {
+      done: steps.hasProducts,
+      icon: '📦',
+      label: 'Ajouter vos premiers produits',
+      sub: 'Listez au moins 1 produit en vitrine',
+      href: '/merchant/products',
+      onClick: undefined as (() => void) | undefined,
+    },
+    {
+      done: steps.hasQrSaved,
+      icon: '📲',
+      label: 'Enregistrer votre QR Code',
+      sub: 'Téléchargez-le pour afficher en caisse',
+      href: undefined,
+      onClick: onOpenQr,
+    },
+    {
+      done: steps.hasFirstSale,
+      icon: '💳',
+      label: 'Encaisser votre premier client',
+      sub: 'Testez le flux de paiement GreenFlame',
+      href: '/merchant/receive',
+      onClick: undefined,
+    },
+  ]
+
+  const completed = STEPS.filter(s => s.done).length
+  const pct = Math.round((completed / STEPS.length) * 100)
+
+  return (
+    <div className="bg-gradient-to-br from-brand-50 to-brand-100 border border-brand-200 rounded-2xl p-4">
+      <div className="flex items-center justify-between mb-2">
+        <div>
+          <p className="font-bold text-brand-900 text-sm">🚀 Finalisez votre boutique</p>
+          <p className="text-xs text-brand-600 mt-0.5">{completed}/{STEPS.length} étapes complétées</p>
+        </div>
+        <span className="text-xl font-bold text-brand-700">{pct}%</span>
+      </div>
+
+      <div className="h-1.5 bg-brand-200 rounded-full mb-4 overflow-hidden">
+        <div
+          className="h-full bg-brand-600 rounded-full transition-all duration-500"
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+
+      <div className="space-y-2">
+        {STEPS.map((step, i) => {
+          const inner = (
+            <>
+              <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${step.done ? 'bg-green-100 text-green-700' : 'bg-brand-100 text-brand-600 border-2 border-brand-300'}`}>
+                {step.done ? '✓' : i + 1}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className={`text-sm font-medium leading-tight ${step.done ? 'text-gray-400 line-through' : 'text-brand-900'}`}>
+                  {step.icon} {step.label}
+                </p>
+                {!step.done && <p className="text-xs text-brand-500 mt-0.5">{step.sub}</p>}
+              </div>
+              {!step.done && <span className="text-brand-400 text-sm flex-shrink-0">→</span>}
+            </>
+          )
+          const cls = `flex items-center gap-3 py-2 px-3 rounded-xl transition-colors ${step.done ? '' : 'bg-white/60 hover:bg-white'}`
+
+          if (step.done) return <div key={i} className={cls}>{inner}</div>
+          if (step.onClick) return <button key={i} onClick={step.onClick} className={`w-full text-left ${cls}`}>{inner}</button>
+          return <a key={i} href={step.href} className={cls}>{inner}</a>
+        })}
+      </div>
     </div>
   )
 }

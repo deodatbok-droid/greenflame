@@ -57,12 +57,10 @@ function PayForm() {
   const supabase = createClient()
   const { t } = useLocale()
 
-  const PAYMENT_OPTIONS: { value: PayMethod; label: string; icon: string; desc: string; needsPhone: boolean }[] = [
-    { value: 'wallet_gf',      label: t('pay.wallet'),  icon: '🔥', desc: t('pay.wallet'),  needsPhone: false },
-    { value: 'mtn_momo',       label: t('pay.mtn'),     icon: '📱', desc: t('pay.mtn'),     needsPhone: true  },
-    { value: 'moov_money',     label: t('pay.moov'),    icon: '💚', desc: t('pay.moov'),    needsPhone: true  },
-    { value: 'celtiis',        label: t('pay.celtiis'), icon: '🔵', desc: t('pay.celtiis'), needsPhone: true  },
-    { value: 'cash_confirmed', label: t('pay.cash'),    icon: '💵', desc: t('pay.cash'),    needsPhone: false },
+  const MOBILE_OPERATORS: { value: PayMethod; label: string; icon: string }[] = [
+    { value: 'mtn_momo',   label: t('pay.mtn'),     icon: '🟡' },
+    { value: 'moov_money', label: t('pay.moov'),    icon: '💚' },
+    { value: 'celtiis',    label: t('pay.celtiis'), icon: '🔵' },
   ]
 
   const STEP_LABELS: Partial<Record<Step, string>> = {
@@ -97,6 +95,15 @@ function PayForm() {
   const scannerRef = useRef<{ stop: () => Promise<void> } | null>(null)
   const scannerActiveRef = useRef(false)
 
+  type PayCategory = 'wallet_gf' | 'mobile_money' | 'cash_confirmed'
+  const isMobileMoney = IS_MOBILE_MONEY.includes(paymentMethod)
+  const payCategory: PayCategory = isMobileMoney ? 'mobile_money' : paymentMethod as PayCategory
+  const PAYMENT_CATEGORIES: { value: PayCategory; label: string; icon: string; desc: string }[] = [
+    { value: 'wallet_gf',      label: t('pay.wallet'),   icon: '🔥', desc: t('pay.wallet')  },
+    { value: 'mobile_money',   label: 'Paiement Mobile', icon: '📱', desc: 'MTN MoMo · Moov Money · Celtiis' },
+    { value: 'cash_confirmed', label: t('pay.cash'),     icon: '💵', desc: t('pay.cash')    },
+  ]
+
   const amountNum = parseInt(amount.replace(/\D/g, '')) || 0
   // Taux effectif : produit > marchand > défaut (10%)
   const effectiveRate = product?.commission_rate ?? merchant?.commission_rate ?? GOVERNANCE.DEFAULT_COMMISSION_RATE
@@ -106,7 +113,14 @@ function PayForm() {
   // Montants exacts pour l'affichage (sans arrondi)
   const exactCashback = amountNum * effectiveRate * GOVERNANCE.CASHBACK_SHARE
   const cashbackDisplay = formatCashback(exactCashback)
-  const selectedOption = PAYMENT_OPTIONS.find(o => o.value === paymentMethod)!
+  const ALL_OPTIONS: { value: PayMethod; label: string; icon: string; needsPhone: boolean }[] = [
+    { value: 'wallet_gf',      label: t('pay.wallet'),   icon: '🔥', needsPhone: false },
+    { value: 'mtn_momo',       label: t('pay.mtn'),      icon: '🟡', needsPhone: true  },
+    { value: 'moov_money',     label: t('pay.moov'),     icon: '💚', needsPhone: true  },
+    { value: 'celtiis',        label: t('pay.celtiis'),  icon: '🔵', needsPhone: true  },
+    { value: 'cash_confirmed', label: t('pay.cash'),     icon: '💵', needsPhone: false },
+  ]
+  const selectedOption = ALL_OPTIONS.find(o => o.value === paymentMethod)!
   const insufficient = paymentMethod === 'wallet_gf' && walletBalance !== null && walletBalance < amountNum
 
   // Tracking page vue
@@ -330,37 +344,141 @@ function PayForm() {
 
   return (
     <div className="max-w-4xl mx-auto min-h-screen bg-gray-50">
+
+      {/* ── ÉTATS PLEIN ÉCRAN : processing + success ── */}
+      {step === 'processing' && (
+        <div className="min-h-screen flex flex-col items-center justify-center gap-6 px-6">
+          <div className="relative">
+            <div className="w-24 h-24 rounded-full bg-brand-100 flex items-center justify-center">
+              <Logo size={48} className="w-12 h-12" />
+            </div>
+            <div className="absolute inset-0 rounded-full border-4 border-brand-400 border-t-transparent animate-spin" />
+          </div>
+          <div className="text-center">
+            <p className="font-bold text-xl text-gray-900">{t('pay.processing')}</p>
+            <p className="text-gray-400 text-sm mt-1">
+              {merchant ? `${t('pay.payingAt')} ${merchant.business_name}` : ''}
+            </p>
+          </div>
+          <div className="bg-white rounded-2xl border border-gray-100 px-6 py-4 text-center">
+            <p className="text-3xl font-black text-gray-900">{formatFcfa(amountNum)}</p>
+            <p className="text-gray-400 text-sm mt-0.5">FCFA</p>
+          </div>
+        </div>
+      )}
+
+      {step === 'success' && (
+        <div className="min-h-screen flex flex-col items-center justify-center gap-6 px-6">
+          {/* Cercle succès animé */}
+          <div className="relative">
+            <div className="w-28 h-28 rounded-full bg-green-100 flex items-center justify-center">
+              <span className="text-5xl">✅</span>
+            </div>
+            <div className="absolute inset-0 rounded-full border-4 border-green-400 animate-ping opacity-20" />
+          </div>
+
+          <div className="text-center">
+            <h1 className="font-black text-2xl text-gray-900">{t('pay.successTitle')}</h1>
+            {merchant && (
+              <p className="text-gray-400 text-sm mt-1">{t('pay.payingAt')} <span className="font-semibold text-gray-600">{merchant.business_name}</span></p>
+            )}
+          </div>
+
+          {/* Reçu */}
+          <div className="w-full max-w-sm bg-white rounded-3xl border border-gray-100 overflow-hidden shadow-sm">
+            {/* Montant */}
+            <div className="bg-gradient-to-br from-brand-700 to-brand-600 px-6 py-5 text-center">
+              <p className="text-brand-200 text-xs font-semibold uppercase tracking-widest mb-1">Montant payé</p>
+              <p className="text-white text-4xl font-black">{formatFcfa(amountNum)}</p>
+              <p className="text-brand-300 text-sm mt-0.5">FCFA</p>
+            </div>
+
+            {/* Détails */}
+            <div className="divide-y divide-gray-50">
+              <div className="px-5 py-3 flex justify-between items-center">
+                <span className="text-sm text-gray-500">Mode</span>
+                <span className="text-sm font-semibold">{selectedOption.icon} {selectedOption.label}</span>
+              </div>
+              {merchant && (
+                <div className="px-5 py-3 flex justify-between items-center">
+                  <span className="text-sm text-gray-500">Marchand</span>
+                  <span className="text-sm font-semibold">{merchant.business_name}</span>
+                </div>
+              )}
+              {resultTx && resultTx.cashback > 0 && (
+                <div className="px-5 py-3 flex justify-between items-center bg-brand-50">
+                  <span className="text-sm font-semibold text-brand-700">🔥 Cashback gagné</span>
+                  <span className="text-sm font-bold text-brand-600">
+                    +{formatFcfa(resultTx.cashback)} {resultTx.isGfp ? 'GFP' : 'FCFA'}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Séparateur découpe ticket */}
+            <div className="flex items-center gap-1 px-2">
+              <div className="w-4 h-4 rounded-full bg-gray-50 border border-gray-100 -ml-2 flex-shrink-0" />
+              <div className="flex-1 border-t border-dashed border-gray-200" />
+              <div className="w-4 h-4 rounded-full bg-gray-50 border border-gray-100 -mr-2 flex-shrink-0" />
+            </div>
+
+            <div className="px-5 py-3 text-center">
+              <p className="text-xs text-gray-400">{new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="w-full max-w-sm space-y-3">
+            <button
+              onClick={reset}
+              className="w-full py-3.5 bg-brand-600 text-white rounded-2xl font-bold text-sm"
+            >
+              Nouveau paiement
+            </button>
+            <button
+              onClick={() => window.history.back()}
+              className="w-full py-3 text-gray-500 text-sm font-medium"
+            >
+              Retour
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ── CONTENU NORMAL (toutes les autres étapes) ── */}
+      {!['processing', 'success'].includes(step) && (
+        <>
       {/* Header */}
       <div className="bg-white border-b border-gray-100 px-4 py-4 pt-12 flex items-center gap-3 sticky top-0 z-10">
-        {!['processing', 'success'].includes(step) && (
-          <button
-            onClick={handleBack}
-            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-lg flex-shrink-0"
-          >
-            ←
-          </button>
-        )}
+        <button
+          onClick={handleBack}
+          className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-600 flex-shrink-0"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
         <div className="flex-1 min-w-0">
           <h1 className="font-bold text-lg leading-none">
-            {step === 'success' ? t('pay.successTitle') : step === 'processing' ? t('pay.processing') : STEP_LABELS[step] ?? t('pay.title')}
+            {STEP_LABELS[step] ?? t('pay.title')}
           </h1>
-          {merchant && !['processing', 'success'].includes(step) && (
-            <p className="text-xs text-gray-400 mt-0.5 truncate">{t('pay.payingAt')} {merchant.business_name}</p>
+          {merchant && (
+            <p className="text-xs text-gray-400 mt-0.5 truncate">{t('pay.payingAt')} <span className="font-medium text-gray-600">{merchant.business_name}</span></p>
           )}
         </div>
-        {amountNum > 0 && !['method', 'processing', 'success'].includes(step) && (
-          <span className="font-bold text-brand-600 flex-shrink-0">{formatFcfa(amountNum)} FCFA</span>
+        {amountNum > 0 && !['method'].includes(step) && (
+          <span className="font-bold text-brand-600 flex-shrink-0 bg-brand-50 px-3 py-1 rounded-xl text-sm">{formatFcfa(amountNum)}</span>
         )}
-        <Logo size={40} className="w-10 h-10 flex-shrink-0 ml-auto" />
+        <Logo size={36} className="w-9 h-9 flex-shrink-0 ml-1" />
       </div>
 
       {/* Progress bar */}
-      {!['processing', 'success'].includes(step) && progressIdx >= 0 && (
-        <div className="flex gap-1 px-4 pt-3">
+      {progressIdx >= 0 && (
+        <div className="flex gap-1 px-4 pt-3 pb-1">
           {progressSteps.map((s, i) => (
             <div
               key={s}
-              className={`h-1 flex-1 rounded-full transition-all ${i <= progressIdx ? 'bg-brand-600' : 'bg-gray-200'}`}
+              className={`h-1 flex-1 rounded-full transition-all duration-300 ${i <= progressIdx ? 'bg-brand-600' : 'bg-gray-200'}`}
             />
           ))}
         </div>
@@ -370,19 +488,17 @@ function PayForm() {
       {step === 'method' && (
         <button
           onClick={() => setStep('amount')}
-          className="relative w-full h-36 overflow-hidden block cursor-pointer group"
+          className="relative w-full h-32 overflow-hidden block cursor-pointer group mt-2"
         >
           <img
             src="/images/Chargement%20cam%C3%A9ra.png"
             alt=""
-            className="w-full h-full object-cover object-center"
+            className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-brand-900/30 via-brand-800/50 to-brand-900/80" />
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
+          <div className="absolute inset-0 bg-gradient-to-b from-brand-900/20 via-brand-800/50 to-brand-900/85" />
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-1.5">
             <span className="text-3xl drop-shadow-lg">📷</span>
-            <p className="text-white font-semibold text-sm drop-shadow-md">
-              {t('pay.scanQrBanner')}
-            </p>
+            <p className="text-white font-semibold text-sm drop-shadow-md">{t('pay.scanQrBanner')}</p>
             <span className="text-white/70 text-xs">{t('pay.scanQrBannerStart')}</span>
           </div>
         </button>
@@ -392,54 +508,89 @@ function PayForm() {
 
         {/* ── STEP: METHOD ── */}
         {step === 'method' && (
-          <div className="space-y-4">
+          <div className="space-y-3">
             <p className="text-gray-500 text-sm">
               {merchant ? `${t('pay.payingAt')} ${merchant.business_name}` : t('pay.chooseMethod')}
             </p>
 
             <div className="space-y-2">
-              {PAYMENT_OPTIONS.map(({ value, label, icon, desc }) => (
-                <button
-                  key={value}
-                  onClick={() => setPaymentMethod(value)}
-                  className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 transition-all text-left ${
-                    paymentMethod === value
-                      ? 'border-brand-500 bg-brand-50'
-                      : 'border-gray-200 bg-white hover:border-brand-300'
-                  }`}
-                >
-                  <span className="text-2xl w-8 text-center">{icon}</span>
-                  <div className="flex-1">
-                    <p className="font-semibold text-gray-900">{label}</p>
-                    {value === 'wallet_gf' && walletBalance !== null ? (
-                      <p className="text-xs text-brand-600 font-medium">{t('pay.walletBalance')} : {formatFcfa(walletBalance)} FCFA</p>
-                    ) : (
-                      <p className="text-xs text-gray-400">{desc}</p>
+              {PAYMENT_CATEGORIES.map(({ value, label, icon, desc }) => {
+                const isSelected = payCategory === value
+                return (
+                  <div key={value}>
+                    <button
+                      onClick={() => {
+                        if (value === 'mobile_money') {
+                          if (!isMobileMoney) setPaymentMethod('mtn_momo')
+                        } else {
+                          setPaymentMethod(value as PayMethod)
+                        }
+                      }}
+                      className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 transition-all text-left ${
+                        isSelected
+                          ? 'border-brand-500 bg-brand-50 shadow-sm'
+                          : 'border-gray-100 bg-white hover:border-gray-200'
+                      }`}
+                    >
+                      <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0 transition-colors ${
+                        isSelected ? 'bg-brand-100' : 'bg-gray-50'
+                      }`}>
+                        {icon}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className={`font-semibold text-sm ${isSelected ? 'text-brand-800' : 'text-gray-900'}`}>{label}</p>
+                        {value === 'wallet_gf' && walletBalance !== null ? (
+                          <p className="text-xs text-brand-600 font-medium mt-0.5">{formatFcfa(walletBalance)} disponibles</p>
+                        ) : (
+                          <p className="text-xs text-gray-400 mt-0.5">{desc}</p>
+                        )}
+                      </div>
+                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${
+                        isSelected ? 'border-brand-500 bg-brand-500' : 'border-gray-200'
+                      }`}>
+                        {isSelected && (
+                          <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        )}
+                      </div>
+                    </button>
+
+                    {/* Sous-opérateurs mobiles */}
+                    {value === 'mobile_money' && isSelected && (
+                      <div className="ml-4 mt-2 flex gap-2">
+                        {MOBILE_OPERATORS.map(op => (
+                          <button
+                            key={op.value}
+                            onClick={() => setPaymentMethod(op.value)}
+                            className={`flex-1 flex flex-col items-center gap-1 py-2 px-1 rounded-xl border-2 text-xs font-semibold transition-all ${
+                              paymentMethod === op.value
+                                ? 'border-brand-500 bg-brand-50 text-brand-800'
+                                : 'border-gray-100 bg-white text-gray-600 hover:border-gray-200'
+                            }`}
+                          >
+                            <span className="text-lg">{op.icon}</span>
+                            <span>{op.label}</span>
+                          </button>
+                        ))}
+                      </div>
                     )}
                   </div>
-                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
-                    paymentMethod === value ? 'border-brand-500 bg-brand-500' : 'border-gray-300'
-                  }`}>
-                    {paymentMethod === value && <span className="text-white text-xs">✓</span>}
-                  </div>
-                </button>
-              ))}
+                )
+              })}
             </div>
 
-            {selectedOption.needsPhone && (
-              <div>
-                <label className="label">
+            {isMobileMoney && (
+              <div className="bg-white rounded-2xl border border-gray-100 p-4 space-y-2">
+                <label className="text-xs font-semibold text-gray-600 uppercase tracking-wide">
                   {t('pay.mobileNumberDebit').replace('{method}', selectedOption.label)}
-                  <span className="text-gray-400 text-xs font-normal ml-1">— {t('pay.mobileNumberEditHint')}</span>
                 </label>
                 <PhoneInput
                   value={payerMsisdn}
                   onChange={setPayerMsisdn}
                   placeholder="97 00 00 00"
                 />
-                <p className="text-xs text-gray-400 mt-1">
-                  {t('pay.ussdNote')}
-                </p>
+                <p className="text-xs text-gray-400">{t('pay.ussdNote')}</p>
               </div>
             )}
 
@@ -725,6 +876,8 @@ function PayForm() {
         )}
 
       </div>
+      </>
+      )}
     </div>
   )
 }

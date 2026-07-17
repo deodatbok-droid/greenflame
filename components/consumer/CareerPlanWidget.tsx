@@ -563,7 +563,7 @@ export default function CareerPlanWidget() {
         </div>
         <div className="bg-gray-50 rounded-xl p-2.5 text-center">
           <p className="text-base font-black text-gray-900">{fmt(state.networkMerchantsCount)}</p>
-          <p className="text-[10px] text-gray-500 leading-tight">Marchands réseau</p>
+          <p className="text-[10px] text-gray-500 leading-tight">Marchands communauté</p>
         </div>
       </div>
 

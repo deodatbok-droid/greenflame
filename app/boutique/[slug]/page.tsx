@@ -66,7 +66,7 @@ export default async function BoutiquePage({ params }: Props) {
 
       {/* Header boutique */}
       <div className={`relative px-4 pt-10 pb-6 text-white ${isVip ? 'bg-gradient-to-br from-amber-600 to-amber-800' : isPro ? 'bg-gradient-to-br from-brand-700 to-brand-900' : 'bg-gradient-to-br from-gray-700 to-gray-900'}`}>
-        <div className="max-w-lg mx-auto">
+        <div className="max-w-4xl mx-auto">
           {/* Badge tier */}
           {isVip && (
             <span className="inline-flex items-center gap-1 bg-amber-400 text-amber-900 text-xs font-bold px-2 py-0.5 rounded-full mb-3">
@@ -95,7 +95,7 @@ export default async function BoutiquePage({ params }: Props) {
         </div>
       </div>
 
-      <div className="max-w-lg mx-auto px-4 py-6 space-y-6">
+      <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
 
         {/* CTA paiement GreenFlame */}
         <div className="bg-white rounded-2xl border border-gray-200 p-4 flex items-center gap-4 shadow-sm">
@@ -121,35 +121,33 @@ export default async function BoutiquePage({ params }: Props) {
         ) : (
           <div className="space-y-3">
             <h2 className="font-bold text-gray-900">{t('boutique.ourProducts')}</h2>
-            <div className="grid grid-cols-1 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
               {products.map(p => {
                 const isFeatured = p.featured_until && new Date(p.featured_until) > new Date()
                 return (
-                  <div key={p.id} className={`bg-white rounded-2xl border overflow-hidden shadow-sm flex gap-3 p-3 ${isFeatured ? 'border-amber-300' : 'border-gray-200'}`}>
+                  <div key={p.id} className={`bg-white rounded-2xl border overflow-hidden shadow-sm ${isFeatured ? 'border-amber-300' : 'border-gray-200'}`}>
                     {/* Image / emoji */}
-                    <div className="flex-shrink-0 w-16 h-16 rounded-xl overflow-hidden bg-gray-100 flex items-center justify-center">
+                    <div className="w-full aspect-square bg-gray-100 flex items-center justify-center overflow-hidden">
                       {p.image_url ? (
-                        <Image src={p.image_url} alt={p.name} width={64} height={64} className="object-cover w-full h-full" />
+                        <Image src={p.image_url} alt={p.name} width={200} height={200} className="object-cover w-full h-full" />
                       ) : (
-                        <span className="text-3xl">{p.emoji}</span>
+                        <span className="text-4xl">{p.emoji}</span>
                       )}
                     </div>
 
                     {/* Info */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-2">
-                        <p className="font-semibold text-gray-900 text-sm leading-tight">{p.name}</p>
-                        {isFeatured && (
-                          <span className="flex-shrink-0 text-[10px] bg-amber-100 text-amber-700 font-bold px-1.5 py-0.5 rounded-full">
-                            {t('boutique.newBadge')}
-                          </span>
-                        )}
-                      </div>
+                    <div className="p-3">
+                      {isFeatured && (
+                        <span className="text-[10px] bg-amber-100 text-amber-700 font-bold px-1.5 py-0.5 rounded-full mb-1 inline-block">
+                          {t('boutique.newBadge')}
+                        </span>
+                      )}
+                      <p className="font-semibold text-gray-900 text-sm leading-tight line-clamp-2">{p.name}</p>
                       {p.description && <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{p.description}</p>}
-                      <div className="flex items-center justify-between mt-2">
-                        <p className="font-bold text-brand-600">{formatFcfa(p.price_fcfa)}</p>
+                      <div className="mt-2">
+                        <p className="font-bold text-brand-600 text-sm">{formatFcfa(p.price_fcfa)}</p>
                         {p.stock_quantity !== null && (
-                          <p className={`text-xs ${p.stock_quantity === 0 ? 'text-red-400' : 'text-gray-400'}`}>
+                          <p className={`text-xs mt-0.5 ${p.stock_quantity === 0 ? 'text-red-400' : 'text-gray-400'}`}>
                             {p.stock_quantity === 0 ? t('boutique.outOfStock') : `${t('boutique.stock')} ${p.stock_quantity}`}
                           </p>
                         )}

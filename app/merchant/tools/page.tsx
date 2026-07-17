@@ -245,7 +245,7 @@ export default async function MerchantToolsPage() {
               <span className="text-3xl">🏦</span>
               <div className="flex items-center justify-center gap-1 mt-2">
                 <p className="font-semibold text-gray-500 text-sm">{t('merchant.tools.agentServiceTitle')}</p>
-                <span className="text-[9px] bg-blue-100 text-blue-700 font-bold px-1.5 py-0.5 rounded-full">10k</span>
+                <span className="text-[9px] bg-blue-100 text-blue-700 font-bold px-1.5 py-0.5 rounded-full">Gratuit</span>
               </div>
               <p className="text-xs text-gray-400 mt-1">{t('merchant.tools.agentServicePrice')}</p>
             </div>
@@ -258,7 +258,7 @@ export default async function MerchantToolsPage() {
                 <p className="font-semibold text-gray-500 text-sm">{t('merchant.tools.agentServiceTitle')}</p>
                 <span className="text-[9px] bg-amber-100 text-amber-700 font-bold px-1.5 py-0.5 rounded-full">VIP requis</span>
               </div>
-              <p className="text-xs text-gray-400 mt-1">VIP requis + 10 000 FCFA activation</p>
+              <p className="text-xs text-gray-400 mt-1">VIP requis · activation gratuite en VIP</p>
             </div>
           </Link>
         )}
@@ -402,7 +402,7 @@ export default async function MerchantToolsPage() {
             <div className="card text-center py-4 hover:border-brand-300 border-brand-200 bg-brand-50 transition-colors cursor-pointer">
               <span className="text-3xl">✨</span>
               <p className="font-semibold text-brand-800 mt-2 text-sm">Outil sectoriel personnalisé</p>
-              <p className="text-[10px] text-brand-600 font-medium mt-1.5">5 000/mois · 50 000/an · Configurer →</p>
+              <p className="text-[10px] text-brand-600 font-medium mt-1.5">10 000 FCFA/an · Configurer →</p>
             </div>
           </Link>
         )}
@@ -418,7 +418,7 @@ export default async function MerchantToolsPage() {
                 {t('merchant.tools.toolActiveExpires').replace('{date}', fmtExpiry(toolExpiry['salon']) ?? '')}
               </p>
             ) : (
-              <p className="text-[10px] text-orange-500 font-medium mt-1.5">5 000/mois · 50 000/an</p>
+              <p className="text-[10px] text-orange-500 font-medium mt-1.5">10 000 FCFA/an</p>
             )}
           </div>
         </Link>
@@ -433,7 +433,7 @@ export default async function MerchantToolsPage() {
                 {t('merchant.tools.toolActiveExpires').replace('{date}', fmtExpiry(toolExpiry['couture']) ?? '')}
               </p>
             ) : (
-              <p className="text-[10px] text-orange-500 font-medium mt-1.5">5 000/mois · 50 000/an</p>
+              <p className="text-[10px] text-orange-500 font-medium mt-1.5">10 000 FCFA/an</p>
             )}
           </div>
         </Link>
@@ -448,7 +448,7 @@ export default async function MerchantToolsPage() {
                 {t('merchant.tools.toolActiveExpires').replace('{date}', fmtExpiry(toolExpiry['resto']) ?? '')}
               </p>
             ) : (
-              <p className="text-[10px] text-orange-500 font-medium mt-1.5">5 000/mois · 50 000/an</p>
+              <p className="text-[10px] text-orange-500 font-medium mt-1.5">10 000 FCFA/an</p>
             )}
           </div>
         </Link>
@@ -463,7 +463,7 @@ export default async function MerchantToolsPage() {
                 {t('merchant.tools.toolActiveExpires').replace('{date}', fmtExpiry(toolExpiry['btp']) ?? '')}
               </p>
             ) : (
-              <p className="text-[10px] text-orange-500 font-medium mt-1.5">5 000/mois · 50 000/an</p>
+              <p className="text-[10px] text-orange-500 font-medium mt-1.5">10 000 FCFA/an</p>
             )}
           </div>
         </Link>

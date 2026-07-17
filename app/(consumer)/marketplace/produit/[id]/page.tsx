@@ -68,7 +68,7 @@ export default async function ProductPage({ params }: Props) {
     ? '/merchant/upgrade'
     : user
     ? `/pay?merchant_id=${merchant.id}&amount=${p.price_fcfa}&product_id=${p.id}`
-    : '/register'
+    : `/register?next=/marketplace/produit/${id}`
 
   return (
     <div className="max-w-2xl mx-auto pb-32">
@@ -233,7 +233,7 @@ export default async function ProductPage({ params }: Props) {
                     : t('marketplace.createAccountToBuy')}
                 </button>
               </Link>
-              {user && !isSubscription && (
+              {!isSubscription && !outOfStock && (
                 <AddToCartButton
                   productId={p.id}
                   merchantId={merchant.id}
@@ -258,9 +258,10 @@ export default async function ProductPage({ params }: Props) {
           {!user && !isSubscription && (
             <p className="text-center text-xs text-gray-400 mt-2">
               {t('marketplace.alreadyMember')}{' '}
-              <Link href="/login" className="text-brand-600 font-medium hover:underline">
+              <Link href={`/login?next=/marketplace/produit/${id}`} className="text-brand-600 font-medium hover:underline">
                 {t('common.signIn')}
               </Link>
+
             </p>
           )}
         </div>

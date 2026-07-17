@@ -14,7 +14,7 @@ const FICTIONAL_CHAIN = [
   { tag: 'L3',   name: 'Fatou DIALLO',            role: 'network'  as const, share: 0.08 },
   { tag: 'L4',   name: 'Moussa SABI',             role: 'network'  as const, share: 0.06 },
   { tag: 'L5',   name: 'Binta ALABI',             role: 'network'  as const, share: 0.04 },
-  { tag: '🏆',   name: 'Pool Récompenses',        role: 'platform' as const, share: 0.03 },
+  { tag: '🎉',   name: 'Pool Événements',          role: 'platform' as const, share: 0.03 },
   { tag: '🔥',   name: 'GreenFlame (plateforme)', role: 'platform' as const, share: 0.45 },
 ]
 

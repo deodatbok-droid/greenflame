@@ -2,6 +2,7 @@ import { createServiceClient } from '@/lib/supabase/server'
 import { formatFcfa } from '@/lib/utils/format'
 import TransactionsTable from './TransactionsTable'
 import { requireAdmin } from '@/lib/utils/admin-guard'
+import Link from 'next/link'
 
 export interface DistRow {
   distribution_type: string
@@ -126,6 +127,11 @@ export default async function AdminTransactionsPage() {
 
   return (
     <div className="max-w-6xl space-y-6">
+      <div className="flex items-center gap-3">
+        <Link href="/admin/dashboard" className="text-gray-400 hover:text-white text-sm">← Dashboard</Link>
+        <span className="text-gray-600">/</span>
+        <span className="text-gray-400 text-sm">Transactions</span>
+      </div>
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-white">Transactions</h1>
         {(fraudHigh.length > 0 || fraudMedium.length > 0) && (

@@ -1,6 +1,7 @@
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { formatFcfa } from '@/lib/utils/format'
 import { redirect } from 'next/navigation'
+import Link from 'next/link'
 import CashPendingPanel, { type CashPendingItem } from './CashPendingPanel'
 import FloatEntryForm from './FloatEntryForm'
 
@@ -390,6 +391,13 @@ export default async function ReconciliationPage() {
 
   return (
     <div className="max-w-5xl space-y-6">
+
+      {/* Breadcrumb */}
+      <div className="flex items-center gap-3">
+        <Link href="/admin/dashboard" className="text-gray-400 hover:text-white text-sm">← Dashboard</Link>
+        <span className="text-gray-600">/</span>
+        <span className="text-gray-400 text-sm">Réconciliation</span>
+      </div>
 
       {/* ── En-tête ── */}
       <div className="flex items-start justify-between flex-wrap gap-3">

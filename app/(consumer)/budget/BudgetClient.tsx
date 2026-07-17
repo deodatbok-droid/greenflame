@@ -11,6 +11,8 @@ import {
   GOAL_ICONS,
   GOAL_CATEGORIES,
 } from '@/lib/budget/categories'
+import { useToast } from '@/components/ui/Toast'
+import { SectionHeader } from '@/components/ui/SectionHeader'
 
 // ── TYPES ────────────────────────────────────────────────────────────────────
 
@@ -105,6 +107,7 @@ export default function BudgetClient({
   initialGfTxns,
 }: Props) {
   const router = useRouter()
+  const toast  = useToast()
   const [month,   setMonthState] = useState(initialMonth)
   const [tab,     setTab]        = useState<Tab>('month')
   const [entries, setEntries]    = useState<BudgetEntry[]>(initialEntries)
@@ -113,11 +116,12 @@ export default function BudgetClient({
   const [gfTxns,  setGfTxns]    = useState<GfTxn[]>(initialGfTxns)
 
   // Modals
-  const [showAdd,       setShowAdd]       = useState(false)
-  const [showLimit,     setShowLimit]     = useState<string | null>(null)
-  const [showGoalModal, setShowGoalModal] = useState(false)
-  const [editGoal,      setEditGoal]      = useState<SavingsGoal | null>(null)
-  const [loading,       setLoading]       = useState(false)
+  const [showAdd,           setShowAdd]           = useState(false)
+  const [showLimit,         setShowLimit]         = useState<string | null>(null)
+  const [showGoalModal,     setShowGoalModal]     = useState(false)
+  const [editGoal,          setEditGoal]          = useState<SavingsGoal | null>(null)
+  const [loading,           setLoading]           = useState(false)
+  const [showAllCategories, setShowAllCategories] = useState(false)
 
   // ── Navigation mois ───────────────────────────────────────────────────────
 
@@ -181,6 +185,7 @@ export default function BudgetClient({
   const deleteEntry = useCallback(async (id: string) => {
     await fetch(`/api/budget/entries/${id}`, { method: 'DELETE' })
     setEntries(prev => prev.filter(e => e.id !== id))
+    toast.success('Entrée supprimée')
   }, [])
 
   const setLimit = useCallback(async (category: string, monthly_limit_fcfa: number) => {
@@ -196,6 +201,7 @@ export default function BudgetClient({
       return idx >= 0 ? prev.map((l, i) => i === idx ? updated : l) : [...prev, updated]
     })
     setShowLimit(null)
+    toast.success('Plafond enregistré')
   }, [])
 
   const saveGoal = useCallback(async (body: Partial<SavingsGoal>) => {
@@ -246,6 +252,7 @@ export default function BudgetClient({
 
       {/* ── HEADER ── */}
       <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-4 sticky top-0 z-20">
+        <div className="max-w-2xl mx-auto">
         <div className="flex items-center gap-3 mb-3">
           <Link href="/dashboard" className="p-2 -ml-2 text-gray-500">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
@@ -296,9 +303,10 @@ export default function BudgetClient({
             </button>
           ))}
         </div>
+        </div>
       </div>
 
-      <div className="px-4 pt-4 space-y-4">
+      <div className="max-w-2xl mx-auto px-4 pt-4 space-y-4">
         {loading && (
           <div className="flex justify-center py-8">
             <div className="w-6 h-6 border-2 border-brand-500 border-t-transparent rounded-full animate-spin" />
@@ -349,65 +357,68 @@ function MonthView({
   setLimit: (cat: string, amt: number) => Promise<void>
 }) {
   const [limitInput, setLimitInput] = useState('')
+  const [showAllCategories, setShowAllCategories] = useState(false)
 
   const totalSpend = totalExpense + totalGfSpend
 
   return (
     <div className="space-y-4">
 
-      {/* BILAN MENSUEL */}
-      <div className="bg-white rounded-2xl p-4 border border-gray-100 space-y-3">
-        <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Bilan du mois</h2>
+      {/* ── HERO CARD BILAN ── */}
+      <div className="relative rounded-3xl overflow-hidden text-white shadow-lg">
+        <div className={`absolute inset-0 ${netBalance < 0 ? 'bg-gradient-to-br from-red-700 to-red-600' : netBalance === 0 && totalIncome === 0 ? 'bg-gradient-to-br from-gray-700 to-gray-600' : 'bg-gradient-to-br from-emerald-700 via-emerald-600 to-teal-500'}`} />
+        <div className="absolute -top-6 -right-6 w-32 h-32 rounded-full bg-white/10" />
+        <div className="absolute -bottom-8 -left-3 w-24 h-24 rounded-full bg-white/5" />
+        <div className="relative z-10 p-5">
+          <p className="text-emerald-200/80 text-xs font-semibold uppercase tracking-widest mb-1">
+            {netBalance >= 0 ? 'Solde net du mois' : '⚠️ Dépassement de budget'}
+          </p>
+          <p className="text-4xl font-black tracking-tight leading-none">
+            {netBalance >= 0 ? '+' : ''}{formatFcfa(netBalance)}
+          </p>
+          <p className="text-emerald-200/70 text-sm mt-0.5">FCFA</p>
 
-        <div className="grid grid-cols-3 gap-2">
-          <div className="bg-green-50 rounded-xl p-3 text-center">
-            <p className="text-xs text-green-600 font-medium mb-0.5">Revenus</p>
-            <p className="text-base font-bold text-green-700">{formatFcfa(totalIncome)}</p>
+          <div className="flex items-center gap-4 mt-4 pt-4 border-t border-white/10">
+            <div className="flex-1">
+              <p className="text-emerald-200/60 text-[10px] uppercase tracking-wide">Revenus</p>
+              <p className="text-white font-bold text-sm">+{formatFcfa(totalIncome)}</p>
+            </div>
+            <div className="w-px h-8 bg-white/10" />
+            <div className="flex-1">
+              <p className="text-emerald-200/60 text-[10px] uppercase tracking-wide">Dépenses</p>
+              <p className="text-white font-bold text-sm">−{formatFcfa(totalSpend)}</p>
+            </div>
+            {walletGf > 0 && (
+              <>
+                <div className="w-px h-8 bg-white/10" />
+                <Link href="/wallet" className="flex-1 text-right">
+                  <p className="text-emerald-200/60 text-[10px] uppercase tracking-wide">Wallet GF</p>
+                  <p className="text-white font-bold text-sm">{formatFcfa(walletGf)}</p>
+                </Link>
+              </>
+            )}
           </div>
-          <div className="bg-red-50 rounded-xl p-3 text-center">
-            <p className="text-xs text-red-500 font-medium mb-0.5">Dépenses</p>
-            <p className="text-base font-bold text-red-600">{formatFcfa(totalSpend)}</p>
-          </div>
-          <div className={`rounded-xl p-3 text-center ${netBalance >= 0 ? 'bg-blue-50' : 'bg-orange-50'}`}>
-            <p className={`text-xs font-medium mb-0.5 ${netBalance >= 0 ? 'text-blue-600' : 'text-orange-600'}`}>Solde net</p>
-            <p className={`text-base font-bold ${netBalance >= 0 ? 'text-blue-700' : 'text-orange-600'}`}>
-              {netBalance >= 0 ? '+' : ''}{formatFcfa(netBalance)}
-            </p>
-          </div>
-        </div>
 
-        {/* Wallet GF disponible */}
-        {walletGf > 0 && (
-          <Link href="/wallet" className="flex items-center justify-between bg-brand-50 border border-brand-100 rounded-xl px-3 py-2.5">
-            <div className="flex items-center gap-2">
-              <span className="text-base">🌱</span>
-              <div>
-                <p className="text-xs font-semibold text-brand-700">Portefeuille GreenFlame</p>
-                <p className="text-xs text-brand-500">Utilisables pour tes dépenses sur GF</p>
+          {/* Barre budget — visible uniquement si revenus saisis */}
+          {totalIncome > 0 && (
+            <div className="mt-3">
+              <div className="h-1.5 bg-white/20 rounded-full overflow-hidden">
+                <div
+                  className={`h-full rounded-full transition-all duration-700 ${totalSpend > totalIncome ? 'bg-red-400' : 'bg-white'}`}
+                  style={{ width: `${Math.min((totalSpend / totalIncome) * 100, 100)}%` }}
+                />
               </div>
+              <p className="text-emerald-200/70 text-[10px] mt-1">
+                {Math.round((totalSpend / totalIncome) * 100)}% de tes revenus dépensés · Appuie sur ⊕ pour saisir une entrée
+              </p>
             </div>
-            <span className="text-sm font-bold text-brand-700">{formatFcfa(walletGf)}</span>
-          </Link>
-        )}
-
-        {/* Barre globale revenus vs dépenses */}
-        {totalIncome > 0 && (
-          <div>
-            <div className="flex justify-between text-xs text-gray-400 mb-1">
-              <span>0</span>
-              <span>{formatFcfa(totalIncome)}</span>
-            </div>
-            <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-              <div
-                className={`h-full rounded-full transition-all duration-700 ${totalSpend > totalIncome ? 'bg-red-500' : 'bg-brand-500'}`}
-                style={{ width: `${Math.min((totalSpend / totalIncome) * 100, 100)}%` }}
-              />
-            </div>
-            <p className="text-xs text-gray-400 mt-1 text-right">
-              {totalIncome > 0 ? Math.round((totalSpend / totalIncome) * 100) : 0}% de tes revenus dépensés
+          )}
+          {totalIncome === 0 && (
+            <p className="text-emerald-200/70 text-[10px] mt-3">
+              Saisis tes revenus du mois pour voir ton bilan complet. Appuie sur ⊕ en haut à droite.
             </p>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* ACHATS SUR GreenFlame ce mois */}
@@ -427,7 +438,10 @@ function MonthView({
       {/* DÉPENSES PAR CATÉGORIE */}
       <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
         <div className="px-4 pt-4 pb-2">
-          <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Dépenses par catégorie</h2>
+          <SectionHeader
+            title="Dépenses par catégorie"
+            hint="Appuie sur « Plafond » pour fixer un budget mensuel par poste."
+          />
         </div>
         <div className="divide-y divide-gray-50">
           {EXPENSE_CATEGORIES.map(cat => {
@@ -435,6 +449,9 @@ function MonthView({
             const limit = limitsMap[cat.key]
             const pct   = limit ? Math.min((spent / limit) * 100, 100) : 0
             const over  = limit ? spent > limit : false
+            // Masquer les catégories sans activité ET sans plafond (sauf si showAllCategories)
+            const isVisible = spent > 0 || !!limit || showAllCategories
+            if (!isVisible) return null
             return (
               <div key={cat.key} className="px-4 py-3">
                 <div className="flex items-center gap-3">
@@ -471,14 +488,14 @@ function MonthView({
                   <div className="flex items-center gap-1 ml-1">
                     <button
                       onClick={() => { setShowLimit(showLimit === cat.key ? null : cat.key); setLimitInput(String(limit ?? '')) }}
-                      className="text-xs text-gray-400 hover:text-brand-600 px-1 py-0.5 rounded"
-                      title="Définir un plafond"
+                      className="text-xs text-gray-500 hover:text-brand-600 px-2 py-1 rounded-lg bg-gray-50 hover:bg-brand-50 transition-colors font-medium whitespace-nowrap"
+                      title="Définir un plafond mensuel"
                     >
-                      {limit ? '✏️' : '⚙️'}
+                      {limit ? 'Plafond ✏' : 'Plafond'}
                     </button>
                     {cat.gfPath && (
-                      <Link href={cat.gfPath} className="text-xs px-1.5 py-0.5 bg-brand-50 text-brand-600 rounded font-medium hover:bg-brand-100 transition-colors whitespace-nowrap">
-                        GF →
+                      <Link href={cat.gfPath} className="text-xs px-2 py-1 bg-brand-50 text-brand-600 rounded-lg font-medium hover:bg-brand-100 transition-colors whitespace-nowrap">
+                        Acheter →
                       </Link>
                     )}
                   </div>
@@ -496,8 +513,35 @@ function MonthView({
               </div>
             )
           })}
+
+          {/* État vide — aucune dépense ce mois */}
+          {Object.keys(expenseByCategory).length === 0 && (
+            <div className="px-4 py-6 text-center">
+              <p className="text-2xl mb-2">📊</p>
+              <p className="text-sm font-semibold text-gray-600">Aucune dépense enregistrée</p>
+              <p className="text-xs text-gray-400 mt-1">Appuie sur ⊕ pour saisir tes premières dépenses du mois.</p>
+            </div>
+          )}
         </div>
       </div>
+
+      {/* BOUTON "VOIR TOUTES LES CATÉGORIES" — toggle */}
+      {!showAllCategories && EXPENSE_CATEGORIES.some(c => !(expenseByCategory[c.key] || limitsMap[c.key])) && (
+        <button
+          onClick={() => setShowAllCategories(true)}
+          className="w-full text-xs text-gray-400 hover:text-gray-600 py-2 transition-colors"
+        >
+          + Voir toutes les catégories et fixer des plafonds
+        </button>
+      )}
+      {showAllCategories && (
+        <button
+          onClick={() => setShowAllCategories(false)}
+          className="w-full text-xs text-gray-400 hover:text-gray-600 py-2 transition-colors"
+        >
+          ↑ Masquer les catégories vides
+        </button>
+      )}
 
       {/* REVENUS PAR CATÉGORIE */}
       {Object.keys(incomeByCategory).length > 0 && (
@@ -582,6 +626,10 @@ function JournalView({
 
   return (
     <div className="space-y-3">
+      <SectionHeader
+        title="Journal des entrées"
+        hint="Toutes tes saisies manuelles + tes achats GreenFlame, dans l'ordre chronologique."
+      />
       {/* Filtre */}
       <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
         {(['all','income','expense'] as const).map(f => (
@@ -598,10 +646,14 @@ function JournalView({
       </div>
 
       {items.length === 0 && (
-        <div className="text-center py-12 text-gray-400">
-          <p className="text-3xl mb-2">📋</p>
-          <p className="text-sm">Aucune entrée ce mois-ci</p>
-          <p className="text-xs mt-1">Appuie sur + pour ajouter</p>
+        <div className="bg-white rounded-2xl border border-gray-100 py-12 px-4 text-center">
+          <p className="text-3xl mb-3">📋</p>
+          <p className="text-sm font-semibold text-gray-700">
+            {filter === 'income' ? 'Aucun revenu saisi ce mois' : filter === 'expense' ? 'Aucune dépense enregistrée' : 'Aucune entrée ce mois'}
+          </p>
+          <p className="text-xs text-gray-400 mt-1 max-w-xs mx-auto">
+            Appuie sur le bouton ⊕ en haut à droite pour saisir un revenu ou une dépense.
+          </p>
         </div>
       )}
 
@@ -641,9 +693,11 @@ function JournalView({
                 </span>
                 <button
                   onClick={() => onDelete(e.id)}
-                  className="opacity-0 group-hover:opacity-100 text-gray-300 hover:text-red-500 transition-all text-xs p-1"
+                  className="text-gray-300 active:text-red-500 hover:text-red-500 transition-colors p-2 -mr-1 rounded-lg touch-manipulation"
+                  aria-label="Supprimer"
+                  title="Supprimer cette entrée"
                 >
-                  ✕
+                  🗑
                 </button>
               </div>
             </div>
@@ -671,23 +725,21 @@ function GoalsView({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-sm font-semibold text-gray-700">Mes objectifs d'épargne</h2>
-        <button
-          onClick={onAdd}
-          className="text-xs font-semibold text-brand-600 flex items-center gap-1"
-        >
-          <span>+</span> Nouvel objectif
-        </button>
-      </div>
+      <SectionHeader
+        title="Objectifs d'épargne"
+        hint="Fixe une cible et suis tes versements mois après mois."
+        action={{ label: '+ Objectif', onClick: onAdd }}
+      />
 
       {goals.length === 0 && (
-        <div className="text-center py-12 bg-white rounded-2xl border border-gray-100">
+        <div className="text-center py-14 px-4 bg-white rounded-2xl border border-gray-100">
           <p className="text-4xl mb-3">🎯</p>
-          <p className="text-sm font-semibold text-gray-700">Aucun objectif pour l'instant</p>
-          <p className="text-xs text-gray-400 mt-1 mb-4">Scolarité, logement, fonds d'urgence…</p>
-          <button onClick={onAdd} className="px-4 py-2 bg-brand-600 text-white text-sm rounded-xl font-semibold">
-            Créer un objectif
+          <p className="text-sm font-bold text-gray-800">Pas encore d'objectif d'épargne</p>
+          <p className="text-xs text-gray-400 mt-1.5 mb-5 max-w-xs mx-auto leading-relaxed">
+            Un objectif, c'est simple : tu fixes un montant cible, une date, et tu notes chaque versement ici. Bon pour la scolarité, le logement, un fonds d'urgence, ou un investissement.
+          </p>
+          <button onClick={onAdd} className="px-5 py-2.5 bg-brand-600 text-white text-sm rounded-xl font-semibold hover:bg-brand-700 transition-colors">
+            Créer mon premier objectif
           </button>
         </div>
       )}
@@ -774,19 +826,21 @@ function GoalsView({
                   </button>
                 </div>
 
-                {/* Lien tontine */}
-                <Link
-                  href={`/tontines?amount=${Math.round(remaining / 12)}&category=${goal.goal_category ?? ''}`}
-                  className="mt-2 flex items-center justify-between bg-amber-50 border border-amber-100 rounded-xl px-3 py-2 group hover:bg-amber-100 transition-colors"
-                >
-                  <div>
-                    <p className="text-xs font-semibold text-amber-700">Épargner collectivement</p>
-                    <p className="text-xs text-amber-600">Rejoindre une tontine adaptée</p>
-                  </div>
-                  <svg className="w-4 h-4 text-amber-500 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                  </svg>
-                </Link>
+                {/* Lien tontine — visible seulement si l'objectif est loin d'être atteint */}
+                {remaining > 0 && pct < 50 && (
+                  <Link
+                    href={`/tontine?amount=${Math.round(remaining / 12)}&category=${goal.goal_category ?? ''}`}
+                    className="mt-2 flex items-center justify-between bg-amber-50 border border-amber-100 rounded-xl px-3 py-2 group hover:bg-amber-100 transition-colors"
+                  >
+                    <div>
+                      <p className="text-xs font-semibold text-amber-700">🤝 Atteindre cet objectif en groupe</p>
+                      <p className="text-xs text-amber-600 mt-0.5">Une tontine est un groupe d'épargne collective — chacun cotise, un membre reçoit à tour de rôle.</p>
+                    </div>
+                    <svg className="w-4 h-4 text-amber-500 group-hover:translate-x-0.5 transition-transform flex-shrink-0 ml-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </Link>
+                )}
               </>
             )}
           </div>

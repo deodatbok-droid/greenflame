@@ -53,7 +53,7 @@ export function ProductCard({
     ? '#'
     : userId
     ? `/pay?merchant_id=${product.merchant_id}&amount=${product.price_fcfa}&product_id=${product.id}`
-    : '/register'
+    : `/register?next=/marketplace/produit/${product.id}`
 
   return (
     <div
@@ -95,7 +95,7 @@ export function ProductCard({
           )}
           {product.is_in_network && !(product.community_boost) && (
             <span className="bg-brand-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-lg">
-              Réseau
+              Communauté
             </span>
           )}
         </div>

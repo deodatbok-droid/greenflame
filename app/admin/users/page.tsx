@@ -1,6 +1,7 @@
 import { createServiceClient } from '@/lib/supabase/server'
 import UsersTable from './UsersTable'
 import { requireAdmin } from '@/lib/utils/admin-guard'
+import Link from 'next/link'
 
 export default async function AdminUsersPage() {
   await requireAdmin()
@@ -22,9 +23,14 @@ export default async function AdminUsersPage() {
 
   return (
     <div className="space-y-6 max-w-6xl">
+      <div className="flex items-center gap-3">
+        <Link href="/admin/dashboard" className="text-gray-400 hover:text-white text-sm">← Dashboard</Link>
+        <span className="text-gray-600">/</span>
+        <span className="text-gray-400 text-sm">Membres</span>
+      </div>
       <div>
         <h1 className="text-2xl font-bold text-white">Membres</h1>
-        <p className="text-gray-400 text-sm mt-1">{userList.length} compte(s) enregistre(s)</p>
+        <p className="text-gray-400 text-sm mt-1">{userList.length} compte(s) enregistré(s)</p>
       </div>
       <UsersTable users={userList} />
     </div>

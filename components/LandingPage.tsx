@@ -9,6 +9,7 @@ import LangToggle from '@/components/ui/LangToggle'
 export default function LandingPage({ isLoggedIn = false }: { isLoggedIn?: boolean }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [showInstall, setShowInstall] = useState(false)
+  const [showNetworks, setShowNetworks] = useState(false)
   const { t } = useLocale()
 
   useEffect(() => {
@@ -52,7 +53,7 @@ export default function LandingPage({ isLoggedIn = false }: { isLoggedIn?: boole
   const STATS = [
     { value: t('landing.stat1Value'), label: t('landing.stat1Label') },
     { value: '100%',                  label: t('landing.stat2Label') },
-    { value: 'MTN · Moov · Celtiis', label: t('landing.stat3Label') },
+    { value: t('landing.stat3Value'), label: t('landing.stat3Label') },
     { value: t('landing.stat4Value'), label: t('landing.stat4Label') },
   ]
 
@@ -190,13 +191,15 @@ export default function LandingPage({ isLoggedIn = false }: { isLoggedIn?: boole
               {t('landing.heroDemo')}
             </Link>
           </div>
-          <div className="mt-4 flex justify-center">
-            <button onClick={handleInstall} className="inline-flex items-center gap-2 text-green-200 text-sm hover:text-white transition-colors pointer-events-auto">
+          <div className="mt-5 flex flex-wrap justify-center gap-3">
+            <Link href="/marketplace" className="inline-flex items-center gap-2 bg-white/15 hover:bg-white/25 border border-white/25 backdrop-blur-sm text-white text-sm font-semibold px-4 py-2 rounded-2xl transition-all pointer-events-auto">
+              <span>🛍️</span>
+              <span>{t('landing.heroMarket')}</span>
+              <span className="text-green-300 text-xs">→</span>
+            </Link>
+            <button onClick={handleInstall} className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-green-100 text-sm font-medium px-4 py-2 rounded-2xl transition-all pointer-events-auto">
               <span>📲</span>
-              <span>Installer l&apos;application</span>
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
-              </svg>
+              <span>Installer l&apos;app</span>
             </button>
           </div>
 
@@ -215,6 +218,70 @@ export default function LandingPage({ isLoggedIn = false }: { isLoggedIn?: boole
             <span>{t('landing.heroCheck2')}</span>
             <span>{t('landing.heroCheck3')}</span>
           </div>
+        </div>
+      </section>
+
+      {/* ── ACHETEURS vs MARCHANDS ── */}
+      <section className="py-12 md:py-20 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-8">
+
+          {/* Acheteurs */}
+          <div className="bg-gradient-to-br from-green-700 to-green-900 rounded-3xl p-8 text-white">
+            <div className="text-4xl mb-4">🛍️</div>
+            <h3 className="text-2xl font-bold mb-2">{t('landing.buyerTitle')}</h3>
+            <p className="text-green-200 text-sm mb-6">{t('landing.buyerSubtitle')}</p>
+            <ul className="space-y-3 mb-8">
+              {BUYER_FEATURES.map((f) => (
+                <li key={f.text} className="flex items-start gap-3">
+                  <span className="text-xl flex-shrink-0">{f.icon}</span>
+                  {f.icon === '📱' ? (
+                    <div className="flex-1">
+                      <button
+                        onClick={() => setShowNetworks(!showNetworks)}
+                        className="text-green-100 text-sm leading-relaxed hover:text-white transition-colors text-left flex items-center gap-1"
+                      >
+                        {f.text}
+                        <span className="text-green-400 text-xs ml-1">{showNetworks ? '▾' : '▸'}</span>
+                      </button>
+                      {showNetworks && (
+                        <div className="mt-1.5 flex gap-1.5 flex-wrap">
+                          {['MTN MoMo', 'Moov Money', 'Celtiis'].map(n => (
+                            <span key={n} className="text-[11px] bg-green-800/60 text-green-200 px-2 py-0.5 rounded-full border border-green-700/50">
+                              {n}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <span className="text-green-100 text-sm leading-relaxed">{f.text}</span>
+                  )}
+                </li>
+              ))}
+            </ul>
+            <Link href="/register" className="inline-block bg-white text-green-700 font-semibold px-6 py-3 rounded-xl hover:bg-green-50 transition-colors text-sm">
+              {t('landing.buyerCta')}
+            </Link>
+          </div>
+
+          {/* Marchands */}
+          <div className="bg-gradient-to-br from-amber-500 to-orange-600 rounded-3xl p-8 text-white">
+            <div className="text-4xl mb-4">🏪</div>
+            <h3 className="text-2xl font-bold mb-2">{t('landing.merchantTitle')}</h3>
+            <p className="text-amber-100 text-sm mb-6">{t('landing.merchantSubtitle')}</p>
+            <ul className="space-y-3 mb-8">
+              {MERCHANT_FEATURES.map((f) => (
+                <li key={f.text} className="flex items-start gap-3">
+                  <span className="text-xl flex-shrink-0">{f.icon}</span>
+                  <span className="text-amber-100 text-sm leading-relaxed">{f.text}</span>
+                </li>
+              ))}
+            </ul>
+            <Link href="/register" className="inline-block bg-white text-orange-600 font-semibold px-6 py-3 rounded-xl hover:bg-amber-50 transition-colors text-sm">
+              {t('landing.merchantCta')}
+            </Link>
+          </div>
+
         </div>
       </section>
 
@@ -288,49 +355,6 @@ export default function LandingPage({ isLoggedIn = false }: { isLoggedIn?: boole
           <p className="text-center text-xs text-gray-400 mt-6">
             {t('landing.feesNote')}
           </p>
-        </div>
-      </section>
-
-      {/* ── ACHETEURS vs MARCHANDS ── */}
-      <section className="py-12 md:py-20 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-8">
-
-          {/* Acheteurs */}
-          <div className="bg-gradient-to-br from-green-700 to-green-900 rounded-3xl p-8 text-white">
-            <div className="text-4xl mb-4">🛍️</div>
-            <h3 className="text-2xl font-bold mb-2">{t('landing.buyerTitle')}</h3>
-            <p className="text-green-200 text-sm mb-6">{t('landing.buyerSubtitle')}</p>
-            <ul className="space-y-3 mb-8">
-              {BUYER_FEATURES.map((f) => (
-                <li key={f.text} className="flex items-start gap-3">
-                  <span className="text-xl flex-shrink-0">{f.icon}</span>
-                  <span className="text-green-100 text-sm leading-relaxed">{f.text}</span>
-                </li>
-              ))}
-            </ul>
-            <Link href="/register" className="inline-block bg-white text-green-700 font-semibold px-6 py-3 rounded-xl hover:bg-green-50 transition-colors text-sm">
-              {t('landing.buyerCta')}
-            </Link>
-          </div>
-
-          {/* Marchands */}
-          <div className="bg-gradient-to-br from-amber-500 to-orange-600 rounded-3xl p-8 text-white">
-            <div className="text-4xl mb-4">🏪</div>
-            <h3 className="text-2xl font-bold mb-2">{t('landing.merchantTitle')}</h3>
-            <p className="text-amber-100 text-sm mb-6">{t('landing.merchantSubtitle')}</p>
-            <ul className="space-y-3 mb-8">
-              {MERCHANT_FEATURES.map((f) => (
-                <li key={f.text} className="flex items-start gap-3">
-                  <span className="text-xl flex-shrink-0">{f.icon}</span>
-                  <span className="text-amber-100 text-sm leading-relaxed">{f.text}</span>
-                </li>
-              ))}
-            </ul>
-            <Link href="/register" className="inline-block bg-white text-orange-600 font-semibold px-6 py-3 rounded-xl hover:bg-amber-50 transition-colors text-sm">
-              {t('landing.merchantCta')}
-            </Link>
-          </div>
-
         </div>
       </section>
 

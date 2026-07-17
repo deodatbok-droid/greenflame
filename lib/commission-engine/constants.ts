@@ -6,7 +6,7 @@ export const GOVERNANCE = {
   // Distribution de la commission marchande (somme = 100%)
   PLATFORM_SHARE: 0.45,         // 45% → revenu plateforme
   CASHBACK_SHARE: 0.12,         // 12% → cashback acheteur (réduit depuis 15%)
-  REWARDS_FUND_SHARE: 0.03,     // 3%  → Fonds Récompenses/Événements (30% récomp. / 70% événements)
+  REWARDS_FUND_SHARE: 0.03,     // 3%  → Marge de Manœuvre Communautaire (événements, initiatives, urgences)
   NETWORK_POOL_SHARE: 0.40,     // 40% → VERROUILLÉ, ne peut jamais descendre
 
   // Distribution reseau par niveau (somme = 40%)
@@ -38,6 +38,14 @@ export const GOVERNANCE = {
   GROSSISTE_NEVER_SELLS_TO_CONSUMERS: true,
 } as const
 
+// Split des dividendes communautaires reçus par chaque Cercle (L1-L5)
+// Le brut = 100% → 60% cash immédiat, 30% droit aux bons d'achat GF, 10% Fonds de Reconnaissance
+export const DIVIDENDE_SPLIT = {
+  CASH:        0.60,
+  VOUCHER:     0.30,
+  RECOGNITION: 0.10,
+} as const
+
 // Taux de commission par categorie marchand
 export const CATEGORY_RATES: Record<string, number> = {
   ALIMENTATION: 0.10,
@@ -51,6 +59,7 @@ export const CATEGORY_RATES: Record<string, number> = {
   RESTAURATION_SMALL: 0.03,
   GROSSISTE: 0.05,
   DELIVERY: 0.05,           // GreenFlame Delivery — taux fixe 5% des frais de livraison
+  SERVICES_PREMIUM: 0.15,  // C-15 — services spécialisés (académie, accompagnement, conseil)
 }
 
 // Validation — a appeler au demarrage de l'application

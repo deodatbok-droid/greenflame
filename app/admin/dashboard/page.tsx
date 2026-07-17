@@ -120,66 +120,92 @@ export default async function AdminDashboard() {
         </div>
       </div>
 
-      {/* ── RAPPORT IA QUOTIDIEN ── */}
-      <DigestCard digest={latestDigest as Parameters<typeof DigestCard>[0]['digest']} />
-
-      {/* ── ALERTE GOUVERNANCE ── */}
-      {auditLogs.length > 0 && (
-        <div className="bg-red-900/30 border border-red-500/40 rounded-xl p-4">
-          <p className="text-red-400 font-semibold text-sm mb-2 flex items-center gap-2">
-            🚨 {auditLogs.length} tentative(s) de modification des constantes de gouvernance
-          </p>
-          <div className="space-y-1">
-            {auditLogs.slice(0, 3).map((log: { id: string; field_attempted: string; attempted_value: string; was_blocked: boolean; created_at: string }) => (
-              <p key={log.id} className="text-red-300 text-xs">
-                <span className="font-mono">{log.field_attempted}</span>
-                {' '}→ valeur tentée : {log.attempted_value}
-                {' '}· {new Date(log.created_at).toLocaleString('fr-FR')}
-                {log.was_blocked && <span className="ml-2 bg-red-500/30 text-red-300 px-1.5 rounded text-[10px]">BLOQUÉ</span>}
+      {/* ── ALERTES ACTIONNABLES ── priorité absolue */}
+      {(pendingWd > 0 || auditLogs.length > 0) && (
+        <div className="space-y-2">
+          {pendingWd > 0 && (
+            <Link
+              href="/admin/withdrawals"
+              className="flex items-center justify-between bg-yellow-500/10 border border-yellow-500/30 rounded-xl px-4 py-3 hover:bg-yellow-500/15 transition-colors group"
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-xl">⏳</span>
+                <div>
+                  <p className="text-yellow-300 font-semibold text-sm">
+                    {pendingWd} retrait{pendingWd > 1 ? 's' : ''} en attente de traitement
+                  </p>
+                  <p className="text-yellow-500 text-xs">Action requise</p>
+                </div>
+              </div>
+              <span className="text-yellow-400 text-sm font-medium">Traiter →</span>
+            </Link>
+          )}
+          {auditLogs.length > 0 && (
+            <div className="bg-red-900/30 border border-red-500/40 rounded-xl px-4 py-3">
+              <p className="text-red-400 font-semibold text-sm mb-2 flex items-center gap-2">
+                🚨 {auditLogs.length} tentative(s) de modification des constantes de gouvernance
               </p>
-            ))}
-          </div>
+              <div className="space-y-1">
+                {auditLogs.slice(0, 3).map((log: { id: string; field_attempted: string; attempted_value: string; was_blocked: boolean; created_at: string }) => (
+                  <p key={log.id} className="text-red-300 text-xs">
+                    <span className="font-mono">{log.field_attempted}</span>
+                    {' '}→ {log.attempted_value}
+                    {' '}· {new Date(log.created_at).toLocaleString('fr-FR')}
+                    {log.was_blocked && <span className="ml-2 bg-red-500/30 text-red-300 px-1.5 rounded text-[10px]">BLOQUÉ</span>}
+                  </p>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
+
+      {/* ── RAPPORT IA QUOTIDIEN ── */}
+      <DigestCard digest={latestDigest as Parameters<typeof DigestCard>[0]['digest']} />
 
       {/* ── KPIs AUJOURD'HUI ── */}
       <div>
         <p className="text-xs text-gray-500 uppercase tracking-wide font-medium mb-3">Aujourd&apos;hui</p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <Link
+            href="/admin/transactions"
+            className="bg-gray-800 rounded-xl p-4 border border-gray-700 hover:border-brand-500/50 hover:bg-gray-700/30 transition-colors block col-span-2 md:col-span-1"
+          >
+            <p className="text-gray-400 text-xs mb-3">GMV aujourd&apos;hui</p>
+            <p className="text-3xl font-bold text-white tabular-nums">{formatFcfa(gmvToday)}</p>
+            <p className="text-xs text-gray-500 mt-1">FCFA encaissés</p>
+          </Link>
           {[
-            { label: "GMV aujourd'hui",         value: `${formatFcfa(gmvToday)} F`,    delta: 'Volume encaissé',                  icon: '💰', color: 'text-green-400',  href: '/admin/transactions' },
-            { label: "Revenu plateforme (45%)", value: `${formatFcfa(Math.floor(commToday * 0.45))} F`, delta: '45% des commissions', icon: '📊', color: 'text-brand-400', href: '/admin/transactions' },
-            { label: 'Transactions complétées', value: String(txToday),                delta: 'transactions validées',            icon: '💳', color: 'text-white',        href: '/admin/transactions' },
-            { label: 'Alertes gouvernance',     value: String(auditLogs.length),        delta: auditLogs.length > 0 ? 'À traiter' : 'RAS', icon: '🛡️', color: auditLogs.length > 0 ? 'text-red-400' : 'text-green-400', href: '/admin/transactions' },
+            { label: 'Revenu plateforme (45%)', value: formatFcfa(Math.floor(commToday * 0.45)), sub: '45% des commissions', color: 'text-brand-400', href: '/admin/transactions' },
+            { label: 'Transactions validées',   value: String(txToday),                          sub: 'aujourd\'hui',        color: 'text-white',       href: '/admin/transactions' },
+            { label: 'Alertes gouvernance',     value: String(auditLogs.length),                 sub: auditLogs.length > 0 ? 'À vérifier' : 'RAS', color: auditLogs.length > 0 ? 'text-red-400' : 'text-green-400', href: '/admin/dashboard' },
           ].map(s => (
             <Link key={s.label} href={s.href} className="bg-gray-800 rounded-xl p-4 border border-gray-700 hover:border-brand-500/50 hover:bg-gray-700/30 transition-colors block">
-              <div className="flex items-center gap-1.5 mb-2">
-                <span className="text-base">{s.icon}</span>
-                <p className="text-gray-400 text-xs leading-tight">{s.label}</p>
-              </div>
-              <p className={`text-2xl font-bold ${s.color}`}>{s.value}</p>
-              <p className="text-xs text-gray-500 mt-1">{s.delta}</p>
+              <p className="text-gray-400 text-xs mb-3 leading-tight">{s.label}</p>
+              <p className={`text-2xl font-bold tabular-nums ${s.color}`}>{s.value}</p>
+              <p className="text-xs text-gray-500 mt-1">{s.sub}</p>
             </Link>
           ))}
         </div>
       </div>
 
-      {/* ── MEMBRES + MARCHANDS ── */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        {[
-          { label: 'Membres total',     value: totalUsers.toLocaleString('fr-FR'),  icon: '👥', color: 'text-white',        href: '/admin/users'        },
-          { label: 'Marchands actifs',  value: activeMerch.toLocaleString('fr-FR'), icon: '🏪', color: 'text-white',        href: '/admin/merchants'    },
-          { label: 'Membres invités',   value: networkSize.toLocaleString('fr-FR'), icon: '🌱', color: 'text-brand-400',    href: '/admin/users'        },
-          { label: 'Retraits en attente', value: String(pendingWd), icon: '⏳', color: pendingWd > 0 ? 'text-yellow-400' : 'text-gray-400', href: '/admin/withdrawals' },
-        ].map(s => (
-          <Link key={s.label} href={s.href} className="bg-gray-800 rounded-xl p-4 border border-gray-700 hover:border-brand-500/50 hover:bg-gray-700/30 transition-colors block">
-            <div className="flex items-center gap-1.5 mb-2">
-              <span className="text-base">{s.icon}</span>
-              <p className="text-gray-400 text-xs">{s.label}</p>
-            </div>
-            <p className={`text-xl font-bold ${s.color}`}>{s.value}</p>
-          </Link>
-        ))}
+      {/* ── COMMUNAUTÉ & MARCHANDS ── */}
+      <div>
+        <p className="text-xs text-gray-500 uppercase tracking-wide font-medium mb-3">Communauté</p>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+          {[
+            { label: 'Membres total',      value: totalUsers.toLocaleString('fr-FR'),  color: 'text-white',      href: '/admin/users'        },
+            { label: 'Marchands actifs',   value: activeMerch.toLocaleString('fr-FR'), color: 'text-white',      href: '/admin/merchants'    },
+            { label: 'Pro actifs',         value: String(proCount),                    color: 'text-purple-400', href: '/admin/merchants'    },
+            { label: 'VIP actifs',         value: String(vipCount),                    color: 'text-amber-400',  href: '/admin/merchants'    },
+            { label: 'FlameFund ce mois',  value: `${formatFcfa(spilloverMonth)} F`,   color: spilloverMonth > 0 ? 'text-orange-400' : 'text-gray-500', href: '/admin/rewards-fund' },
+          ].map(s => (
+            <Link key={s.label} href={s.href} className="bg-gray-800 rounded-xl p-4 border border-gray-700 hover:border-brand-500/50 hover:bg-gray-700/30 transition-colors block">
+              <p className="text-gray-400 text-xs mb-2 leading-tight">{s.label}</p>
+              <p className={`text-xl font-bold tabular-nums ${s.color}`}>{s.value}</p>
+            </Link>
+          ))}
+        </div>
       </div>
 
       {/* ── RÉPARTITION DES COMMISSIONS (mois) ── */}
@@ -187,68 +213,52 @@ export default async function AdminDashboard() {
         <p className="text-xs text-gray-500 uppercase tracking-wide font-medium mb-3">
           Répartition des commissions — {now.toLocaleString('fr-FR', { month: 'long' })}
         </p>
+        {/* Barre de proportion des commissions */}
+        <div className="flex h-2 rounded-full overflow-hidden mb-4 gap-px bg-gray-900">
+          <div className="bg-brand-500 transition-all" style={{ width: '45%' }} title="Plateforme 45%" />
+          <div className="bg-green-500 transition-all" style={{ width: '40%' }} title="Communauté 40%" />
+          <div className="bg-blue-500 transition-all"  style={{ width: '12%' }} title="Cashback 12%" />
+          <div className="bg-amber-500 transition-all" style={{ width: '3%' }}  title="Récompenses 3%" />
+        </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div className="bg-gray-800 rounded-xl p-5 border border-gray-700">
-            <p className="text-gray-400 text-xs mb-1">GMV ce mois</p>
-            <p className="text-2xl font-bold text-white">{formatFcfa(gmvMonth)}</p>
-            <p className="text-xs text-gray-500 mt-1">FCFA</p>
-          </div>
-          <div className="bg-gray-800 rounded-xl p-5 border border-gray-700">
-            <p className="text-gray-400 text-xs mb-1">Revenu plateforme (45%)</p>
-            <p className="text-2xl font-bold text-brand-400">{formatFcfa(platformMonth)}</p>
-            <p className="text-xs text-gray-500 mt-1">GreenFlame</p>
-          </div>
-          <div className="bg-gray-800 rounded-xl p-5 border border-gray-700">
-            <p className="text-gray-400 text-xs mb-1">Cashback acheteurs (12%)</p>
-            <p className="text-2xl font-bold text-blue-400">{formatFcfa(cashbackMonth)}</p>
-            <p className="text-xs text-gray-500 mt-1">Crédité aux acheteurs</p>
-          </div>
-          <div className="bg-gray-800 rounded-xl p-5 border border-gray-700">
-            <p className="text-gray-400 text-xs mb-1">Pool Récompenses (3%)</p>
-            <p className="text-2xl font-bold text-amber-400">{formatFcfa(rewardsMonth)}</p>
-            <p className="text-xs text-gray-500 mt-1">30% récomp. / 70% événements</p>
-          </div>
-          <div className="bg-gray-800 rounded-xl p-5 border border-gray-700">
-            <p className="text-gray-400 text-xs mb-1">Dividendes communauté (40%)</p>
-            <p className="text-2xl font-bold text-green-400">{formatFcfa(networkMonth)}</p>
-            <p className="text-xs text-gray-500 mt-1">
-              {spilloverMonth > 0 ? `FlameFund : ${formatFcfa(spilloverMonth)} F` : 'N1→N5'}
-            </p>
-          </div>
+          {[
+            { label: 'GMV ce mois',               value: formatFcfa(gmvMonth),    sub: 'FCFA',                       color: 'text-white',      border: 'border-gray-700'    },
+            { label: 'Plateforme (45%)',           value: formatFcfa(platformMonth), sub: 'GreenFlame',               color: 'text-brand-400',  border: 'border-brand-800/50'},
+            { label: 'Dividendes communauté (40%)', value: formatFcfa(networkMonth), sub: spilloverMonth > 0 ? `FlameFund : ${formatFcfa(spilloverMonth)} F` : 'N1 → N5', color: 'text-green-400', border: 'border-green-900/30' },
+            { label: 'Cashback acheteurs (12%)',   value: formatFcfa(cashbackMonth), sub: 'Crédité aux acheteurs',   color: 'text-blue-400',   border: 'border-gray-700'    },
+          ].map(c => (
+            <div key={c.label} className={`bg-gray-800 rounded-xl p-4 border ${c.border}`}>
+              <p className="text-gray-400 text-xs mb-2 leading-tight">{c.label}</p>
+              <p className={`text-xl font-bold tabular-nums ${c.color}`}>{c.value}</p>
+              <p className="text-xs text-gray-500 mt-1">{c.sub}</p>
+            </div>
+          ))}
         </div>
       </div>
 
       {/* ── REVENUS GREENFLAME ── */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">Revenus GreenFlame (total cumulé)</p>
-          <Link href="/admin/revenue" className="text-xs text-brand-400 hover:text-brand-300">
-            Détail →
-          </Link>
+          <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">Revenus GreenFlame (cumulés)</p>
+          <Link href="/admin/revenue" className="text-xs text-brand-400 hover:text-brand-300">Détail →</Link>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div className="bg-brand-900/40 rounded-xl p-5 border border-brand-800/50">
-            <p className="text-gray-400 text-xs mb-1">Total GreenFlame</p>
-            <p className="text-2xl font-bold text-brand-300">{formatFcfa(totalGFRevenue)}</p>
+          <div className="bg-brand-900/40 rounded-xl p-4 border border-brand-800/50 col-span-2 md:col-span-1">
+            <p className="text-gray-400 text-xs mb-2">Total GreenFlame</p>
+            <p className="text-2xl font-bold text-brand-300 tabular-nums">{formatFcfa(totalGFRevenue)}</p>
             <p className="text-xs text-gray-500 mt-1">FCFA cumulés</p>
           </div>
-          <div className="bg-gray-800 rounded-xl p-5 border border-gray-700">
-            <p className="text-gray-400 text-xs mb-1">Frais transactions (45%)</p>
-            <p className="text-xl font-bold text-brand-400">{formatFcfa(platformMonth)}</p>
-            <p className="text-xs text-gray-500 mt-1">Ce mois-ci</p>
-          </div>
-          <div className="bg-gray-800 rounded-xl p-5 border border-gray-700">
-            <p className="text-gray-400 text-xs mb-1">Abonnements (Pro + VIP)</p>
-            <p className="text-xl font-bold text-purple-400">{formatFcfa(subsRevenue)}</p>
-            <p className="text-xs text-gray-500 mt-1">
-              {proCount} Pro · {vipCount} VIP actifs
-            </p>
-          </div>
-          <div className="bg-gray-800 rounded-xl p-5 border border-gray-700">
-            <p className="text-gray-400 text-xs mb-1">Frais bons de retrait (0,5%)</p>
-            <p className="text-xl font-bold text-amber-400">{formatFcfa(voucherRevenue)}</p>
-            <p className="text-xs text-gray-500 mt-1">Sur tous les bons encaissés</p>
-          </div>
+          {[
+            { label: 'Frais transactions (45%)', value: formatFcfa(platformMonth), sub: 'Ce mois-ci',                      color: 'text-brand-400'  },
+            { label: 'Abonnements Pro + VIP',    value: formatFcfa(subsRevenue),   sub: `${proCount} Pro · ${vipCount} VIP`, color: 'text-purple-400' },
+            { label: 'Frais bons de retrait',    value: formatFcfa(voucherRevenue), sub: '0,5% sur bons encaissés',         color: 'text-amber-400'  },
+          ].map(r => (
+            <div key={r.label} className="bg-gray-800 rounded-xl p-4 border border-gray-700">
+              <p className="text-gray-400 text-xs mb-2 leading-tight">{r.label}</p>
+              <p className={`text-xl font-bold tabular-nums ${r.color}`}>{r.value}</p>
+              <p className="text-xs text-gray-500 mt-1">{r.sub}</p>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -256,9 +266,7 @@ export default async function AdminDashboard() {
       <div>
         <div className="flex justify-between items-center mb-3">
           <h2 className="font-semibold text-white">Transactions récentes</h2>
-          <Link href="/admin/transactions" className="text-xs text-brand-400 hover:text-brand-300">
-            Tout voir →
-          </Link>
+          <Link href="/admin/transactions" className="text-xs text-brand-400 hover:text-brand-300">Tout voir →</Link>
         </div>
         <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
           <div className="overflow-x-auto">
@@ -280,20 +288,12 @@ export default async function AdminDashboard() {
                   </tr>
                 ) : recentTxs.map(tx => (
                   <tr key={tx.id} className="hover:bg-gray-700/30 transition-colors">
-                    <td className="px-4 py-3 font-medium text-white">
-                      {tx.merchants?.business_name ?? '—'}
-                    </td>
-                    <td className="px-4 py-3 text-gray-400 text-xs">
-                      {tx.buyers?.full_name ?? '—'}
-                    </td>
-                    <td className="px-4 py-3 text-right font-medium text-white">
-                      {formatFcfa(tx.amount_fcfa)} F
-                    </td>
-                    <td className="px-4 py-3 text-right text-brand-400 font-medium">
-                      +{formatFcfa(tx.commission_total)} F
-                    </td>
+                    <td className="px-4 py-3 font-medium text-white">{tx.merchants?.business_name ?? '—'}</td>
+                    <td className="px-4 py-3 text-gray-400 text-xs">{tx.buyers?.full_name ?? '—'}</td>
+                    <td className="px-4 py-3 text-right font-medium text-white tabular-nums">{formatFcfa(tx.amount_fcfa)} F</td>
+                    <td className="px-4 py-3 text-right text-brand-400 font-medium tabular-nums">+{formatFcfa(tx.commission_total)} F</td>
                     <td className="px-4 py-3 text-center">
-                      <span className={`text-xs px-2 py-0.5 rounded-full ${
+                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
                         tx.status === 'completed' ? 'bg-green-900/30 text-green-400' :
                         tx.status === 'failed'    ? 'bg-red-900/30 text-red-400'     :
                                                    'bg-yellow-900/30 text-yellow-400'
@@ -301,7 +301,7 @@ export default async function AdminDashboard() {
                         {tx.status === 'completed' ? '✓ OK' : tx.status === 'failed' ? '✗ Échec' : '⏳'}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-right text-xs text-gray-500">
+                    <td className="px-4 py-3 text-right text-xs text-gray-500 tabular-nums">
                       {new Date(tx.created_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
                     </td>
                   </tr>
@@ -312,76 +312,54 @@ export default async function AdminDashboard() {
         </div>
       </div>
 
-      {/* ── SANTÉ DE LA COMMUNAUTÉ ── */}
-      <div className="bg-gray-800 rounded-xl p-5 border border-gray-700">
-        <h2 className="font-semibold text-white mb-4">Santé de la communauté</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          <div>
-            <p className="text-gray-400 text-xs">Membres totaux</p>
-            <p className="text-2xl font-bold text-white mt-1">{totalUsers.toLocaleString('fr-FR')}</p>
-          </div>
-          <div>
-            <p className="text-gray-400 text-xs">Membres avec invitation</p>
-            <p className="text-2xl font-bold text-brand-400 mt-1">{networkSize.toLocaleString('fr-FR')}</p>
-          </div>
-          <div>
-            <p className="text-gray-400 text-xs">FlameFund ce mois</p>
-            <p className={`text-2xl font-bold mt-1 ${spilloverMonth > 0 ? 'text-yellow-400' : 'text-gray-500'}`}>
-              {formatFcfa(spilloverMonth)} F
-            </p>
-          </div>
-          <div>
-            <p className="text-gray-400 text-xs">FlameFund total cumulé</p>
-            <p className={`text-2xl font-bold mt-1 ${spilloverTotal > 0 ? 'text-orange-400' : 'text-gray-500'}`}>
-              {formatFcfa(spilloverTotal)} F
-            </p>
-          </div>
-        </div>
-      </div>
-
       {/* ── CONSTANTES DE GOUVERNANCE ── */}
       <div className="bg-gray-800 rounded-xl p-5 border border-gray-700">
-        <h2 className="font-semibold text-white mb-1">Constantes de gouvernance</h2>
-        <p className="text-xs text-gray-500 mb-4">Immuables — toute tentative de modification est bloquée et loggée</p>
-        <div className="space-y-3">
+        <div className="flex items-start justify-between mb-4">
+          <div>
+            <h2 className="font-semibold text-white">Constantes de gouvernance</h2>
+            <p className="text-xs text-gray-500 mt-0.5">Immuables — toute modification est bloquée et loggée</p>
+          </div>
+          <span className="text-xs px-2 py-1 bg-green-900/30 text-green-400 rounded-full flex-shrink-0">🔒 Protégées</span>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
-            { label: 'GreenFlame (plateforme)', pct: '45%', color: 'bg-brand-500' },
-            { label: 'Cashback acheteur',       pct: '12%', color: 'bg-blue-500'  },
-            { label: 'Communauté (5 niveaux)',  pct: '40%', color: 'bg-green-500' },
-            { label: 'Pool Récompenses',        pct: '3%',  color: 'bg-amber-500' },
+            { label: 'GreenFlame',   pct: '45%', color: 'bg-brand-500', sub: 'Plateforme'      },
+            { label: 'Communauté',  pct: '40%', color: 'bg-green-500', sub: 'N1 → N5'         },
+            { label: 'Cashback',     pct: '12%', color: 'bg-blue-500',  sub: 'Acheteurs'       },
+            { label: 'Récompenses',  pct: '3%',  color: 'bg-amber-500', sub: 'Pool événements' },
           ].map(item => (
-            <div key={item.label} className="flex items-center gap-3">
+            <div key={item.label} className="flex items-center gap-3 bg-gray-900/40 rounded-lg p-3">
               <div className={`w-3 h-3 rounded-full flex-shrink-0 ${item.color}`} />
-              <span className="text-gray-300 flex-1 text-sm">{item.label}</span>
-              <span className="font-bold text-white">{item.pct}</span>
+              <div>
+                <p className="text-white font-bold text-lg tabular-nums">{item.pct}</p>
+                <p className="text-gray-400 text-xs">{item.label}</p>
+                <p className="text-gray-600 text-xs">{item.sub}</p>
+              </div>
             </div>
           ))}
         </div>
-        <div className="mt-4 bg-gray-700/50 rounded-lg p-3">
-          <p className="text-xs text-gray-400">
-            Communauté : N1 12% · N2 10% · N3 8% · N4 6% · N5 4%
-          </p>
+        <div className="mt-3 bg-gray-700/50 rounded-lg p-3">
+          <p className="text-xs text-gray-400">Communauté : N1 12% · N2 10% · N3 8% · N4 6% · N5 4%</p>
         </div>
       </div>
 
       {/* ── EXPORT BCEAO ── */}
-      <div>
+      <div className="pb-4">
         <h2 className="font-semibold text-white mb-3">Export réglementaire BCEAO</h2>
         <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
-          <p className="text-sm text-gray-400 mb-5">
-            Génère un export horodaté et immuable de toutes les transactions pour la supervision réglementaire.
-            Conforme aux exigences de la BCEAO pour les plateformes de paiement numérique.
+          <p className="text-sm text-gray-400 mb-4">
+            Export horodaté et immuable de toutes les transactions pour la supervision réglementaire BCEAO.
           </p>
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2">
             {[
-              { label: 'Export journalier',    desc: 'Toutes les transactions du jour en cours',    href: '/admin/exports?period=day'   },
-              { label: 'Export mensuel',       desc: 'Rapport complet du mois sélectionné',         href: '/admin/exports?period=month' },
-              { label: 'Export sur période',   desc: 'Sélectionner une plage de dates personnalisée', href: '/admin/exports?period=range' },
+              { label: 'Export journalier',  desc: 'Toutes les transactions du jour en cours',  href: '/admin/exports?period=day'   },
+              { label: 'Export mensuel',     desc: 'Rapport complet du mois sélectionné',       href: '/admin/exports?period=month' },
+              { label: 'Export sur période', desc: 'Plage de dates personnalisée',              href: '/admin/exports?period=range' },
             ].map(e => (
               <Link
                 key={e.label}
                 href={e.href}
-                className="flex items-center justify-between border border-gray-700 rounded-xl p-4 hover:border-brand-500/50 hover:bg-gray-700/30 transition-colors"
+                className="flex items-center justify-between border border-gray-700 rounded-xl p-3.5 hover:border-brand-500/50 hover:bg-gray-700/30 transition-colors"
               >
                 <div>
                   <p className="font-medium text-white text-sm">{e.label}</p>
@@ -391,28 +369,10 @@ export default async function AdminDashboard() {
               </Link>
             ))}
           </div>
-          <div className="mt-4 bg-green-900/20 border border-green-800/30 rounded-xl p-3 text-xs text-green-400">
+          <div className="mt-3 bg-green-900/20 border border-green-800/30 rounded-xl p-3 text-xs text-green-400">
             📋 Chaque export est signé cryptographiquement et enregistré dans le journal d&apos;audit immuable.
           </div>
         </div>
-      </div>
-
-      {/* ── LIENS RAPIDES ── */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pb-4">
-        {[
-          { href: '/admin/merchants',    label: 'Marchands',    icon: '🏪' },
-          { href: '/admin/users',        label: 'Membres',      icon: '👥' },
-          { href: '/admin/transactions', label: 'Transactions', icon: '💳' },
-          { href: '/admin/withdrawals',  label: 'Retraits',     icon: '💸' },
-          { href: '/admin/flamme',       label: 'Flamme + Rang', icon: '🔥' },
-        ].map(l => (
-          <Link key={l.href} href={l.href}>
-            <div className="bg-gray-800 border border-gray-700 rounded-xl p-4 text-center hover:border-brand-500/50 hover:bg-gray-700/30 transition-colors cursor-pointer">
-              <span className="text-2xl">{l.icon}</span>
-              <p className="text-xs font-medium text-gray-300 mt-2">{l.label}</p>
-            </div>
-          </Link>
-        ))}
       </div>
 
     </div>

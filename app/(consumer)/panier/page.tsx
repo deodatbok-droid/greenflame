@@ -1,11 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useCart, type MerchantGroup } from '@/context/CartContext'
 import { useRouter } from 'next/navigation'
+import { createBrowserClient } from '@supabase/ssr'
+import { GOVERNANCE } from '@/lib/commission-engine/constants'
 
-const CASHBACK_RATE = 0.12 * 0.45 // 12% cashback share × commission share approx
+const CASHBACK_RATE = GOVERNANCE.DEFAULT_COMMISSION_RATE * GOVERNANCE.CASHBACK_SHARE
 
 function formatFcfa(n: number) {
   return new Intl.NumberFormat('fr-FR').format(n) + ' F'
@@ -15,12 +17,63 @@ function estimateCashback(subtotal: number) {
   return Math.floor(subtotal * CASHBACK_RATE)
 }
 
-function MerchantGroupCard({ group, onCheckout }: { group: MerchantGroup; onCheckout: (g: MerchantGroup) => void }) {
+interface DeliveryProvider {
+  id: string
+  display_name: string
+  phone: string
+  service_area: string | null
+  base_fee_fcfa: number
+  avg_rating: number | null
+  nb_deliveries: number
+  is_verified: boolean
+}
+
+function MerchantGroupCard({
+  group,
+  onCheckout,
+  isCheckingOut,
+  isGuest,
+  onGuestLogin,
+}: {
+  group: MerchantGroup
+  onCheckout: (g: MerchantGroup, opts: {
+    deliveryType: 'pickup' | 'delivery'
+    deliveryAddress: string
+    providerId: string | null
+    paymentMethod: 'wallet_gf' | 'cash_on_delivery'
+  }) => void
+  isCheckingOut: boolean
+  isGuest?: boolean
+  onGuestLogin?: () => void
+}) {
   const { removeItem, updateQty } = useCart()
   const cashback = estimateCashback(group.subtotal)
 
+  const [deliveryType, setDeliveryType] = useState<'pickup' | 'delivery' | null>(null)
+  const [deliveryAddress, setDeliveryAddress] = useState('')
+  const [providerId, setProviderId] = useState<string | null>(null)
+  const [providers, setProviders] = useState<DeliveryProvider[]>([])
+  const [loadingProviders, setLoadingProviders] = useState(false)
+  const [paymentMethod, setPaymentMethod] = useState<'wallet_gf' | 'cash_on_delivery'>('wallet_gf')
+
+  useEffect(() => {
+    if (deliveryType !== 'delivery') return
+    setLoadingProviders(true)
+    fetch('/api/delivery/providers')
+      .then(r => r.json())
+      .then(d => { setProviders(d.providers ?? []); setLoadingProviders(false) })
+      .catch(() => setLoadingProviders(false))
+  }, [deliveryType])
+
+  const canPay = deliveryType !== null && (deliveryType === 'pickup' || deliveryAddress.trim().length > 3)
+
+  function handlePay() {
+    if (!deliveryType) return
+    onCheckout(group, { deliveryType, deliveryAddress, providerId, paymentMethod })
+  }
+
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+    <div className={`bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden transition-opacity ${isCheckingOut ? 'opacity-60 pointer-events-none' : ''}`}>
       {/* En-tête marchand */}
       <div className="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center justify-between">
         <p className="font-semibold text-gray-800 text-sm">{group.merchantName}</p>
@@ -36,25 +89,17 @@ function MerchantGroupCard({ group, onCheckout }: { group: MerchantGroup; onChec
               <p className="text-sm font-medium text-gray-800 truncate">{item.name}</p>
               <p className="text-xs text-gray-500">{formatFcfa(item.price_fcfa)} / unité</p>
             </div>
-
-            {/* Quantité */}
             <div className="flex items-center gap-2 flex-shrink-0">
               <button
                 onClick={() => updateQty(item.productId, item.quantity - 1)}
                 className="w-7 h-7 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-gray-100 text-lg leading-none font-bold"
-              >
-                −
-              </button>
+              >−</button>
               <span className="w-5 text-center text-sm font-semibold">{item.quantity}</span>
               <button
                 onClick={() => updateQty(item.productId, item.quantity + 1)}
                 className="w-7 h-7 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-gray-100 text-lg leading-none font-bold"
-              >
-                +
-              </button>
+              >+</button>
             </div>
-
-            {/* Sous-total ligne */}
             <div className="flex-shrink-0 text-right min-w-[70px]">
               <p className="text-sm font-bold text-gray-900">{formatFcfa(item.price_fcfa * item.quantity)}</p>
               <button onClick={() => removeItem(item.productId)} className="text-[10px] text-red-400 hover:text-red-600">
@@ -71,20 +116,177 @@ function MerchantGroupCard({ group, onCheckout }: { group: MerchantGroup; onChec
           <span className="text-gray-600">Sous-total</span>
           <span className="font-bold text-gray-900">{formatFcfa(group.subtotal)}</span>
         </div>
-        <div className="flex justify-between text-xs">
-          <span className="text-brand-600">Cashback estimé 🔥</span>
-          <span className="font-semibold text-brand-600">~{formatFcfa(cashback)}</span>
-        </div>
+        {paymentMethod === 'wallet_gf' && (
+          <div className="flex justify-between text-xs">
+            <span className="text-brand-600">Cashback estimé 🔥</span>
+            <span className="font-semibold text-brand-600">~{formatFcfa(cashback)}</span>
+          </div>
+        )}
       </div>
 
-      {/* Bouton payer ce marchand */}
+      {/* ─── Mode de récupération ─── */}
+      <div className="px-4 pt-4 pb-2 border-t border-gray-100">
+        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Mode de récupération</p>
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            onClick={() => setDeliveryType('pickup')}
+            className={`py-2.5 px-3 rounded-xl border text-sm font-medium transition-all text-left ${
+              deliveryType === 'pickup'
+                ? 'border-brand-500 bg-brand-50 text-brand-700'
+                : 'border-gray-200 text-gray-600 hover:border-gray-300'
+            }`}
+          >
+            <span className="block text-lg leading-none mb-0.5">🏪</span>
+            <span className="text-xs">Retrait en boutique</span>
+            <span className="block text-[10px] text-green-600 font-semibold mt-0.5">Gratuit</span>
+          </button>
+          <button
+            onClick={() => setDeliveryType('delivery')}
+            className={`py-2.5 px-3 rounded-xl border text-sm font-medium transition-all text-left ${
+              deliveryType === 'delivery'
+                ? 'border-brand-500 bg-brand-50 text-brand-700'
+                : 'border-gray-200 text-gray-600 hover:border-gray-300'
+            }`}
+          >
+            <span className="block text-lg leading-none mb-0.5">🚚</span>
+            <span className="text-xs">Livraison à domicile</span>
+            <span className="block text-[10px] text-gray-400 font-medium mt-0.5">Frais livreur</span>
+          </button>
+        </div>
+        {deliveryType === null && (
+          <p className="text-[11px] text-gray-400 text-center mt-2">
+            Choisissez un mode de récupération pour continuer
+          </p>
+        )}
+      </div>
+
+      {/* Options livraison */}
+      {deliveryType === 'delivery' && (
+        <div className="px-4 pb-2 space-y-3">
+          <div>
+            <label className="text-xs text-gray-500 mb-1 block">Adresse de livraison *</label>
+            <input
+              type="text"
+              value={deliveryAddress}
+              onChange={e => setDeliveryAddress(e.target.value)}
+              placeholder="Quartier, rue, repère…"
+              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-brand-400 focus:ring-1 focus:ring-brand-200"
+            />
+          </div>
+
+          {loadingProviders ? (
+            <div className="h-10 bg-gray-100 rounded-xl animate-pulse" />
+          ) : providers.length === 0 ? (
+            <div className="bg-amber-50 border border-amber-200 rounded-xl px-3 py-2.5 text-xs text-amber-700">
+              Aucun livreur disponible actuellement. Votre commande sera traitée sans livreur assigné.
+            </div>
+          ) : (
+            <div>
+              <label className="text-xs text-gray-500 mb-1.5 block">Choisir un livreur (optionnel)</label>
+              <div className="space-y-1.5 max-h-40 overflow-y-auto">
+                <button
+                  onClick={() => setProviderId(null)}
+                  className={`w-full text-left px-3 py-2 rounded-xl border text-xs transition-all ${
+                    providerId === null ? 'border-brand-400 bg-brand-50 text-brand-700' : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                  }`}
+                >
+                  🎯 Assigner automatiquement
+                </button>
+                {providers.map(p => (
+                  <button
+                    key={p.id}
+                    onClick={() => setProviderId(p.id)}
+                    className={`w-full text-left px-3 py-2 rounded-xl border transition-all ${
+                      providerId === p.id ? 'border-brand-400 bg-brand-50' : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-xs font-semibold text-gray-800">
+                          {p.is_verified ? '✅ ' : ''}{p.display_name}
+                        </p>
+                        {p.service_area && <p className="text-[10px] text-gray-400">{p.service_area}</p>}
+                      </div>
+                      <div className="text-right flex-shrink-0">
+                        <p className="text-xs font-bold text-gray-700">{formatFcfa(p.base_fee_fcfa)}</p>
+                        {p.avg_rating && <p className="text-[10px] text-amber-500">★ {p.avg_rating} ({p.nb_deliveries})</p>}
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ─── Mode de paiement — visible seulement après choix de livraison ─── */}
+      {deliveryType !== null && (
+        <div className="px-4 pt-3 pb-2 border-t border-gray-100">
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Mode de paiement</p>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              onClick={() => setPaymentMethod('wallet_gf')}
+              className={`py-2.5 px-3 rounded-xl border text-sm font-medium transition-all text-left ${
+                paymentMethod === 'wallet_gf'
+                  ? 'border-brand-500 bg-brand-50 text-brand-700'
+                  : 'border-gray-200 text-gray-600 hover:border-gray-300'
+              }`}
+            >
+              <span className="block text-lg leading-none mb-0.5">🔥</span>
+              <span className="text-xs">Wallet GreenFlame</span>
+              <span className="block text-[10px] text-brand-600 font-semibold mt-0.5">+Cashback</span>
+            </button>
+            <button
+              onClick={() => setPaymentMethod('cash_on_delivery')}
+              disabled={deliveryType === 'pickup'}
+              className={`py-2.5 px-3 rounded-xl border text-sm font-medium transition-all text-left ${
+                deliveryType === 'pickup'
+                  ? 'opacity-40 cursor-not-allowed border-gray-200 text-gray-400'
+                  : paymentMethod === 'cash_on_delivery'
+                  ? 'border-brand-500 bg-brand-50 text-brand-700'
+                  : 'border-gray-200 text-gray-600 hover:border-gray-300'
+              }`}
+            >
+              <span className="block text-lg leading-none mb-0.5">💵</span>
+              <span className="text-xs">Espèces à la livraison</span>
+              <span className="block text-[10px] text-gray-400 font-medium mt-0.5">Paiement au livreur</span>
+            </button>
+          </div>
+          {deliveryType === 'pickup' && (
+            <p className="text-[10px] text-gray-400 mt-1.5">Paiement espèces disponible uniquement en livraison.</p>
+          )}
+        </div>
+      )}
+
+      {/* Bouton payer */}
       <div className="px-4 py-3">
-        <button
-          onClick={() => onCheckout(group)}
-          className="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3 rounded-xl text-sm active:scale-95 transition-all"
-        >
-          Payer {group.merchantName} — {formatFcfa(group.subtotal)}
-        </button>
+        {isGuest ? (
+          <button
+            onClick={onGuestLogin}
+            className="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3 rounded-xl text-sm active:scale-95 transition-all"
+          >
+            Se connecter pour commander →
+          </button>
+        ) : (
+          <>
+            <button
+              onClick={handlePay}
+              disabled={!canPay || isCheckingOut}
+              className="w-full bg-brand-600 hover:bg-brand-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl text-sm active:scale-95 transition-all"
+            >
+              {isCheckingOut ? '⏳ En cours…'
+                : deliveryType === null ? 'Choisir un mode de récupération'
+                : paymentMethod === 'cash_on_delivery'
+                  ? `Commander — ${formatFcfa(group.subtotal)} (espèces)`
+                  : `Payer ${group.merchantName} — ${formatFcfa(group.subtotal)}`
+              }
+            </button>
+            {deliveryType === 'delivery' && !deliveryAddress.trim() && (
+              <p className="text-[10px] text-red-400 text-center mt-1">Saisissez une adresse de livraison</p>
+            )}
+          </>
+        )}
       </div>
     </div>
   )
@@ -95,10 +297,33 @@ export default function PanierPage() {
   const router = useRouter()
   const [checkingOut, setCheckingOut] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [isGuest, setIsGuest] = useState(false)
+
+  useEffect(() => {
+    const sb = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    )
+    sb.auth.getSession().then(({ data: { session } }) => {
+      setIsGuest(!session)
+    })
+  }, [])
+
+  function handleGuestLogin() {
+    router.push('/login?next=/panier')
+  }
 
   const groups = groupedByMerchant()
 
-  async function handleCheckout(group: MerchantGroup) {
+  async function handleCheckout(
+    group: MerchantGroup,
+    opts: {
+      deliveryType: 'pickup' | 'delivery'
+      deliveryAddress: string
+      providerId: string | null
+      paymentMethod: 'wallet_gf' | 'cash_on_delivery'
+    }
+  ) {
     setCheckingOut(group.merchantId)
     setError(null)
     try {
@@ -115,6 +340,10 @@ export default function PanierPage() {
             emoji: i.emoji,
           })),
           totalAmount: group.subtotal,
+          deliveryType: opts.deliveryType,
+          deliveryAddress: opts.deliveryAddress || undefined,
+          providerId: opts.providerId || undefined,
+          paymentMethod: opts.paymentMethod,
         }),
       })
       const data = await res.json()
@@ -153,6 +382,26 @@ export default function PanierPage() {
         <span className="text-xs text-gray-400">{totalItems} article{totalItems > 1 ? 's' : ''}</span>
       </div>
 
+      {isGuest && (
+        <div className="bg-gradient-to-r from-brand-50 to-indigo-50 border border-brand-100 rounded-2xl p-4 flex items-center gap-3">
+          <div className="w-10 h-10 rounded-2xl bg-brand-100 flex items-center justify-center flex-shrink-0 text-lg">
+            🔒
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-bold text-gray-800 leading-none">Mode visiteur</p>
+            <p className="text-[11px] text-gray-500 mt-0.5 leading-snug">
+              Connecte-toi pour commander et gagner ton cashback 🔥
+            </p>
+          </div>
+          <Link
+            href="/login?next=/panier"
+            className="bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold px-3 py-2 rounded-xl flex-shrink-0 transition-colors active:scale-95"
+          >
+            Connexion →
+          </Link>
+        </div>
+      )}
+
       {error && (
         <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">
           {error}
@@ -161,15 +410,14 @@ export default function PanierPage() {
 
       {/* Groupes par marchand */}
       {groups.map(group => (
-        <div key={group.merchantId} className={checkingOut === group.merchantId ? 'opacity-60 pointer-events-none' : ''}>
-          <MerchantGroupCard
-            group={group}
-            onCheckout={handleCheckout}
-          />
-          {checkingOut === group.merchantId && (
-            <p className="text-center text-xs text-gray-500 mt-1">⏳ Paiement en cours…</p>
-          )}
-        </div>
+        <MerchantGroupCard
+          key={group.merchantId}
+          group={group}
+          onCheckout={handleCheckout}
+          isCheckingOut={checkingOut === group.merchantId}
+          isGuest={isGuest}
+          onGuestLogin={handleGuestLogin}
+        />
       ))}
 
       {/* Récap global */}

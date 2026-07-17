@@ -11,7 +11,7 @@
  *   - wallet_gf → géré directement dans handleWalletGfPayment, ne passe pas ici
  */
 import { calculateCommissions } from './calculate'
-import { GOVERNANCE } from './constants'
+import { GOVERNANCE, DIVIDENDE_SPLIT } from './constants'
 import { createServiceClient } from '@/lib/supabase/server'
 import { checkAndAlertStock } from '@/lib/utils/stock-alert'
 import { insertNotifications } from '@/lib/utils/notify'
@@ -162,7 +162,67 @@ export async function distributeCommissions(transactionId: string): Promise<{
           balance_after:    newGfpBalance,
         })
       }
+    } else if (alloc.distributionType === 'network') {
+      // ── Dividende communautaire (Cercle 1-5) — split 60/30/10 ──
+      const gross      = alloc.amountFcfa
+      const cashPart   = Math.floor(gross * DIVIDENDE_SPLIT.CASH)          // 60%
+      const voucherPart = Math.floor(gross * DIVIDENDE_SPLIT.VOUCHER)      // 30%
+      const fundPart   = gross - cashPart - voucherPart                    // 10% (reste exact)
+      const monthYear  = now.slice(0, 7)  // 'YYYY-MM'
+
+      // 60% → balance_fcfa
+      const newBalance = wallet.balance_fcfa + cashPart
+      await svc.from('wallets').update({
+        balance_fcfa:      newBalance,
+        total_earned_fcfa: (wallet.total_earned_fcfa ?? 0) + gross,
+        updated_at:        now,
+      }).eq('id', wallet.id)
+
+      await svc.from('wallet_ledger').insert({
+        wallet_id:        wallet.id,
+        amount:           cashPart,
+        currency_type:    'fcfa',
+        transaction_type: 'dividende_communautaire',
+        reference_id:     transactionId,
+        balance_after:    newBalance,
+      })
+
+      // 30% → voucher_rights_monthly (upsert sur (user_id, month_year))
+      if (voucherPart > 0) {
+        await svc.rpc('increment_voucher_rights', {
+          p_user_id:   alloc.recipientId,
+          p_month:     monthYear,
+          p_amount:    voucherPart,
+        })
+      }
+
+      // 10% → recognition_fund_contributions
+      if (fundPart > 0) {
+        await svc.from('recognition_fund_contributions').insert({
+          user_id:        alloc.recipientId,
+          transaction_id: transactionId,
+          cercle_level:   alloc.level,
+          gross_amount:   gross,
+          fund_amount:    fundPart,
+          month_year:     monthYear,
+          created_at:     now,
+        })
+      }
+
+      // WhatsApp immédiat (dividende communautaire)
+      if (gross > 0) {
+        const phone = uplinePhones[alloc.recipientId]
+        if (phone) {
+          sendWhatsApp(phone, waCommissionNetwork({
+            amountFcfa: gross,
+            level:      alloc.level,
+            newBalance,
+            ref:        transactionId.slice(0, 8).toUpperCase(),
+          })).catch(() => {})
+        }
+      }
     } else {
+      // cashback (déjà géré plus haut) ou autre type non-réseau
       const newBalance = wallet.balance_fcfa + alloc.amountFcfa
       await svc.from('wallets').update({
         balance_fcfa:      newBalance,
@@ -174,23 +234,10 @@ export async function distributeCommissions(transactionId: string): Promise<{
         wallet_id:        wallet.id,
         amount:           alloc.amountFcfa,
         currency_type:    'fcfa',
-        transaction_type: alloc.distributionType === 'cashback' ? 'cashback' : 'commission_network',
+        transaction_type: 'cashback',
         reference_id:     transactionId,
         balance_after:    newBalance,
       })
-
-      // WhatsApp immédiat pour chaque niveau réseau (1-5) qui reçoit une commission
-      if (alloc.distributionType === 'network' && alloc.amountFcfa > 0 && alloc.recipientId) {
-        const phone = uplinePhones[alloc.recipientId]
-        if (phone) {
-          sendWhatsApp(phone, waCommissionNetwork({
-            amountFcfa: alloc.amountFcfa,
-            level:      alloc.level,
-            newBalance,
-            ref:        transactionId.slice(0, 8).toUpperCase(),
-          })).catch(() => {})
-        }
-      }
     }
   }
 
@@ -304,8 +351,8 @@ export async function distributeCommissions(transactionId: string): Promise<{
       return {
         userId:      a.recipientId!,
         type:        'commission',
-        title:       '💰 Dividende communauté',
-        body:        `+${a.amountFcfa.toLocaleString('fr-FR')} FCFA — niveau ${a.level} de votre communauté. Un achat dans votre communauté vous a généré ce dividende. Ubuntu en action. 🌍`,
+        title:       '💰 Dividende communautaire',
+        body:        `+${a.amountFcfa.toLocaleString('fr-FR')} FCFA — Cercle ${a.level} de votre communauté. 60% en cash, 30% en bons d'achat GreenFlame ce mois. Ubuntu en action. 🌍`,
         referenceId: transactionId,
       }
     })

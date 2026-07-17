@@ -25,15 +25,9 @@ export async function POST() {
     .eq('id', user.id)
     .single()
 
-  const { count: txCount } = await supabase
-    .from('transactions')
-    .select('id', { count: 'exact', head: true })
-    .eq('buyer_id', user.id)
-    .eq('status', 'completed')
-
-  if (!txCount || txCount < 1) {
-    return NextResponse.json({ error: 'Premier achat requis pour accéder au cercle' }, { status: 403 })
-  }
+  // Palier 1 : aucun gate achat — tout utilisateur authentifié peut accéder
+  // à son cercle communautaire (upline direct). Décision : même sans KYC ni
+  // achat, l'utilisateur doit pouvoir discuter avec sa communauté.
 
   // Sans parrain (racine du réseau) : on est soi-même le centre du cercle.
   const kingmakerId = profile?.upline_id ?? user.id

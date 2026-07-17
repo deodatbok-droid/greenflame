@@ -11,6 +11,7 @@
  */
 
 import { useState } from 'react'
+import Link from 'next/link'
 
 // ─── Types ────────────────────────────────────────────────────────
 
@@ -151,6 +152,15 @@ export default function MerchantAnalyticsClient({
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
+
+      {/* Breadcrumb */}
+      <div className="flex items-center gap-3">
+        <Link href="/admin/dashboard" className="text-gray-400 hover:text-gray-600 text-sm">← Dashboard</Link>
+        <span className="text-gray-300">/</span>
+        <Link href="/admin/merchants" className="text-gray-400 hover:text-gray-600 text-sm">Marchands</Link>
+        <span className="text-gray-300">/</span>
+        <span className="text-gray-500 text-sm">Analytics</span>
+      </div>
 
       {/* En-tête */}
       <div>

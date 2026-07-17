@@ -4,6 +4,7 @@ import { useState, useMemo } from 'react'
 import { ProductCard, type MarketplaceProduct } from '@/components/marketplace/ProductCard'
 import type { MarketplaceCategory } from '@/components/marketplace/CategoryGrid'
 import Link from 'next/link'
+import { EmptyState } from '@/components/ui/EmptyState'
 
 type Tab = 'all' | 'network' | 'vip' | 'trending' | 'recent'
 type SortKey = 'score' | 'price_asc' | 'price_desc' | 'recent'
@@ -234,21 +235,21 @@ export default function MarketplaceClient({
         </div>
 
         {filtered.length === 0 ? (
-          <div className="text-center py-16">
-            <p className="text-4xl mb-3">🔍</p>
-            <p className="text-gray-500 text-sm font-medium">Aucun produit trouvé</p>
-            <p className="text-gray-400 text-xs mt-1">Essayez d&apos;autres filtres ou parcourez les catégories</p>
-            <div className="flex gap-2 justify-center mt-4 flex-wrap">
-              {categories.slice(0, 4).map((cat) => (
-                <Link
-                  key={cat.slug}
-                  href={`/marketplace/categorie/${cat.slug}`}
-                  className="px-3 py-1.5 rounded-full text-xs font-medium bg-brand-50 text-brand-700 border border-brand-200"
-                >
-                  {cat.name}
-                </Link>
-              ))}
-            </div>
+          <div>
+            <EmptyState.Search query={searchQuery || undefined} />
+            {categories.length > 0 && (
+              <div className="flex gap-2 justify-center mt-1 flex-wrap pb-4">
+                {categories.slice(0, 4).map((cat) => (
+                  <Link
+                    key={cat.slug}
+                    href={`/marketplace/categorie/${cat.slug}`}
+                    className="px-3 py-1.5 rounded-full text-xs font-medium bg-brand-50 text-brand-700 border border-brand-200"
+                  >
+                    {cat.name}
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">

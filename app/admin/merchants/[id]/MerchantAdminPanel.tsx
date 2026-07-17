@@ -127,7 +127,7 @@ export default function MerchantAdminPanel({ merchantId, initialRate, initialAct
               { label: 'Marchand reçoit',                    val: fmt1000(breakdown.merchant), color: 'text-green-400',   pct: fmtPct(breakdown.merchant) },
               { label: 'Plateforme GreenFlame (45%)',         val: fmt1000(breakdown.platform), color: 'text-brand-400',  pct: fmtPct(breakdown.platform) },
               { label: 'Cashback acheteur (12%)',             val: fmt1000(breakdown.cashback), color: 'text-blue-400',   pct: fmtPct(breakdown.cashback) },
-              { label: 'Pool Récompenses (3%)',               val: fmt1000(breakdown.rewards),  color: 'text-amber-400',  pct: fmtPct(breakdown.rewards)  },
+              { label: 'Pool Événements (3%)',                val: fmt1000(breakdown.rewards),  color: 'text-amber-400',  pct: fmtPct(breakdown.rewards)  },
               { label: 'Dividendes communauté N1-N5 (40%)',  val: fmt1000(breakdown.network),  color: 'text-indigo-400', pct: fmtPct(breakdown.network)  },
             ].map(row => (
               <div key={row.label} className="flex items-center justify-between text-xs">
