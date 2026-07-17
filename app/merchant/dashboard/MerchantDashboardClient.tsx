@@ -232,7 +232,7 @@ export default function MerchantDashboardClient({
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-5 space-y-4">
+      <div className="max-w-4xl mx-auto px-4 py-5 space-y-6">
 
         {/* ── DASHBOARD ── */}
         {activeTab === 'dashboard' && (

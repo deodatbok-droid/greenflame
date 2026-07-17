@@ -306,7 +306,7 @@ export default function BudgetClient({
         </div>
       </div>
 
-      <div className="max-w-2xl mx-auto px-4 pt-4 space-y-4">
+      <div className="max-w-2xl mx-auto px-4 pt-4 space-y-6">
         {loading && (
           <div className="flex justify-center py-8">
             <div className="w-6 h-6 border-2 border-brand-500 border-t-transparent rounded-full animate-spin" />

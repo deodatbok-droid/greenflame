@@ -134,7 +134,7 @@ export default async function ConsumerDashboard() {
         </div>
       </div>
 
-      <div className="px-4 pt-5 space-y-4">
+      <div className="px-4 pt-5 space-y-6">
 
         {/* ── GREETING + NIVEAU ── */}
         <div>
@@ -222,7 +222,7 @@ export default async function ConsumerDashboard() {
 
         {/* ── SWAHILI — LANGUE PANAFRICAINE ── */}
         <Link href="/swahili">
-          <div className="rounded-2xl border border-green-100 bg-gradient-to-r from-green-950 to-green-900 shadow-sm p-4 flex items-center gap-4 hover:opacity-90 transition-opacity">
+          <div className="card-dark rounded-2xl border border-green-800 bg-gradient-to-r from-green-950 to-green-900 p-4 flex items-center gap-4">
             <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-amber-400/20 flex items-center justify-center text-3xl">
               🌍
             </div>
@@ -330,7 +330,7 @@ export default async function ConsumerDashboard() {
 
         {/* ── BUDGET — accès rapide ── */}
         <Link href="/budget">
-          <div className="relative rounded-2xl overflow-hidden cursor-pointer group">
+          <div className="card-dark relative rounded-2xl overflow-hidden cursor-pointer group">
             <div className="absolute inset-0 bg-gradient-to-br from-emerald-700 via-emerald-600 to-teal-500" />
             <div className="absolute -top-5 -right-5 w-28 h-28 rounded-full bg-white/10" />
             <div className="absolute -bottom-8 -left-3 w-24 h-24 rounded-full bg-white/5" />
@@ -417,7 +417,7 @@ export default async function ConsumerDashboard() {
               </Link>
             </div>
           ) : (
-            <div className="card p-0 divide-y divide-gray-50">
+            <div className="card p-0 divide-y divide-gray-50 overflow-hidden">
               {transactions.map(tx => {
                 const merchant = tx.merchants as unknown as { business_name: string } | null
                 return (
@@ -485,7 +485,7 @@ export default async function ConsumerDashboard() {
             </Link>
           </div>
         ) : (
-          <div className="bg-gradient-to-r from-brand-50 to-fuchsia-50 border border-brand-200 rounded-xl p-4">
+          <div className="card-tinted bg-gradient-to-r from-brand-50 to-fuchsia-50 border border-brand-200 rounded-xl p-4">
             <p className="text-xs text-gray-500 mb-0.5 font-semibold uppercase tracking-wide">Ton lien d'invitation</p>
             <p className="text-xs text-gray-400 mb-2">Chaque personne inscrite via ton lien rejoint ta communauté — tu gagnes sur ses achats jusqu'au Cercle 5.</p>
             <div className="flex items-center justify-between gap-3">
@@ -497,7 +497,7 @@ export default async function ConsumerDashboard() {
 
         {/* ── DÉMO ── */}
         <Link href="/demo">
-          <div className="bg-gradient-to-r from-brand-700 to-brand-800 rounded-xl p-4 flex items-center gap-3 hover:from-brand-800 hover:to-brand-900 transition-colors cursor-pointer">
+          <div className="card-dark bg-gradient-to-r from-brand-700 to-brand-800 rounded-xl p-4 flex items-center gap-3 cursor-pointer">
             <span className="text-2xl flex-shrink-0">⚡</span>
             <div className="flex-1">
               <p className="text-sm font-semibold text-white">{t('dashboard.demoTitle')}</p>

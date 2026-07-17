@@ -92,7 +92,7 @@ export default function CagnotteWidget() {
   const progress = Math.min((balance / milestone) * 100, 100)
 
   return (
-    <div className="rounded-2xl border border-green-200 bg-green-50 p-4 space-y-4">
+    <div className="card-tinted rounded-2xl border border-green-200 bg-green-50 p-4 space-y-4">
 
       {/* ── EN-TÊTE ── */}
       <div className="flex items-center justify-between">

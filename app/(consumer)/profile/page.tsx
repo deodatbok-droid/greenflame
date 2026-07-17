@@ -193,7 +193,7 @@ export default async function ProfilePage() {
         </div>
       </div>
 
-      <div className="px-4 mt-4 space-y-4">
+      <div className="px-4 mt-4 space-y-6">
 
         {/* Stats rapides */}
         <div className="space-y-2">

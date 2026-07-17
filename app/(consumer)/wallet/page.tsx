@@ -160,7 +160,7 @@ export default async function WalletPage() {
         )}
       </div>
 
-      <div className="p-4 space-y-4">
+      <div className="p-4 space-y-6">
 
         {/* Validations en attente (retraits initiés par admin) */}
         {pendingValidations.length > 0 && (

@@ -47,7 +47,7 @@ export default async function FondsReconnaisssancePage() {
           <BackButton href="/carriere" />
         </div>
 
-        <div className="px-4 space-y-4 pt-2">
+        <div className="px-4 space-y-6 pt-2">
 
           {/* Hero verrouillé */}
           <div
