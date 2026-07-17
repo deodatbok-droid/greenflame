@@ -281,7 +281,7 @@ export default async function MerchantToolsPage() {
         )}
 
         {/* Tontines-Produit */}
-        <Link href="/merchant/tontines" className="col-span-2">
+        <Link href="/merchant/tontines">
           <div className="card text-center py-5 hover:border-green-300 border-green-200 bg-green-50 transition-colors cursor-pointer">
             <span className="text-3xl">🤝</span>
             <p className="font-semibold text-green-800 mt-2 text-sm">Tontines-Produit</p>
@@ -299,7 +299,7 @@ export default async function MerchantToolsPage() {
       <div className="grid grid-cols-2 gap-3">
         {/* POS rapide — VIP requis */}
         {isVip ? (
-          <Link href="/merchant/pos" className="col-span-2">
+          <Link href="/merchant/pos">
             <div className="card text-center py-5 hover:border-brand-400 border-brand-200 bg-brand-50 transition-colors cursor-pointer">
               <span className="text-3xl">🧾</span>
               <p className="font-semibold text-brand-800 mt-2 text-sm">POS Rapide</p>
@@ -307,7 +307,7 @@ export default async function MerchantToolsPage() {
             </div>
           </Link>
         ) : (
-          <Link href="/merchant/upgrade?tier=vip" className="col-span-2">
+          <Link href="/merchant/upgrade?tier=vip">
             <div className="card text-center py-5 cursor-pointer border-dashed opacity-60 hover:opacity-80 transition-opacity">
               <span className="text-3xl">🧾</span>
               <div className="flex items-center justify-center gap-1 mt-2">
@@ -358,7 +358,7 @@ export default async function MerchantToolsPage() {
 
         {/* Livre de caisse — VIP requis */}
         {isVip ? (
-          <Link href="/merchant/caisse" className="col-span-2">
+          <Link href="/merchant/caisse">
             <div className="card text-center py-5 hover:border-amber-300 border-amber-200 bg-amber-50 transition-colors cursor-pointer">
               <span className="text-3xl">📒</span>
               <p className="font-semibold text-amber-800 mt-2 text-sm">Livre de caisse</p>
@@ -366,7 +366,7 @@ export default async function MerchantToolsPage() {
             </div>
           </Link>
         ) : (
-          <Link href="/merchant/upgrade?tier=vip" className="col-span-2">
+          <Link href="/merchant/upgrade?tier=vip">
             <div className="card text-center py-5 cursor-pointer border-dashed opacity-60 hover:opacity-80 transition-opacity">
               <span className="text-3xl">📒</span>
               <div className="flex items-center justify-center gap-1 mt-2">
@@ -388,7 +388,7 @@ export default async function MerchantToolsPage() {
       <div className="grid grid-cols-2 gap-3">
         {/* ── Outil sectoriel personnalisé (universel) ── */}
         {merchant.sector && merchant.sector_activated_at ? (
-          <Link href={`/merchant/tools/${merchant.sector}`} className="col-span-2">
+          <Link href={`/merchant/tools/${merchant.sector}`}>
             <div className="card text-center py-4 hover:border-brand-300 border-brand-200 bg-brand-50 transition-colors cursor-pointer">
               <span className="text-3xl">{SECTOR_LABELS[merchant.sector]?.icon ?? '✨'}</span>
               <p className="font-semibold text-brand-800 mt-2 text-sm">
@@ -398,7 +398,7 @@ export default async function MerchantToolsPage() {
             </div>
           </Link>
         ) : (
-          <Link href="/merchant/tools/activer" className="col-span-2">
+          <Link href="/merchant/tools/activer">
             <div className="card text-center py-4 hover:border-brand-300 border-brand-200 bg-brand-50 transition-colors cursor-pointer">
               <span className="text-3xl">✨</span>
               <p className="font-semibold text-brand-800 mt-2 text-sm">Outil sectoriel personnalisé</p>

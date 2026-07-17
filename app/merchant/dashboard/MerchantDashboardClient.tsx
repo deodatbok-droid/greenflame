@@ -185,7 +185,7 @@ export default function MerchantDashboardClient({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
 
       {/* ── HEADER ── */}
       <div className="bg-white border-b border-gray-100 sticky top-0 z-40">
@@ -407,7 +407,7 @@ export default function MerchantDashboardClient({
 
             {/* ── WALLET PERSO (cashback + commissions réseau) ── */}
             {personalWallet && (personalWallet.balance_fcfa > 0 || personalWallet.balance_gfp > 0) && (
-              <div className="bg-white rounded-xl border border-gray-100 p-4">
+              <div className="card">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-xs text-gray-400 mb-0.5">{t('merchantDash.personalAccount')}</p>
@@ -436,7 +436,7 @@ export default function MerchantDashboardClient({
                   { label: t('merchantDash.statFees').replace('{code}', code), value: formatFcfa(monthStats.commission), sub: t('merchantDash.statFeesSub') },
                   { label: t('merchantDash.statNet'), value: formatFcfa(monthStats.netRevenue), sub: t('merchantDash.statNetSub') },
                 ].map(s => (
-                  <Link key={s.label} href="/merchant/history" className="bg-white rounded-xl p-4 border border-gray-100 hover:border-brand-200 hover:shadow-sm transition-all block">
+                  <Link key={s.label} href="/merchant/history" className="card block">
                     <p className="text-xl font-bold text-gray-900">{s.value}</p>
                     <p className="text-xs text-gray-500 mt-1 leading-tight">{s.label}</p>
                     <p className="text-xs text-brand-600 mt-1">{s.sub}</p>
@@ -450,15 +450,15 @@ export default function MerchantDashboardClient({
               <div>
                 <p className="text-xs text-gray-400 font-medium uppercase tracking-wide mb-2">{t('merchantDash.today')}</p>
                 <div className="grid grid-cols-3 gap-3">
-                  <div className="bg-white rounded-xl p-4 border border-gray-100 text-center">
+                  <div className="card text-center">
                     <p className="text-2xl font-bold text-gray-900">{todayStats.count}</p>
                     <p className="text-xs text-gray-500 mt-1">{t('merchantDash.todayTransactions')}</p>
                   </div>
-                  <div className="bg-white rounded-xl p-4 border border-gray-100 text-center">
+                  <div className="card text-center">
                     <p className="text-lg font-bold text-gray-900">{formatFcfa(todayStats.gmv)}</p>
                     <p className="text-xs text-gray-500 mt-1">{t('merchantDash.todaySales')}</p>
                   </div>
-                  <div className="bg-white rounded-xl p-4 border border-gray-100 text-center">
+                  <div className="card text-center">
                     <p className="text-lg font-bold text-brand-600">{formatFcfa(todayStats.commission)}</p>
                     <p className="text-xs text-gray-500 mt-1">{t('merchantDash.todayFees')}</p>
                   </div>
@@ -468,7 +468,7 @@ export default function MerchantDashboardClient({
 
             {/* Répartition des frais */}
             {monthStats.commission > 0 && (
-              <div className="bg-white rounded-xl border border-gray-100 p-5">
+              <div className="card p-5">
                 <h2 className="font-semibold text-gray-900 mb-1">
                   {t('merchantDash.breakdownTitle').replace('{amount}', formatFcfa(monthStats.commission))}
                 </h2>
@@ -504,7 +504,7 @@ export default function MerchantDashboardClient({
 
           {/* ── Bande latérale outils — desktop uniquement ── */}
           <div className="hidden md:flex flex-col gap-3 sticky top-20">
-            <div className="bg-white rounded-xl border border-gray-100 p-4">
+            <div className="card">
               <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-3">{t('merchantDash.toolTools')}</p>
               <div className="space-y-0.5">
                 <Link href="/merchant/receive">
