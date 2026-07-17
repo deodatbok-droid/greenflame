@@ -71,7 +71,7 @@ export default function WaitlistClient({ referralCode, referrerName, initialCoun
     if (!success) return
     const msg =
       `🔥 J'ai réservé ma place sur GreenFlame — le marché communautaire sur lequel tu gagnes à chaque achat.\n\n` +
-      `Rejoins la liste d'attente avant le lancement officiel :\n${success.referral_url}\n\n${success.first_name} 🔥`
+      `Clique sur le lien 👇 et rejoins la liste d'attente avant le lancement officiel :\n${success.referral_url}\n\n${success.first_name} 🔥`
     window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank')
   }
 
