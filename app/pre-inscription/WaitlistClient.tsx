@@ -70,8 +70,8 @@ export default function WaitlistClient({ referralCode, referrerName, initialCoun
   function shareWhatsApp() {
     if (!success) return
     const msg =
-      `🔥 J'ai réservé ma place sur GreenFlame — le marché communautaire qui te rembourse une partie de chaque achat.\n\n` +
-      `Rejoins la liste d'attente avant le lancement officiel :\n${success.referral_url}\n\nBénin 🇧🇯`
+      `🔥 J'ai réservé ma place sur GreenFlame — le marché communautaire sur lequel tu gagnes à chaque achat.\n\n` +
+      `Rejoins la liste d'attente avant le lancement officiel :\n${success.referral_url}\n\n${success.first_name} 🔥`
     window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank')
   }
 
@@ -279,10 +279,10 @@ export default function WaitlistClient({ referralCode, referrerName, initialCoun
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-lg">🔗</span>
-                <h3 className="font-bold text-gray-900 text-sm">Votre lien de parrainage</h3>
+                <h3 className="font-bold text-gray-900 text-sm">Votre lien d&apos;affiliation</h3>
               </div>
               <p className="text-xs text-gray-400 mb-3">
-                Partagez ce lien — chaque inscrit via vous sera dans votre arborescence au lancement.
+                Votre arborescence sera construite à partir de vos inscriptions ici.
               </p>
               <div className="bg-gray-50 rounded-xl px-3 py-2.5 font-mono text-xs text-gray-600 break-all mb-3">
                 {success.referral_url}
@@ -317,7 +317,7 @@ export default function WaitlistClient({ referralCode, referrerName, initialCoun
               <div className="space-y-3">
                 {[
                   { icon: '📱', text: 'Vous recevrez une notification WhatsApp au lancement officiel' },
-                  { icon: '🌳', text: 'Votre arborescence sera construite à partir de vos parrainages ici' },
+                  { icon: '🌳', text: 'Votre arborescence sera construite à partir de vos inscriptions ici' },
                   { icon: '💰', text: 'Dès le lancement, vos achats et ceux de votre communauté génèrent du cashback' },
                 ].map((step, i) => (
                   <div key={i} className="flex items-start gap-3">
