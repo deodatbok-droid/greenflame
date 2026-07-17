@@ -306,10 +306,10 @@ export default function GlobalVoiceNav() {
       {/* Bouton flottant */}
       <button
         onClick={() => setOpen(o => !o)}
-        className={`fixed bottom-28 right-4 z-50 w-12 h-12 rounded-full shadow-lg flex items-center justify-center transition-all active:scale-95 ${
-          listening   ? 'bg-red-500 shadow-red-300/50'
-          : processing ? 'bg-orange-400 shadow-orange-200/50'
-          : `${headerBg} shadow-black/20`
+        className={`fixed bottom-28 right-4 z-50 w-12 h-12 rounded-full fab flex items-center justify-center transition-all ${
+          listening   ? 'bg-red-500'
+          : processing ? 'bg-orange-400'
+          : headerBg
         }`}
         aria-label="Assistant vocal"
       >

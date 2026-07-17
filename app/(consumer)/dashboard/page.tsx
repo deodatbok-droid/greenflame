@@ -194,7 +194,7 @@ export default async function ConsumerDashboard() {
 
         {/* ── SCORE GREENFLAME + ACADÉMIE ── */}
         <Link href="/academie">
-          <div className="rounded-2xl border border-gray-100 bg-white shadow-sm p-4 flex items-center gap-4 hover:bg-gray-50 transition-colors">
+          <div className="card flex items-center gap-4">
             <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-green-50 flex flex-col items-center justify-center">
               <span className="text-xl font-black text-green-700 leading-none">{userScore?.score ?? '—'}</span>
               <span className="text-[9px] text-green-500 font-semibold uppercase tracking-wide mt-0.5">/ 1000</span>
@@ -301,21 +301,21 @@ export default async function ConsumerDashboard() {
         {/* ── STATS ── */}
         <div className="grid grid-cols-3 gap-3">
           <Link href="/wallet">
-            <div className="bg-white rounded-xl p-3 border border-gray-100 hover:border-brand-200 transition-colors cursor-pointer">
+            <div className="card p-3 cursor-pointer">
               <p className="text-base font-bold text-brand-700">+{formatFcfa(monthlyCashback)}</p>
               <p className="text-xs text-gray-400 leading-tight mt-0.5">{t('dashboard.cashback')}</p>
               <p className="text-[10px] text-brand-400 mt-1 leading-tight">Tes achats ce mois</p>
             </div>
           </Link>
           <Link href="/wallet">
-            <div className="bg-white rounded-xl p-3 border border-gray-100 hover:border-indigo-200 transition-colors cursor-pointer">
+            <div className="card p-3 cursor-pointer">
               <p className="text-base font-bold text-indigo-700">+{formatFcfa(monthlyNetwork)}</p>
               <p className="text-xs text-gray-400 leading-tight mt-0.5">{t('dashboard.networkDividend')}</p>
               <p className="text-[10px] text-indigo-400 mt-1 leading-tight">Ta communauté achète</p>
             </div>
           </Link>
           <Link href="/profile">
-            <div className="bg-white rounded-xl p-3 border border-gray-100 hover:border-green-200 transition-colors cursor-pointer">
+            <div className="card p-3 cursor-pointer">
               <p className="text-base font-bold text-green-700">{networkSize}</p>
               <p className="text-xs text-gray-400 leading-tight mt-0.5">Communauté</p>
               <p className="text-[10px] text-green-500 mt-1 leading-tight">
@@ -352,7 +352,7 @@ export default async function ConsumerDashboard() {
         {/* ── BON DE RETRAIT — raccourci ── */}
         {!isNewUser && (
           <Link href="/voucher">
-            <div className="bg-white rounded-xl border border-gray-100 hover:border-brand-200 flex items-center gap-3 p-4 cursor-pointer transition-colors group">
+            <div className="card flex items-center gap-3 cursor-pointer group">
               <div className="w-11 h-11 rounded-xl bg-indigo-50 flex items-center justify-center text-2xl flex-shrink-0 group-hover:bg-indigo-100 transition-colors">
                 🎟️
               </div>
@@ -367,7 +367,7 @@ export default async function ConsumerDashboard() {
 
         {/* ── MA TONTINE ── */}
         <Link href="/tontine">
-          <div className="bg-white rounded-xl border border-gray-100 hover:border-brand-200 flex items-center gap-3 p-4 cursor-pointer transition-colors group">
+          <div className="card flex items-center gap-3 cursor-pointer group">
             <div className="w-11 h-11 rounded-xl bg-brand-50 flex items-center justify-center text-2xl flex-shrink-0 group-hover:bg-brand-100 transition-colors">
               🤝
             </div>
@@ -406,7 +406,7 @@ export default async function ConsumerDashboard() {
           <p className="text-xs text-gray-400 mb-3">Chaque paiement te rapporte du cashback crédité instantanément.</p>
 
           {transactions.length === 0 ? (
-            <div className="bg-white rounded-xl border border-gray-100 p-6 text-center">
+            <div className="card p-6 text-center">
               <p className="text-3xl mb-2">🛍️</p>
               <p className="font-semibold text-gray-700 text-sm">{t('dashboard.noTransactions')}</p>
               <p className="text-xs text-gray-400 mt-1 mb-4">Paye chez un marchand GreenFlame pour voir ton cashback ici.</p>
@@ -417,7 +417,7 @@ export default async function ConsumerDashboard() {
               </Link>
             </div>
           ) : (
-            <div className="bg-white rounded-xl border border-gray-100 divide-y divide-gray-50">
+            <div className="card p-0 divide-y divide-gray-50">
               {transactions.map(tx => {
                 const merchant = tx.merchants as unknown as { business_name: string } | null
                 return (
@@ -512,7 +512,7 @@ export default async function ConsumerDashboard() {
           <div className="flex gap-3">
             {isMerchant && (
               <Link href="/merchant/dashboard" className="flex-1">
-                <div className="bg-white rounded-xl border border-gray-100 text-center py-3 hover:border-brand-200 transition-colors cursor-pointer">
+                <div className="card py-3 text-center cursor-pointer">
                   <span className="text-2xl">🏪</span>
                   <p className="text-xs font-medium text-gray-700 mt-1">{t('dashboard.merchantSpace')}</p>
                 </div>

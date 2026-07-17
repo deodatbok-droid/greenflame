@@ -134,7 +134,7 @@ export default function ChatWidget() {
       {/* Bouton flottant */}
       <button
         onClick={() => setOpen(o => !o)}
-        className="fixed bottom-44 right-4 z-50 w-12 h-12 rounded-full shadow-lg flex items-center justify-center bg-brand-600 shadow-black/20 active:scale-95 transition-all"
+        className="fixed bottom-44 right-4 z-50 w-12 h-12 rounded-full fab flex items-center justify-center bg-brand-600 transition-all"
         aria-label={t('chat.ariaOpen')}
       >
         {open ? (

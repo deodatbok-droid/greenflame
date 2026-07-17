@@ -88,6 +88,36 @@
   .label {
     @apply text-sm font-medium text-gray-700 mb-1 block;
   }
+  /* Floating Action Buttons */
+  .fab {
+    box-shadow:
+      0 2px 8px rgba(0, 0, 0, 0.22),
+      0 12px 32px rgba(0, 0, 0, 0.28);
+    transition:
+      box-shadow 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+      transform  0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .fab:hover {
+      box-shadow:
+        0 4px 14px rgba(0, 0, 0, 0.22),
+        0 20px 48px rgba(0, 0, 0, 0.32);
+      transform: translateY(-4px) scale(1.08);
+    }
+  }
+  .fab:active {
+    transform: scale(0.86) !important;
+    box-shadow:
+      0 1px 4px rgba(0, 0, 0, 0.18),
+      0 4px 12px rgba(0, 0, 0, 0.22) !important;
+    transition-duration: 0.08s !important;
+  }
+  /* Bottom navigation bar — ombre portée vers le haut */
+  .bottom-nav {
+    box-shadow:
+      0 -1px 0 rgba(0, 0, 0, 0.06),
+      0 -4px 20px rgba(0, 0, 0, 0.09);
+  }
 }
 
 /* PWA safe areas */
