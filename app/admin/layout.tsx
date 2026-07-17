@@ -31,6 +31,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     { href: '/admin/tresorerie',     label: 'Trésorerie'                },
     { href: '/admin/delivery',       label: 'Delivery'                  },
     { href: '/admin/matrix',         label: 'Matrice réseau'            },
+    { href: '/admin/waitlist',        label: 'Liste d\'attente'           },
   ]
 
   const { data: profile } = await supabase
