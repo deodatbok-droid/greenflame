@@ -109,7 +109,7 @@ export default function WaitlistClient({ referralCode, referrerName, initialCoun
             </div>
           )}
           <h1 className="text-3xl font-extrabold leading-tight tracking-tight">
-            Le marché qui vous rembourse<br />
+            Le marché qui vous gratifie<br />
             <span style={{ color: '#fbbf24' }}>à chaque achat</span>
           </h1>
           <p className="text-green-200 mt-3 text-sm leading-relaxed max-w-xs mx-auto">
