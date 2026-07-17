@@ -44,23 +44,47 @@ export default async function NetworkPage() {
       .gte('created_at', thirtyDaysAgo.toISOString()),
   ])
 
-  // Resolve member details for each level
+  // Resolve member details + career rank + merchant status for each level
   async function resolveMembers(treeRows: { user_id: string }[] | null) {
     if (!treeRows || treeRows.length === 0) return []
-    const { data } = await supabase
-      .from('users')
-      .select('id, full_name, created_at')
-      .in('id', treeRows.map(r => r.user_id))
-      .order('created_at', { ascending: false })
-    return (data ?? []) as { id: string; full_name: string; created_at: string }[]
+    const ids = treeRows.map(r => r.user_id)
+    const [{ data: users }, { data: ranks }, { data: merchants }] = await Promise.all([
+      supabase.from('users').select('id, full_name, created_at, role, enrolled_by_id').in('id', ids).order('created_at', { ascending: false }),
+      supabase.from('leader_career_ranks').select('user_id, current_rank').in('user_id', ids),
+      supabase.from('merchants').select('user_id, subscription_tier').in('user_id', ids),
+    ])
+    const rankMap     = new Map((ranks ?? []).map(r => [r.user_id, r.current_rank]))
+    const merchantMap = new Map((merchants ?? []).map(m => [m.user_id, m.subscription_tier]))
+    return (users ?? []).map(u => ({
+      id:           u.id,
+      full_name:    u.full_name,
+      created_at:   u.created_at,
+      currentRank:  rankMap.get(u.id) ?? 0,
+      isDirect:     !!user && u.enrolled_by_id === user.id,
+      isMerchant:   (u.role ?? []).includes('merchant'),
+      merchantTier: merchantMap.get(u.id) ?? null,
+    }))
   }
 
-  const [members1, members2, members3, members4, members5] = await Promise.all([
+  const l1Ids = (t1.data ?? []).map(r => r.user_id)
+
+  async function getSubCounts(): Promise<Record<string, number>> {
+    if (l1Ids.length === 0) return {}
+    const { data } = await supabase.from('network_tree').select('l1_upline').in('l1_upline', l1Ids)
+    const counts: Record<string, number> = {}
+    for (const row of data ?? []) {
+      if (row.l1_upline) counts[row.l1_upline] = (counts[row.l1_upline] ?? 0) + 1
+    }
+    return counts
+  }
+
+  const [members1, members2, members3, members4, members5, memberSubCounts] = await Promise.all([
     resolveMembers(t1.data),
     resolveMembers(t2.data),
     resolveMembers(t3.data),
     resolveMembers(t4.data),
     resolveMembers(t5.data),
+    getSubCounts(),
   ])
 
   // Commission totals by level
@@ -124,6 +148,8 @@ export default async function NetworkPage() {
         passifMois={totalEarnings30d}
         referralUrl={referralUrl}
         totalCount={totalCount}
+        memberSubCounts={memberSubCounts}
+        l1Total={c1.count ?? 0}
       />
     </div>
   )
