@@ -84,11 +84,15 @@ export default function MerchantBottomNav() {
                 }`}
               >
                 <span className={`absolute top-0 h-0.5 rounded-full transition-all duration-300 ${
-                  isActive ? 'w-6 bg-brand-500' : 'w-0'
+                  isActive ? 'w-8 bg-brand-500' : 'w-0'
                 }`} />
-                <span className={`text-xl leading-none mt-0.5 transition-transform duration-300 ${
-                  isActive ? 'scale-110' : 'scale-100'
-                }`}>{item.icon}</span>
+                <div className={`flex items-center justify-center mt-0.5 h-8 rounded-2xl transition-all duration-300 ${
+                  isActive ? 'bg-brand-100 px-3' : 'px-1'
+                }`}>
+                  <span className={`leading-none transition-all duration-300 ${
+                    isActive ? 'text-[1.75rem]' : 'text-xl'
+                  }`}>{item.icon}</span>
+                </div>
                 <span className="text-[10px] font-medium leading-tight mt-0.5 w-full text-center truncate px-1">
                   {t(item.labelKey)}
                 </span>
@@ -105,9 +109,13 @@ export default function MerchantBottomNav() {
             }`}
           >
             <span className={`absolute top-0 h-0.5 rounded-full transition-all duration-300 ${
-              isMoreActive || showMore ? 'w-6 bg-brand-500' : 'w-0'
+              isMoreActive || showMore ? 'w-8 bg-brand-500' : 'w-0'
             }`} />
-            <DotsIcon />
+            <div className={`flex items-center justify-center mt-0.5 h-8 rounded-2xl transition-all duration-300 ${
+              isMoreActive || showMore ? 'bg-brand-100 px-3' : 'px-1'
+            }`}>
+              <DotsIcon />
+            </div>
             <span className="text-[10px] font-medium leading-tight mt-0.5">Plus</span>
           </button>
         </div>

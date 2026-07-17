@@ -241,7 +241,7 @@ export default async function ConsumerDashboard() {
         )}
 
         {/* ── PORTEFEUILLE IMMERSIF ── */}
-        <div className="relative rounded-3xl overflow-hidden text-white shadow-xl">
+        <div className="card-dark relative rounded-3xl overflow-hidden text-white">
           {/* Gradient de fond multi-couche */}
           <div className="absolute inset-0 bg-gradient-to-br from-brand-800 via-brand-700 to-brand-600" />
           {/* Cercles décoratifs flottants */}

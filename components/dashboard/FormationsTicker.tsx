@@ -84,10 +84,11 @@ export default function FormationsTicker({ products }: FormationsTickerProps) {
 
   const current = products[activeIndex]
   const gradient = CARD_GRADIENTS[activeIndex % CARD_GRADIENTS.length]
+  const isReversed = activeIndex % 2 === 1
 
   return (
     <div
-      className="rounded-2xl overflow-hidden shadow-lg"
+      className="card-dark rounded-2xl overflow-hidden"
       style={{ background: gradient }}
     >
       {/* Barre de progression */}
@@ -98,63 +99,59 @@ export default function FormationsTicker({ products }: FormationsTickerProps) {
         />
       </div>
 
-      {/* Corps */}
+      {/* Corps — layout horizontal 1/3 icône + 2/3 texte, alternance gauche/droite */}
       <div
-        className="p-5 transition-opacity duration-300"
+        className="p-4 transition-opacity duration-300"
         style={{ opacity: isTransitioning ? 0 : 1 }}
       >
-        {/* En-tête : badge + compteur */}
-        <div className="flex items-center justify-between mb-4">
-          <span className="text-[10px] font-bold tracking-widest uppercase text-white/60">
-            {current.badge ?? '✨ Mini-formation'}
-          </span>
-          {products.length > 1 && (
-            <span className="text-[11px] font-semibold text-white/50 tabular-nums">
+        <div className={`flex items-center gap-4 ${isReversed ? 'flex-row-reverse' : ''}`}>
+
+          {/* Icône — 1/3 */}
+          <div className="w-1/3 flex-shrink-0 flex items-center justify-center py-3">
+            <span className="text-6xl leading-none select-none" aria-hidden>
+              {current.emoji}
+            </span>
+          </div>
+
+          {/* Texte — 2/3 */}
+          <div className="flex-1 min-w-0 py-1">
+            <span className="text-[9px] font-bold tracking-widest uppercase text-white/55 block mb-1">
+              {current.badge ?? '✨ Mini-formation'}
+            </span>
+            <h3 className="text-white font-bold text-sm leading-snug mb-1.5">
+              {current.name}
+            </h3>
+            <p
+              className="text-white/65 text-[11px] leading-relaxed mb-3"
+              style={{
+                display: '-webkit-box',
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden',
+              }}
+            >
+              {current.description}
+            </p>
+            <div className="flex items-center gap-1.5">
+              <span className="bg-white/15 text-white text-[10px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap flex-shrink-0">
+                {current.price_fcfa.toLocaleString('fr-FR')} F
+              </span>
+              <Link href={current.href ?? `/marketplace/produit/${current.id}`} className="flex-1">
+                <span className="block text-center w-full bg-white text-gray-900 text-[10px] font-bold py-1.5 px-2 rounded-xl hover:bg-white/90 active:scale-95 transition-all cursor-pointer">
+                  {current.ctaLabel ?? 'Découvrir →'}
+                </span>
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Compteur + flèches navigation */}
+        {products.length > 1 && (
+          <div className="flex items-center justify-between mt-3 pt-2.5 border-t border-white/10">
+            <span className="text-[10px] font-semibold text-white/45 tabular-nums">
               {activeIndex + 1}&thinsp;/&thinsp;{products.length}
             </span>
-          )}
-        </div>
-
-        {/* Emoji principal */}
-        <div className="text-5xl mb-3 leading-none select-none" aria-hidden>
-          {current.emoji}
-        </div>
-
-        {/* Titre */}
-        <h3 className="text-white font-bold text-base leading-snug mb-2">
-          {current.name}
-        </h3>
-
-        {/* Description — 2 lignes max */}
-        <p
-          className="text-white/65 text-xs leading-relaxed mb-5"
-          style={{
-            display: '-webkit-box',
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: 'vertical',
-            overflow: 'hidden',
-          }}
-        >
-          {current.description}
-        </p>
-
-        {/* Pied : prix + CTA + navigation */}
-        <div className="flex items-center gap-2">
-          {/* Prix pill */}
-          <span className="bg-white/15 text-white text-xs font-bold px-3 py-1.5 rounded-full whitespace-nowrap flex-shrink-0">
-            {current.price_fcfa.toLocaleString('fr-FR')} F
-          </span>
-
-          {/* CTA — prend l'espace restant */}
-          <Link href={current.href ?? `/marketplace/produit/${current.id}`} className="flex-1">
-            <span className="block text-center w-full bg-white text-gray-900 text-xs font-bold py-2 px-3 rounded-xl hover:bg-white/90 active:scale-95 transition-all cursor-pointer whitespace-nowrap">
-              {current.ctaLabel ?? 'Découvrir →'}
-            </span>
-          </Link>
-
-          {/* Flèches navigation */}
-          {products.length > 1 && (
-            <div className="flex gap-1 flex-shrink-0">
+            <div className="flex gap-1">
               <button
                 onClick={prev}
                 aria-label="Précédent"
@@ -170,8 +167,8 @@ export default function FormationsTicker({ products }: FormationsTickerProps) {
                 ›
               </button>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   )
