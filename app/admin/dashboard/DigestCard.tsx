@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 
@@ -19,9 +19,24 @@ interface Props {
   digest: Digest | null
 }
 
+function formatPeriodDate(periodDate: string): string {
+  // Parse YYYY-MM-DD en date locale pour éviter le décalage UTC → UTC+1
+  const [y, m, d] = periodDate.split('-').map(Number)
+  return new Date(y, m - 1, d).toLocaleDateString('fr-FR', {
+    weekday: 'long', day: '2-digit', month: 'long',
+  })
+}
+
+function formatGeneratedAt(iso: string): string {
+  return new Date(iso).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+}
+
 export default function DigestCard({ digest }: Props) {
   const router             = useRouter()
   const [loading, setLoading] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => { setMounted(true) }, [])
 
   async function triggerDigest() {
     setLoading(true)
@@ -58,11 +73,10 @@ export default function DigestCard({ digest }: Props) {
             <p className="font-semibold text-white text-sm">Rapport IA quotidien</p>
             {digest ? (
               <p className="text-xs text-gray-400">
-                {new Date(digest.period_date).toLocaleDateString('fr-FR', { weekday: 'long', day: '2-digit', month: 'long' })}
+                {mounted ? formatPeriodDate(digest.period_date) : digest.period_date}
                 {' · '}
                 {digest.generated_by === 'manual' ? 'Déclenché manuellement' : 'Généré automatiquement'}
-                {' · '}
-                {new Date(digest.generated_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                {mounted ? ` · ${formatGeneratedAt(digest.generated_at)}` : ''}
               </p>
             ) : (
               <p className="text-xs text-gray-500">Aucun rapport généré aujourd'hui</p>
