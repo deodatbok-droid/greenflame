@@ -56,9 +56,9 @@ export default async function MerchantLayout({ children }: { children: React.Rea
         : 'bg-gray-100 text-gray-500 border-gray-200'
 
   return (
-    <div className="min-h-screen pb-20 overflow-x-hidden" style={{ background: '#fffcf5' }}>
+    <div className="min-h-screen pb-20 overflow-x-hidden" style={{ background: '#fef6e4' }}>
       {/* Top bar — grille 3 colonnes pour éviter tout chevauchement */}
-      <div className="px-3 h-14 grid grid-cols-3 items-center" style={{ background: '#fff', borderBottom: '1px solid #f5e6c8' }}>
+      <div className="px-3 h-14 grid grid-cols-3 items-center" style={{ background: '#fffdf7', borderBottom: '1px solid #e8c882' }}>
         {/* Gauche */}
         <Link href="/dashboard" className="text-brand-600 font-medium text-sm truncate min-w-0">
           {t('merchant.topBar.backHome')}

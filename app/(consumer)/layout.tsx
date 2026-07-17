@@ -35,7 +35,7 @@ export default async function ConsumerLayout({ children }: { children: React.Rea
 
   return (
     <CartProvider>
-      <div className="min-h-screen bg-gray-50 pb-20 overflow-x-hidden">
+      <div className="min-h-screen pb-20 overflow-x-hidden" style={{ background: '#edf7f1' }}>
         {children}
         {user && !isDemo && <BottomNav />}
         {user && !isDemo && <CartFab />}
