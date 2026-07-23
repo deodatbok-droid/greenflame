@@ -34,7 +34,7 @@ export default async function ConsumerDashboard() {
       .eq('status', 'completed')
       .order('created_at', { ascending: false })
       .limit(5),
-    supabase.from('users').select('full_name, referral_code, role, upline_id').eq('id', user.id).single(),
+    supabase.from('users').select('full_name, referral_code, role, upline_id, is_active').eq('id', user.id).single(),
     supabase
       .from('commission_distributions')
       .select('amount_fcfa, distribution_type')
@@ -86,7 +86,7 @@ export default async function ConsumerDashboard() {
   const isKingmaker = profile?.role?.includes('kingmaker')
   const isAdmin     = profile?.role?.includes('admin') || profile?.role?.includes('platform_upline')
   const hasNoUpline = !profile?.upline_id
-  const isNewUser   = txCount === 0
+  const isNewUser   = txCount === 0 && profile?.is_active !== true
 
   const monthlyNetwork  = commissions.filter(c => c.distribution_type === 'network').reduce((s, c) => s + c.amount_fcfa, 0)
   const monthlyCashback = commissions.filter(c => c.distribution_type === 'cashback').reduce((s, c) => s + c.amount_fcfa, 0)
@@ -287,6 +287,11 @@ export default async function ConsumerDashboard() {
               <Link href="/wallet" className="flex-1">
                 <button className="w-full bg-white/15 hover:bg-white/25 active:bg-white/30 transition-all text-white text-xs font-semibold py-2.5 rounded-2xl border border-white/20">
                   {t('nav.wallet')} →
+                </button>
+              </Link>
+              <Link href="/decouvrir" className="flex-1">
+                <button className="w-full bg-white/15 hover:bg-white/25 active:bg-white/30 transition-all text-white text-xs font-semibold py-2.5 rounded-2xl border border-white/20">
+                  📍 Découvrir
                 </button>
               </Link>
               <Link href="/pay" className="flex-1">

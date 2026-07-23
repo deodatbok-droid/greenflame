@@ -112,6 +112,7 @@ export async function middleware(request: NextRequest) {
     '/wallet',
     '/merchant',
     '/admin',
+    '/fieldagent',
   ]
 
   const isProtected = protectedPaths.some(p => pathname.startsWith(p))
