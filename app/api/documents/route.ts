@@ -52,7 +52,14 @@ export async function GET(req: NextRequest) {
   return NextResponse.json(documents)
 }
 
-type DocLine = { description: string; quantity: number; unit_price_fcfa: number }
+type DocLine = { description: string; quantity: number; unit_price_fcfa: number; unit?: string }
+
+function genPlatformRef(type: string): string {
+  const prefix = type === 'facture' ? 'FA' : 'DE'
+  const chars  = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+  const rand   = Array.from({ length: 6 }, () => chars[Math.floor(Math.random() * chars.length)]).join('')
+  return `GF-${prefix}-${rand}`
+}
 
 export async function POST(req: NextRequest) {
   const supabase = await createClient()
@@ -68,9 +75,13 @@ export async function POST(req: NextRequest) {
     status?: string
     client_name?: string
     client_phone?: string
+    client_ifu?: string
+    client_address?: string
     issue_date?: string
     valid_until?: string | null
     due_date?: string | null
+    has_tva?: boolean
+    aib_rate?: number
     notes?: string
     linked_document_id?: string | null
     lines?: DocLine[]
@@ -78,7 +89,8 @@ export async function POST(req: NextRequest) {
 
   const {
     type, document_number, status, client_name, client_phone,
-    issue_date, valid_until, due_date, notes, linked_document_id, lines,
+    client_ifu, client_address, issue_date, valid_until, due_date,
+    has_tva, aib_rate, notes, linked_document_id, lines,
   } = body
 
   if (type !== 'devis' && type !== 'facture') {
@@ -88,7 +100,9 @@ export async function POST(req: NextRequest) {
   if (!client_name?.trim()) return NextResponse.json({ error: 'Nom du client requis' }, { status: 400 })
   if (!lines || lines.length === 0) return NextResponse.json({ error: 'Au moins une ligne est requise' }, { status: 400 })
 
-  const total = lines.reduce((sum, l) => sum + (l.quantity || 0) * (l.unit_price_fcfa || 0), 0)
+  const totalHt = lines.reduce((sum, l) => sum + (l.quantity || 0) * (l.unit_price_fcfa || 0), 0)
+  const tvaCal  = (has_tva ?? false) ? Math.round(totalHt * 0.18) : 0
+  const aibCal  = (aib_rate ?? 0) > 0 ? Math.round(totalHt * (aib_rate ?? 0)) : 0
 
   const svc = createServiceClient()
 
@@ -120,21 +134,28 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  const platform_ref = genPlatformRef(type)
+
   const { data: doc, error: docErr } = await svc
     .from('commercial_documents')
     .insert({
-      merchant_id: merchantId,
+      merchant_id:      merchantId,
       type,
-      document_number: document_number.trim(),
-      status: status ?? 'brouillon',
-      client_name: client_name.trim(),
-      client_phone: client_phone?.trim() || null,
-      issue_date: issue_date ?? new Date().toISOString().slice(0, 10),
-      valid_until: valid_until || null,
-      due_date: due_date || null,
-      notes: notes?.trim() || null,
-      total_fcfa: Math.round(total),
+      document_number:  document_number.trim(),
+      status:           status ?? 'brouillon',
+      client_name:      client_name.trim(),
+      client_phone:     client_phone?.trim() || null,
+      client_ifu:       client_ifu?.trim() || null,
+      client_address:   client_address?.trim() || null,
+      issue_date:       issue_date ?? new Date().toISOString().slice(0, 10),
+      valid_until:      valid_until || null,
+      due_date:         due_date || null,
+      has_tva:          has_tva ?? false,
+      aib_rate:         aib_rate ?? 0,
+      notes:            notes?.trim() || null,
+      total_fcfa:       Math.round(totalHt + tvaCal + aibCal),
       linked_document_id: linked_document_id || null,
+      platform_ref,
     })
     .select('id')
     .single()
@@ -144,11 +165,12 @@ export async function POST(req: NextRequest) {
   }
 
   const rows = lines.map((l, idx) => ({
-    document_id: doc.id,
-    description: l.description?.trim() || '—',
-    quantity: l.quantity || 1,
+    document_id:     doc.id,
+    description:     l.description?.trim() || '—',
+    quantity:        l.quantity || 1,
     unit_price_fcfa: l.unit_price_fcfa || 0,
-    position: idx,
+    unit:            l.unit || 'u',
+    position:        idx,
   }))
   const { error: linesErr } = await svc.from('commercial_document_lines').insert(rows)
   if (linesErr) return NextResponse.json({ error: linesErr.message }, { status: 500 })
