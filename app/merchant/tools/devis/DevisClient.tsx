@@ -123,65 +123,109 @@ export default function DevisClient({
   }
 
   function buildHtml(quoteNum: string) {
-    return `
-<!DOCTYPE html>
-<html><head><meta charset="utf-8">
+    return `<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8">
+<title>${t('merchant.devis.pdfTitle')} ${quoteNum}</title>
 <style>
-  body { font-family: Arial, sans-serif; padding: 40px; color: #111; font-size: 13px; }
-  .header { display: flex; justify-content: space-between; margin-bottom: 32px; }
-  .logo { font-size: 22px; font-weight: bold; color: #166534; }
-  .title { font-size: 26px; font-weight: bold; color: #166534; margin-bottom: 4px; }
-  .meta { color: #6b7280; font-size: 12px; }
-  .section { margin: 20px 0; }
-  .label { font-size: 11px; color: #9ca3af; text-transform: uppercase; letter-spacing: .05em; }
-  table { width: 100%; border-collapse: collapse; margin-top: 16px; }
-  th { background: #f0fdf4; padding: 10px 12px; text-align: left; font-size: 12px; color: #166534; border-bottom: 2px solid #bbf7d0; }
-  td { padding: 10px 12px; border-bottom: 1px solid #f3f4f6; }
-  .total-row { background: #166534; color: white; font-weight: bold; font-size: 16px; }
-  .total-row td { padding: 14px 12px; }
-  .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #e5e7eb; color: #9ca3af; font-size: 11px; text-align: center; }
-  .notes { background: #f9fafb; border-left: 4px solid #166534; padding: 12px; margin-top: 16px; font-size: 12px; }
-</style></head>
+  * { margin:0; padding:0; box-sizing:border-box }
+  body { font-family:'Helvetica Neue',Arial,sans-serif; color:#1a1a1a; font-size:12px; background:#fff }
+  @media print { @page { margin:0; size:A4 } }
+</style>
+</head>
 <body>
-<div class="header">
-  <div>
-    <div class="logo">🔥 GreenFlame</div>
-    <div class="meta">${businessName} · Benin</div>
+
+<div style="background:linear-gradient(135deg,#14532d 0%,#16a34a 100%);height:5px"></div>
+
+<div style="padding:40px 48px">
+
+  <!-- ENTÊTE -->
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px">
+    <div>
+      <div style="font-size:21px;font-weight:800;color:#166534;letter-spacing:-.3px">🔥 ${businessName}</div>
+      <div style="font-size:10px;color:#9ca3af;margin-top:5px;letter-spacing:.02em">Bénin · Plateforme GreenFlame Africa</div>
+    </div>
+    <div style="text-align:right">
+      <div style="display:inline-block;background:#166534;color:#fff;font-size:18px;font-weight:900;padding:5px 18px;border-radius:5px;letter-spacing:2px">${t('merchant.devis.pdfTitle')}</div>
+      <div style="margin-top:10px;font-size:13px;font-weight:700;color:#111">${quoteNum}</div>
+      <div style="font-size:11px;color:#6b7280;margin-top:4px;line-height:2">
+        ${t('merchant.devis.pdfIssued').replace('{date}', today)}<br>
+        ${t('merchant.devis.pdfValidUntil').replace('{date}', expiry)}
+      </div>
+    </div>
   </div>
-  <div style="text-align:right">
-    <div class="title">${t('merchant.devis.pdfTitle')}</div>
-    <div class="meta">${quoteNum}</div>
-    <div class="meta">${t('merchant.devis.pdfIssued').replace('{date}', today)}</div>
-    <div class="meta">${t('merchant.devis.pdfValidUntil').replace('{date}', expiry)}</div>
+
+  <!-- BADGE VALIDITÉ -->
+  <div style="display:flex;align-items:center;gap:10px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px 14px;margin-bottom:24px">
+    <div style="width:8px;height:8px;background:#16a34a;border-radius:50%;flex-shrink:0"></div>
+    <span style="font-size:11px;color:#166534;font-weight:600">${t('merchant.devis.pdfValidUntil').replace('{date}', expiry)}</span>
+    <span style="font-size:10px;color:#9ca3af;margin-left:auto">${validDays} jours</span>
   </div>
+
+  <!-- CLIENT -->
+  <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:14px 16px;margin-bottom:24px">
+    <div style="font-size:9px;font-weight:700;color:#16a34a;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px">${t('merchant.devis.pdfRecipient')}</div>
+    <div style="font-size:15px;font-weight:700;color:#111">${clientName || '—'}</div>
+    ${clientPhone ? `<div style="font-size:11px;color:#6b7280;margin-top:3px">${clientPhone}</div>` : ''}
+  </div>
+
+  <!-- TABLEAU LIGNES -->
+  <table style="width:100%;border-collapse:collapse;margin-bottom:20px">
+    <thead>
+      <tr style="background:#166534">
+        <th style="padding:10px 12px;text-align:left;font-size:10px;color:#fff;font-weight:700">${t('merchant.docs.pdfDesc')}</th>
+        <th style="padding:10px 12px;text-align:center;font-size:10px;color:#fff;font-weight:700;width:60px">${t('merchant.docs.pdfQty')}</th>
+        <th style="padding:10px 12px;text-align:right;font-size:10px;color:#fff;font-weight:700;width:130px">${t('merchant.docs.pdfUnitPrice')}</th>
+        <th style="padding:10px 12px;text-align:right;font-size:10px;color:#fff;font-weight:700;width:130px">${t('merchant.docs.pdfTotal')}</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${lines.map((l, i) => `<tr style="${i % 2 === 1 ? 'background:#f9fafb' : ''}">
+        <td style="padding:10px 12px;border-bottom:1px solid #e5e7eb;color:${l.description ? '#111' : '#9ca3af'}">${l.description || '—'}</td>
+        <td style="padding:10px 12px;border-bottom:1px solid #e5e7eb;text-align:center;color:#374151">${l.qty}</td>
+        <td style="padding:10px 12px;border-bottom:1px solid #e5e7eb;text-align:right;white-space:nowrap;color:#374151">${formatFcfa(l.unitPrice)} FCFA</td>
+        <td style="padding:10px 12px;border-bottom:1px solid #e5e7eb;text-align:right;font-weight:600;white-space:nowrap">${formatFcfa(l.qty * l.unitPrice)} FCFA</td>
+      </tr>`).join('')}
+    </tbody>
+  </table>
+
+  <!-- TOTAL -->
+  <div style="display:flex;justify-content:flex-end;margin-bottom:28px">
+    <div style="width:260px">
+      <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #e5e7eb">
+        <span style="font-size:11px;color:#6b7280">Sous-total</span>
+        <span style="font-size:11px;font-weight:600;white-space:nowrap">${formatFcfa(total)} FCFA</span>
+      </div>
+      <div style="background:#166534;color:#fff;padding:11px 14px;border-radius:5px;display:flex;justify-content:space-between;align-items:center;margin-top:6px">
+        <span style="font-size:12px;font-weight:700">${t('merchant.docs.pdfTotalTtc')}</span>
+        <span style="font-size:15px;font-weight:900;white-space:nowrap">${formatFcfa(total)} FCFA</span>
+      </div>
+    </div>
+  </div>
+
+  ${notes ? `<div style="background:#f9fafb;border-left:3px solid #16a34a;padding:12px 16px;border-radius:0 6px 6px 0;margin-bottom:24px;font-size:11px;color:#4b5563"><strong style="color:#374151">${t('merchant.docs.pdfNotesLabel')}</strong> ${notes}</div>` : ''}
+
+  <!-- SIGNATURES -->
+  <div style="display:flex;gap:20px;margin-top:40px;margin-bottom:24px">
+    <div style="flex:1;border:1px solid #e5e7eb;border-radius:8px;padding:14px">
+      <div style="font-size:9px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Émis par</div>
+      <div style="font-size:13px;font-weight:700;color:#111">${businessName}</div>
+      <div style="height:36px;border-bottom:1px dashed #d1d5db;margin-top:20px"></div>
+      <div style="font-size:9px;color:#9ca3af;margin-top:4px">Signature / Cachet</div>
+    </div>
+    <div style="flex:1;border:1px solid #e5e7eb;border-radius:8px;padding:14px">
+      <div style="font-size:9px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Bon pour accord</div>
+      <div style="font-size:13px;font-weight:700;color:#111">${clientName || '—'}</div>
+      <div style="height:36px;border-bottom:1px dashed #d1d5db;margin-top:20px"></div>
+      <div style="font-size:9px;color:#9ca3af;margin-top:4px">Signature · Date</div>
+    </div>
+  </div>
+
+  <!-- PIED DE PAGE -->
+  <div style="padding-top:14px;border-top:1px solid #e5e7eb;text-align:center">
+    <p style="font-size:10px;color:#9ca3af">${t('merchant.devis.pdfFooter')}</p>
+  </div>
+
 </div>
-<div class="section">
-  <div class="label">${t('merchant.devis.pdfRecipient')}</div>
-  <div style="margin-top:6px;font-weight:600;font-size:15px">${clientName || '—'}</div>
-  ${clientPhone ? `<div class="meta">${clientPhone}</div>` : ''}
-</div>
-<table>
-  <thead><tr>
-    <th style="width:50%">${t('merchant.docs.pdfDesc')}</th>
-    <th style="text-align:right">${t('merchant.docs.pdfQty')}</th>
-    <th style="text-align:right">${t('merchant.docs.pdfUnitPrice')}</th>
-    <th style="text-align:right">${t('merchant.docs.pdfTotal')}</th>
-  </tr></thead>
-  <tbody>
-    ${lines.map(l => `<tr>
-      <td>${l.description || '—'}</td>
-      <td style="text-align:right">${l.qty}</td>
-      <td style="text-align:right">${formatFcfa(l.unitPrice)} FCFA</td>
-      <td style="text-align:right">${formatFcfa(l.qty * l.unitPrice)} FCFA</td>
-    </tr>`).join('')}
-    <tr class="total-row">
-      <td colspan="3">${t('merchant.docs.pdfTotalTtc')}</td>
-      <td style="text-align:right">${formatFcfa(total)} FCFA</td>
-    </tr>
-  </tbody>
-</table>
-${notes ? `<div class="notes"><strong>${t('merchant.docs.pdfNotesLabel')}</strong> ${notes}</div>` : ''}
-<div class="footer">${t('merchant.devis.pdfFooter')}</div>
 </body></html>`
   }
 

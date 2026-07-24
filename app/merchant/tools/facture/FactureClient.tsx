@@ -201,84 +201,97 @@ function buildHtml(o: PdfOpts): string {
 <title>${typeLabel} ${o.num}</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box }
-  body { font-family:'Helvetica Neue',Arial,sans-serif; color:#1a1a1a; font-size:12px; background:#fff; padding:48px }
-  @media print { body { padding:28px } @page { margin:0 } }
+  body { font-family:'Helvetica Neue',Arial,sans-serif; color:#1a1a1a; font-size:12px; background:#fff }
+  @media print { @page { margin:0; size:A4 } }
 </style>
 </head>
 <body style="position:relative">
-${o.paid ? `<div style="position:absolute;top:90px;right:56px;border:4px solid #16a34a;color:#16a34a;font-size:26px;font-weight:900;padding:8px 18px;border-radius:6px;transform:rotate(-20deg);opacity:.22;pointer-events:none">PAYÉ</div>` : ''}
 
-<!-- ENTÊTE -->
-<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;padding-bottom:20px;border-bottom:2px solid #166534">
-  <div>
-    <div style="font-size:22px;font-weight:800;color:#166534">🔥 ${o.merchant.businessName}</div>
-    ${merchantBlock ? `<div style="color:#6b7280;font-size:11px;margin-top:8px;line-height:1.9">${merchantBlock}</div>` : ''}
-  </div>
-  <div style="text-align:right">
-    <div style="font-size:30px;font-weight:900;color:#166534;letter-spacing:-.5px">${typeLabel}</div>
-    <div style="margin-top:8px;font-size:13px;font-weight:700;color:#111">N° ${o.num}</div>
-    <div style="font-size:11px;color:#6b7280;margin-top:4px;line-height:1.9">
-      Date d'émission : ${o.today}
-      ${o.dueDate ? `<br>Date d'échéance : ${o.dueDate}` : ''}
+${o.paid ? `<div style="position:absolute;top:100px;right:52px;border:4px solid #16a34a;color:#16a34a;font-size:24px;font-weight:900;padding:7px 16px;border-radius:6px;transform:rotate(-18deg);opacity:.18;pointer-events:none;letter-spacing:2px">PAYÉ</div>` : ''}
+
+<div style="background:linear-gradient(135deg,#14532d 0%,#16a34a 100%);height:5px"></div>
+
+<div style="padding:40px 48px">
+
+  <!-- ENTÊTE -->
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;padding-bottom:24px;border-bottom:1px solid #e5e7eb">
+    <div>
+      <div style="font-size:21px;font-weight:800;color:#166534;letter-spacing:-.3px">🔥 ${o.merchant.businessName}</div>
+      ${merchantBlock ? `<div style="color:#6b7280;font-size:10.5px;margin-top:8px;line-height:2">${merchantBlock}</div>` : ''}
+    </div>
+    <div style="text-align:right">
+      <div style="display:inline-block;background:#166534;color:#fff;font-size:18px;font-weight:900;padding:5px 18px;border-radius:5px;letter-spacing:2px">${typeLabel}</div>
+      <div style="margin-top:10px;font-size:13px;font-weight:700;color:#111">N° ${o.num}</div>
+      <div style="font-size:11px;color:#6b7280;margin-top:4px;line-height:2">
+        Date d'émission : ${o.today}
+        ${o.dueDate ? `<br>Date d'échéance : <strong style="color:#166534">${o.dueDate}</strong>` : ''}
+      </div>
     </div>
   </div>
-</div>
 
-<!-- CLIENT -->
-<div style="background:#f0fdf4;border-left:3px solid #16a34a;padding:12px 16px;border-radius:4px;margin-bottom:24px">
-  <div style="font-size:10px;font-weight:700;color:#16a34a;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Client / Destinataire</div>
-  <div style="font-size:15px;font-weight:700">${o.clientName || '—'}</div>
-  ${clientBlock ? `<div style="font-size:11px;color:#6b7280;margin-top:5px;line-height:1.8">${clientBlock}</div>` : ''}
-</div>
+  <!-- CLIENT -->
+  <div style="background:#f9fafb;border:1px solid #e5e7eb;border-left:3px solid #16a34a;border-radius:0 8px 8px 0;padding:14px 16px;margin-bottom:24px">
+    <div style="font-size:9px;font-weight:700;color:#16a34a;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px">Client / Destinataire</div>
+    <div style="font-size:15px;font-weight:700;color:#111">${o.clientName || '—'}</div>
+    ${clientBlock ? `<div style="font-size:11px;color:#6b7280;margin-top:5px;line-height:1.9">${clientBlock}</div>` : ''}
+  </div>
 
-<!-- LIGNES -->
-<p style="font-size:11px;font-style:italic;color:#6b7280;margin-bottom:10px">Facture émise au titre de la vente / prestation suivante :</p>
-<table style="width:100%;border-collapse:collapse;margin-bottom:20px">
-  <thead>
-    <tr style="background:#166534">
-      <th style="padding:10px 12px;text-align:left;font-size:11px;color:#fff;width:36px">N°</th>
-      <th style="padding:10px 12px;text-align:left;font-size:11px;color:#fff">Désignation</th>
-      <th style="padding:10px 12px;text-align:center;font-size:11px;color:#fff;width:48px">Qté</th>
-      <th style="padding:10px 12px;text-align:right;font-size:11px;color:#fff;width:110px">Prix unit. HT</th>
-      <th style="padding:10px 12px;text-align:right;font-size:11px;color:#fff;width:110px">Montant HT</th>
-      <th style="padding:10px 12px;text-align:center;font-size:11px;color:#fff;width:48px">Unité</th>
-    </tr>
-  </thead>
-  <tbody>${linesHtml}</tbody>
-</table>
-
-<!-- RÉCAPITULATIF FISCAL -->
-<div style="display:flex;justify-content:flex-end;margin-bottom:20px">
-  <table style="width:280px;border-collapse:collapse">
-    <tbody>${taxRows}</tbody>
+  <!-- LIGNES -->
+  <p style="font-size:10.5px;color:#9ca3af;margin-bottom:10px;font-style:italic">
+    ${o.docType === 'facture' ? 'Facture émise au titre de la vente / prestation suivante :' : 'Devis établi pour la prestation suivante :'}
+  </p>
+  <table style="width:100%;border-collapse:collapse;margin-bottom:24px">
+    <thead>
+      <tr style="background:#166534">
+        <th style="padding:10px 12px;text-align:left;font-size:10px;color:#fff;font-weight:700;width:36px">N°</th>
+        <th style="padding:10px 12px;text-align:left;font-size:10px;color:#fff;font-weight:700">Désignation</th>
+        <th style="padding:10px 12px;text-align:center;font-size:10px;color:#fff;font-weight:700;width:48px">Qté</th>
+        <th style="padding:10px 12px;text-align:right;font-size:10px;color:#fff;font-weight:700;width:110px">Prix unit. HT</th>
+        <th style="padding:10px 12px;text-align:right;font-size:10px;color:#fff;font-weight:700;width:110px">Montant HT</th>
+        <th style="padding:10px 12px;text-align:center;font-size:10px;color:#fff;font-weight:700;width:52px">Unité</th>
+      </tr>
+    </thead>
+    <tbody>${linesHtml}</tbody>
   </table>
-</div>
-<div style="display:flex;justify-content:flex-end;margin-bottom:4px">
-  <div style="width:280px;background:#166534;color:#fff;padding:11px 14px;border-radius:4px;display:flex;justify-content:space-between;font-size:14px;font-weight:800">
-    <span>NET À PAYER</span>
-    <span style="white-space:nowrap">${formatFcfa(netAPayer)} FCFA</span>
+
+  <!-- RÉCAPITULATIF FISCAL -->
+  <div style="display:flex;justify-content:flex-end;margin-bottom:6px">
+    <div style="width:290px">
+      <table style="width:100%;border-collapse:collapse">
+        <tbody>${taxRows}</tbody>
+      </table>
+      <div style="background:#166534;color:#fff;padding:12px 14px;border-radius:6px;display:flex;justify-content:space-between;align-items:center;margin-top:6px">
+        <span style="font-size:13px;font-weight:700;letter-spacing:.03em">NET À PAYER</span>
+        <span style="font-size:16px;font-weight:900;white-space:nowrap">${formatFcfa(netAPayer)} FCFA</span>
+      </div>
+    </div>
   </div>
-</div>
 
-<!-- NOTE FISCALE -->
-<p style="font-size:10px;color:#9ca3af;font-style:italic;margin:18px 0;line-height:1.7">
-  <strong style="color:#6b7280">Taxes applicables :</strong> les lignes ci-dessus sont indicatives et à adapter selon le régime fiscal du marchand (TVA 18%, AIB, TPU, ou exonération).
-  ${o.hasAib ? `Le taux AIB appliqué est de ${Math.round(o.aibRate * 100)}%${o.merchant.ifu ? ' (IFU valide)' : ' (sans IFU)'}.` : ''}
-</p>
+  <!-- NOTE FISCALE -->
+  <p style="font-size:10px;color:#9ca3af;font-style:italic;margin:18px 0 14px;line-height:1.7">
+    <strong style="color:#6b7280">Taxes :</strong> indicatives selon le régime fiscal (TVA 18%, AIB, TPU, ou exonération).
+    ${o.hasAib ? `AIB ${Math.round(o.aibRate * 100)}% appliqué${o.merchant.ifu ? ' — IFU valide' : ' — sans IFU'}.` : ''}
+  </p>
 
-${o.notes ? `<div style="background:#fafafa;border-left:3px solid #d1d5db;padding:10px 14px;margin:16px 0;font-size:11px;color:#4b5563;border-radius:2px"><strong>Notes :</strong> ${o.notes}</div>` : ''}
+  ${o.notes ? `<div style="background:#f9fafb;border-left:3px solid #d1d5db;padding:10px 16px;margin:16px 0;font-size:11px;color:#4b5563;border-radius:0 6px 6px 0"><strong style="color:#374151">Notes :</strong> ${o.notes}</div>` : ''}
 
-${conditionsHtml}
+  ${conditionsHtml}
 
-<!-- PIED DE PAGE -->
-<div style="margin-top:48px;padding-top:16px;border-top:1px solid #e5e7eb;display:flex;align-items:flex-start;gap:14px">
-  <div style="font-size:10px;color:#9ca3af;line-height:1.8">
-    <div><strong style="color:#6b7280">Document émis et sécurisé via la plateforme GreenFlame Africa</strong> • Réf. plateforme : <strong>${o.platformRef}</strong></div>
-    <div><a href="${verifyUrl}" style="color:#16a34a;font-size:10px">Scanner ou cliquer pour vérifier ce document en ligne</a></div>
+  <!-- PIED DE PAGE -->
+  <div style="margin-top:40px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:14px 16px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px">
+    <div>
+      <div style="font-size:10px;font-weight:700;color:#374151;margin-bottom:4px">Document sécurisé via GreenFlame Africa</div>
+      <div style="font-size:10px;color:#9ca3af">Réf. plateforme : <strong style="color:#374151">${o.platformRef}</strong></div>
+    </div>
+    <div style="text-align:right">
+      <a href="${verifyUrl}" style="font-size:10px;color:#16a34a;text-decoration:none;font-weight:600">Vérifier ce document →</a>
+      <div style="font-size:9px;color:#9ca3af;margin-top:2px">${verifyUrl}</div>
+    </div>
   </div>
-</div>
 
-<p style="margin-top:28px;font-size:11px;font-style:italic;color:#9ca3af;text-align:center">Merci de votre confiance.</p>
+  <p style="margin-top:20px;font-size:11px;font-style:italic;color:#9ca3af;text-align:center">Merci de votre confiance.</p>
+
+</div>
 </body></html>`
 }
 
