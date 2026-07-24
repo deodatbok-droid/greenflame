@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 
-const ALL_ROLES = ['consumer', 'merchant', 'kingmaker', 'platform_upline', 'admin']
+const ALL_ROLES = ['consumer', 'merchant', 'field_agent', 'kingmaker', 'platform_upline', 'admin']
 
 export default function PromoteUserPanel({
   userId,

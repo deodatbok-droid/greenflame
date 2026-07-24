@@ -21,6 +21,7 @@ const NAV_GROUPS: NavGroup[] = [
       { href: '/admin/transactions', label: 'Transactions',   icon: '💸' },
       { href: '/admin/withdrawals',  label: 'Retraits',       icon: '🏧' },
       { href: '/admin/kyc',          label: 'KYC',            icon: '🪪' },
+      { href: '/admin/fieldagents',  label: 'Agents terrain', icon: '🧑‍💼' },
     ],
   },
   {
