@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { formatFcfa } from '@/lib/utils/format'
@@ -161,6 +162,21 @@ export default async function WalletPage() {
       </div>
 
       <div className="p-4 space-y-6">
+
+        {/* Action rapide : dépôt cash via agent */}
+        <Link
+          href="/wallet/depot-cash"
+          className="flex items-center gap-3 bg-brand-50 border border-brand-100 rounded-2xl px-4 py-3.5 hover:bg-brand-100 transition-colors group"
+        >
+          <span className="text-2xl flex-shrink-0">💵</span>
+          <div className="flex-1 min-w-0">
+            <p className="font-semibold text-brand-800 text-sm">Déposer du cash</p>
+            <p className="text-brand-600 text-xs mt-0.5">
+              Trouvez un agent GreenFlame et déposez du cash sur votre wallet
+            </p>
+          </div>
+          <span className="text-brand-400 text-lg group-hover:translate-x-0.5 transition-transform">›</span>
+        </Link>
 
         {/* Validations en attente (retraits initiés par admin) */}
         {pendingValidations.length > 0 && (

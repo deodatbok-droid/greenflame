@@ -66,7 +66,7 @@ export default async function DemoPage({
   const noAffiliate = t('demo.noAffiliate')
 
   const realChain: RealChainMember[] = [
-    { level: 'Vous', id: user.id,                          name: profileRes.data?.full_name ?? t('demo.youCashback'),                                                    share: 0.15 },
+    { level: 'Vous', id: user.id,                          name: profileRes.data?.full_name ?? t('demo.youCashback'),                                                    share: 0.12 },
     { level: 'L1',   id: networkTree?.l1_upline ?? null,   name: networkTree?.l1_upline ? (uplineMap[networkTree.l1_upline] ?? 'L1') : noAffiliate, share: 0.12 },
     { level: 'L2',   id: networkTree?.l2_upline ?? null,   name: networkTree?.l2_upline ? (uplineMap[networkTree.l2_upline] ?? 'L2') : noAffiliate, share: 0.10 },
     { level: 'L3',   id: networkTree?.l3_upline ?? null,   name: networkTree?.l3_upline ? (uplineMap[networkTree.l3_upline] ?? 'L3') : noAffiliate, share: 0.08 },
