@@ -1,7 +1,8 @@
+import { Suspense } from 'react'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import Logo from '@/components/Logo'
-import { CategoryGrid, type MarketplaceCategory } from '@/components/marketplace/CategoryGrid'
+import { type MarketplaceCategory } from '@/components/marketplace/CategoryGrid'
 import { type MarketplaceProduct } from '@/components/marketplace/ProductCard'
 import MarketplaceSearchBar from '@/components/marketplace/MarketplaceSearchBar'
 import MarketplaceClient from './MarketplaceClient'
@@ -97,7 +98,7 @@ export default async function MarketplacePage({
         <MarketplaceSearchBar defaultValue={q} />
         <Link
           href="/decouvrir"
-          className="mt-2 flex items-center justify-center gap-2 w-full py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-sm font-medium transition-colors border border-white/20 active:scale-95"
+          className="mt-3 flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-white text-brand-700 text-sm font-semibold transition-colors hover:bg-brand-50 active:scale-95 shadow-sm"
         >
           <span>📍</span>
           <span>Découvrir les marchands près de moi</span>
@@ -106,26 +107,15 @@ export default async function MarketplacePage({
 
       <div className="px-4 pb-8 space-y-6 mt-6">
 
-        {/* ── Grille des catégories (masquée pendant une recherche active) ── */}
-        {!q.trim() && (
-          <>
-            <section>
-              <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-4">
-                {t('marketplace.allCategories')}
-              </h2>
-              <CategoryGrid categories={categories} />
-            </section>
-            <div className="border-t border-gray-100" />
-          </>
-        )}
-
-        {/* ── Produits — grille filtrée/triée côté client ── */}
-        <MarketplaceClient
-          allProducts={taggedProducts}
-          categories={categories}
-          userId={user?.id}
-          searchQuery={q}
-        />
+        {/* ── Catégories + produits — logique de visibilité gérée dans MarketplaceClient ── */}
+        <Suspense>
+          <MarketplaceClient
+            allProducts={taggedProducts}
+            categories={categories}
+            userId={user?.id}
+            searchQuery={q}
+          />
+        </Suspense>
 
         {/* ── CTA invité ── */}
         {!user && (

@@ -1,8 +1,9 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { ProductCard, type MarketplaceProduct } from '@/components/marketplace/ProductCard'
-import type { MarketplaceCategory } from '@/components/marketplace/CategoryGrid'
+import { CategoryGrid, type MarketplaceCategory } from '@/components/marketplace/CategoryGrid'
 import Link from 'next/link'
 import { EmptyState } from '@/components/ui/EmptyState'
 
@@ -42,6 +43,11 @@ export default function MarketplaceClient({
   userId,
   searchQuery = '',
 }: Props) {
+  // useSearchParams() réagit immédiatement au changement d'URL (avant le re-render serveur)
+  const searchParams = useSearchParams()
+  const liveQuery    = searchParams.get('q') ?? searchQuery
+  const hasSearch    = !!liveQuery.trim()
+
   const [tab, setTab]             = useState<Tab>('all')
   const [sort, setSort]           = useState<SortKey>('score')
   const [catFilter, setCatFilter] = useState<string | null>(null)
@@ -93,6 +99,19 @@ export default function MarketplaceClient({
 
   return (
     <div className="space-y-4">
+
+      {/* ── Catégories (masquées dès qu'une recherche est active) ── */}
+      {!hasSearch && categories.length > 0 && (
+        <>
+          <section>
+            <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-4">
+              Toutes les catégories
+            </h2>
+            <CategoryGrid categories={categories} />
+          </section>
+          <div className="border-t border-gray-100" />
+        </>
+      )}
 
       {/* ── Tabs ── */}
       <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none -mx-4 px-4">
@@ -221,7 +240,7 @@ export default function MarketplaceClient({
         <div className="flex items-center justify-between mb-3">
           <p className="text-xs text-gray-500">
             {filtered.length} produit{filtered.length !== 1 ? 's' : ''}
-            {searchQuery && ` pour « ${searchQuery} »`}
+            {liveQuery && ` pour « ${liveQuery} »`}
             {catFilter && ` · ${catFilter}`}
           </p>
           {hasActiveFilters && (
