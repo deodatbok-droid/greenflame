@@ -6,13 +6,13 @@ import { useLocale } from '@/components/providers/LocaleProvider'
 import type { TranslationKey } from '@/lib/i18n'
 import MessagesUnreadBadge from './MessagesUnreadBadge'
 
-// 5 onglets primaires — Wallet et Network accessibles depuis /profile et /dashboard
+// 5 onglets primaires — Marketplace accessible depuis Dashboard et Profile
 const navItems: { href: string; labelKey: TranslationKey; icon: string; exact?: boolean }[] = [
-  { href: '/dashboard',   labelKey: 'nav.home',      icon: '🏠', exact: true },
-  { href: '/marketplace', labelKey: 'nav.market',    icon: '🛍️' },
-  { href: '/pay',         labelKey: 'nav.pay',       icon: '📱' },
-  { href: '/messages',    labelKey: 'nav.messages',  icon: '💬' },
-  { href: '/profile',     labelKey: 'nav.profile',   icon: '👤' },
+  { href: '/dashboard',  labelKey: 'nav.home',      icon: '🏠', exact: true },
+  { href: '/decouvrir',  labelKey: 'nav.discover',  icon: '📍' },
+  { href: '/pay',        labelKey: 'nav.pay',       icon: '📱' },
+  { href: '/messages',   labelKey: 'nav.messages',  icon: '💬' },
+  { href: '/profile',    labelKey: 'nav.profile',   icon: '👤' },
 ]
 
 export default function BottomNav() {
@@ -31,14 +31,14 @@ export default function BottomNav() {
             <Link
               key={item.href}
               href={item.href}
-              className={`relative flex-1 flex flex-col items-center gap-0.5 pt-2 pb-2.5 min-w-0 transition-all active:scale-95 ${
+              className={`relative flex-1 flex flex-col items-center gap-0.5 pt-1.5 pb-1.5 min-w-0 transition-all active:scale-95 ${
                 isActive ? 'text-brand-600' : 'text-gray-400'
               }`}
             >
               <span className={`absolute top-0 h-0.5 rounded-full transition-all duration-300 ${
                 isActive ? 'w-8 bg-brand-500' : 'w-0'
               }`} />
-              <div className={`flex items-center justify-center mt-0.5 h-8 rounded-2xl transition-all duration-300 ${
+              <div className={`flex items-center justify-center mt-0.5 h-7 rounded-2xl transition-all duration-300 ${
                 isActive ? 'bg-brand-100 px-3' : 'px-1'
               }`}>
                 <span className={`leading-none transition-all duration-300 ${
