@@ -430,7 +430,7 @@ export default function AdminShell({ children, userName }: AdminShellProps) {
     <div className="fixed inset-0 flex overflow-hidden" style={{ background: '#0c1018' }}>
 
       {/* Sidebar desktop */}
-      <div className="hidden lg:flex shrink-0">
+      <div className="hidden md:flex shrink-0">
         <Sidebar collapsed={collapsed} onToggle={toggle} userName={userName} ready={ready} onReturnToApp={() => logoutAdmin('/dashboard')} />
       </div>
 
@@ -438,12 +438,12 @@ export default function AdminShell({ children, userName }: AdminShellProps) {
       {mobileOpen && (
         <>
           <div
-            className="fixed inset-0 z-40 lg:hidden"
+            className="fixed inset-0 z-40 md:hidden"
             style={{ background: 'rgba(0,0,0,0.65)', backdropFilter: 'blur(4px)' }}
             onClick={() => setMobileOpen(false)}
           />
           <div
-            className="fixed inset-y-0 left-0 z-50 lg:hidden flex"
+            className="fixed inset-y-0 left-0 z-50 md:hidden flex"
             style={{ animation: 'slideIn 0.25s cubic-bezier(0.22,1,0.36,1)' }}
           >
             <Sidebar
@@ -464,7 +464,7 @@ export default function AdminShell({ children, userName }: AdminShellProps) {
 
         {/* Top bar mobile */}
         <div
-          className="lg:hidden flex items-center gap-3 px-4 h-14 shrink-0"
+          className="md:hidden flex items-center gap-3 px-4 h-14 shrink-0"
           style={{
             background: '#080b12',
             borderBottom: '1px solid rgba(255,255,255,0.05)',
