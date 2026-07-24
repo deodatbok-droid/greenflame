@@ -95,6 +95,13 @@ export default async function MarketplacePage({
         <h1 className="text-white text-2xl font-bold">{t('marketplace.title')}</h1>
         <p className="text-brand-100 text-sm mt-0.5">{t('marketplace.tagline')}</p>
         <MarketplaceSearchBar defaultValue={q} />
+        <Link
+          href="/decouvrir"
+          className="mt-2 flex items-center justify-center gap-2 w-full py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-sm font-medium transition-colors border border-white/20 active:scale-95"
+        >
+          <span>📍</span>
+          <span>Découvrir les marchands près de moi</span>
+        </Link>
       </div>
 
       <div className="px-4 pb-8 space-y-6 mt-6">

@@ -6,13 +6,13 @@ import { useLocale } from '@/components/providers/LocaleProvider'
 import type { TranslationKey } from '@/lib/i18n'
 import MessagesUnreadBadge from './MessagesUnreadBadge'
 
-// 5 onglets primaires — Marketplace accessible depuis Dashboard et Profile
+// 5 onglets primaires — Wallet et Network accessibles depuis /profile et /dashboard
 const navItems: { href: string; labelKey: TranslationKey; icon: string; exact?: boolean }[] = [
-  { href: '/dashboard',  labelKey: 'nav.home',      icon: '🏠', exact: true },
-  { href: '/decouvrir',  labelKey: 'nav.discover',  icon: '📍' },
-  { href: '/pay',        labelKey: 'nav.pay',       icon: '📱' },
-  { href: '/messages',   labelKey: 'nav.messages',  icon: '💬' },
-  { href: '/profile',    labelKey: 'nav.profile',   icon: '👤' },
+  { href: '/dashboard',   labelKey: 'nav.home',      icon: '🏠', exact: true },
+  { href: '/marketplace', labelKey: 'nav.market',    icon: '🛍️' },
+  { href: '/pay',         labelKey: 'nav.pay',       icon: '📱' },
+  { href: '/messages',    labelKey: 'nav.messages',  icon: '💬' },
+  { href: '/profile',     labelKey: 'nav.profile',   icon: '👤' },
 ]
 
 export default function BottomNav() {
