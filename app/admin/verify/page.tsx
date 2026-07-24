@@ -25,7 +25,7 @@ export default function AdminVerifyPage() {
         }
       })
       .catch(() => setMode('verify'))
-  }, [router])
+  }, [])
 
   async function handleVerify(e: React.FormEvent) {
     e.preventDefault()
