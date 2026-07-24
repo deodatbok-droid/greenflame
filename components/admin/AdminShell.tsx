@@ -387,11 +387,16 @@ export default function AdminShell({ children, userName }: AdminShellProps) {
   const [collapsed, setCollapsed] = useState(false)
   const [ready, setReady] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
     setCollapsed(localStorage.getItem('gf-admin-sidebar') === '1')
     setReady(true)
+    const check = () => setIsMobile(window.innerWidth < 768)
+    check()
+    window.addEventListener('resize', check, { passive: true })
+    return () => window.removeEventListener('resize', check)
   }, [])
 
   const logoutAdmin = useCallback(async (destination: string) => {
@@ -429,21 +434,23 @@ export default function AdminShell({ children, userName }: AdminShellProps) {
   return (
     <div className="fixed inset-0 flex overflow-hidden" style={{ background: '#0c1018' }}>
 
-      {/* Sidebar desktop */}
-      <div className="hidden md:flex shrink-0">
-        <Sidebar collapsed={collapsed} onToggle={toggle} userName={userName} ready={ready} onReturnToApp={() => logoutAdmin('/dashboard')} />
-      </div>
+      {/* Sidebar desktop — visible dès que isMobile=false (détecté via window.innerWidth) */}
+      {!isMobile && (
+        <div className="flex shrink-0">
+          <Sidebar collapsed={collapsed} onToggle={toggle} userName={userName} ready={ready} onReturnToApp={() => logoutAdmin('/dashboard')} />
+        </div>
+      )}
 
       {/* Drawer mobile */}
-      {mobileOpen && (
+      {mobileOpen && isMobile && (
         <>
           <div
-            className="fixed inset-0 z-40 md:hidden"
+            className="fixed inset-0 z-40"
             style={{ background: 'rgba(0,0,0,0.65)', backdropFilter: 'blur(4px)' }}
             onClick={() => setMobileOpen(false)}
           />
           <div
-            className="fixed inset-y-0 left-0 z-50 md:hidden flex"
+            className="fixed inset-y-0 left-0 z-50 flex"
             style={{ animation: 'slideIn 0.25s cubic-bezier(0.22,1,0.36,1)' }}
           >
             <Sidebar
@@ -462,10 +469,11 @@ export default function AdminShell({ children, userName }: AdminShellProps) {
       {/* Contenu principal */}
       <div className="flex-1 flex flex-col overflow-hidden min-w-0">
 
-        {/* Top bar mobile */}
+        {/* Top bar mobile — visible uniquement si isMobile */}
         <div
-          className="md:hidden flex items-center gap-3 px-4 h-14 shrink-0"
+          className="flex items-center gap-3 px-4 h-14 shrink-0"
           style={{
+            display: isMobile ? 'flex' : 'none',
             background: '#080b12',
             borderBottom: '1px solid rgba(255,255,255,0.05)',
           }}
