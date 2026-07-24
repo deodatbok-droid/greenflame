@@ -8,6 +8,7 @@ import Link from 'next/link'
 import Logo from '@/components/Logo'
 import BackButton from '@/components/ui/BackButton'
 import { useLocale } from '@/components/providers/LocaleProvider'
+import { useDemo } from '@/lib/demo/DemoContext'
 
 type KycStatus = 'idle' | 'pending' | 'approved' | 'rejected'
 
@@ -22,6 +23,9 @@ export default function KycPage() {
   const router = useRouter()
   const supabase = createClient()
   const { t } = useLocale()
+
+  const { isDemo, markStepComplete } = useDemo()
+  const [demoSubmitting, setDemoSubmitting] = useState(false)
 
   const [userId, setUserId] = useState<string | null>(null)
   const [existing, setExisting] = useState<ExistingKyc | null>(null)
@@ -69,6 +73,15 @@ export default function KycPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // Auto-remplissage en mode démo (attend que loading soit false)
+  useEffect(() => {
+    if (isDemo && !loading && !existing) {
+      setDocType('cni')
+      setFrontPreview('https://placehold.co/600x400/22c55e/white?text=CNI+DEMO+RECTO')
+      setBackPreview('https://placehold.co/600x400/16a34a/white?text=CNI+DEMO+VERSO')
+    }
+  }, [isDemo, loading, existing])
+
   function handleFileChange(side: 'front' | 'back', file: File | null) {
     if (!file) return
     const url = URL.createObjectURL(file)
@@ -82,6 +95,19 @@ export default function KycPage() {
       .upload(path, file, { upsert: true, contentType: file.type })
     if (error) throw new Error(error.message)
     return path
+  }
+
+  async function handleDemoKyc() {
+    setDemoSubmitting(true)
+    try {
+      const res = await fetch('/api/demo/kyc', { method: 'POST' })
+      if (!res.ok) { toast.error('Erreur lors du KYC démo'); return }
+      toast.success('KYC validé automatiquement')
+      markStepComplete('kyc')
+      setExisting({ status: 'approved', rejection_reason: null, document_type: 'cni', created_at: new Date().toISOString() })
+    } finally {
+      setDemoSubmitting(false)
+    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -145,15 +171,17 @@ export default function KycPage() {
 
       {/* Header */}
       <div className="bg-gradient-to-br from-brand-700 to-brand-900 px-4 pt-8 pb-14">
-        <div className="flex items-center justify-between mb-6">
-          <BackButton href="/profile" className="text-white/70 hover:text-white" />
-          <Logo size={40} className="w-10 h-10" />
+        <div className="max-w-xl mx-auto">
+          <div className="flex items-center justify-between mb-6">
+            <BackButton href="/profile" className="text-white/70 hover:text-white" />
+            <Logo size={40} className="w-10 h-10" />
+          </div>
+          <h1 className="text-2xl font-bold text-white">{t('kyc.title')}</h1>
+          <p className="text-brand-200 text-sm mt-1">{t('kyc.subtitle')}</p>
         </div>
-        <h1 className="text-2xl font-bold text-white">{t('kyc.title')}</h1>
-        <p className="text-brand-200 text-sm mt-1">{t('kyc.subtitle')}</p>
       </div>
 
-      <div className="mx-4 -mt-8 relative z-10 space-y-4">
+      <div className="max-w-xl mx-auto px-4 -mt-8 relative z-10 space-y-4">
 
         {/* Status existing */}
         {existing && (
@@ -192,6 +220,14 @@ export default function KycPage() {
                 {t('kyc.backToProfile')}
               </Link>
             )}
+          </div>
+        )}
+
+        {/* En mode démo : bandeau informatif */}
+        {isDemo && (!existing || existing.status === 'rejected') && (
+          <div className="rounded-2xl px-4 py-3 text-sm font-medium text-green-800 flex items-center gap-2" style={{ background: 'rgba(22,163,74,0.1)', border: '1px solid rgba(22,163,74,0.25)' }}>
+            <span>🎬</span>
+            <span>Formulaire pré-rempli — vérifiez les données et validez</span>
           </div>
         )}
 
@@ -337,13 +373,25 @@ export default function KycPage() {
               </div>
             )}
 
-            <button
-              type="submit"
-              disabled={submitting || !frontFile}
-              className="w-full bg-brand-600 hover:bg-brand-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold py-4 rounded-2xl transition-colors shadow-sm"
-            >
-              {submitting ? t('kyc.uploading') : t('kyc.submit')}
-            </button>
+            {isDemo ? (
+              <button
+                type="button"
+                onClick={handleDemoKyc}
+                disabled={demoSubmitting}
+                className="w-full text-white font-bold py-4 rounded-2xl shadow-lg transition-opacity disabled:opacity-50"
+                style={{ background: 'linear-gradient(135deg,#16a34a,#15803d)', boxShadow: '0 8px 24px rgba(22,163,74,0.3)' }}
+              >
+                {demoSubmitting ? '⏳ Validation en cours…' : '✦ Valider le KYC démo'}
+              </button>
+            ) : (
+              <button
+                type="submit"
+                disabled={submitting || !frontFile}
+                className="w-full bg-brand-600 hover:bg-brand-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold py-4 rounded-2xl transition-colors shadow-sm"
+              >
+                {submitting ? t('kyc.uploading') : t('kyc.submit')}
+              </button>
+            )}
 
             <p className="text-xs text-gray-400 text-center px-4">
               {t('kyc.privacy')}

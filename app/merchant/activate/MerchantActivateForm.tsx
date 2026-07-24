@@ -5,10 +5,13 @@ import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import Link from 'next/link'
 import { useLocale } from '@/components/providers/LocaleProvider'
+import { useDemo } from '@/lib/demo/DemoContext'
+import { DEMO_MERCHANT } from '@/lib/demo/data'
 
 export default function MerchantActivateForm() {
   const router = useRouter()
   const { t } = useLocale()
+  const { isDemo, markStepComplete } = useDemo()
 
   const CATEGORIES = [
     { code: 'ALIMENTATION',   label: t('merchantActivate.catAlimentation'), emoji: '🛒' },
@@ -45,6 +48,7 @@ export default function MerchantActivateForm() {
     if (!res.ok) { toast.error(data.error ?? t('merchantActivate.error')); return }
     setQrCode(data.qrCode ?? null)
     setDone(true)
+    markStepComplete('boutique')
     toast.success(t('merchantActivate.successTitle'))
   }
 
@@ -64,7 +68,7 @@ export default function MerchantActivateForm() {
             </div>
           )}
           <button
-            onClick={() => router.push('/merchant/products')}
+            onClick={() => router.push('/merchant/abonnements?bienvenue=1')}
             className="w-full bg-brand-600 text-white font-bold py-3 rounded-xl hover:bg-brand-700 transition-colors"
           >
             {t('merchantActivate.successAddProducts')}
@@ -91,6 +95,20 @@ export default function MerchantActivateForm() {
       </div>
 
       <div className="card w-full max-w-sm space-y-5">
+        {isDemo && (
+          <button
+            type="button"
+            onClick={() => {
+              setBusinessName(DEMO_MERCHANT.shopName)
+              setBusinessCategory('ALIMENTATION')
+              setAddressText(DEMO_MERCHANT.address)
+            }}
+            className="w-full py-2.5 rounded-xl text-sm font-bold text-white"
+            style={{ background: 'linear-gradient(135deg,#16a34a,#15803d)' }}
+          >
+            🎬 ✦ Remplir automatiquement
+          </button>
+        )}
         <form onSubmit={submit} className="space-y-4">
           <div>
             <label className="label">{t('merchantActivate.businessNameLabel')}</label>

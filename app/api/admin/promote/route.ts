@@ -1,7 +1,7 @@
 ﻿import { NextRequest, NextResponse } from 'next/server'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 
-const VALID_ROLES = ['consumer', 'admin', 'platform_upline', 'kingmaker', 'merchant']
+const VALID_ROLES = ['consumer', 'admin', 'platform_upline', 'kingmaker', 'merchant', 'field_agent']
 
 export async function POST(req: NextRequest) {
   const supabase = await createClient()

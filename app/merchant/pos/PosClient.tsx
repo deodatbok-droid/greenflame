@@ -205,7 +205,7 @@ export default function PosClient({
       <div className="bg-white border-b border-gray-100 px-4 py-3 flex items-center justify-between sticky top-14 z-30">
         <div>
           <h1 className="text-lg font-bold text-gray-900">🧾 POS Rapide</h1>
-          <p className="text-xs text-gray-400">{businessName}</p>
+          <p className="text-xs text-gray-500">{businessName}</p>
         </div>
         {cart.length > 0 && (
           <div className="flex items-center gap-2">
@@ -233,9 +233,9 @@ export default function PosClient({
           </div>
 
           {loading ? (
-            <div className="text-center py-12 text-gray-400">Chargement…</div>
+            <div className="text-center py-12 text-gray-500">Chargement…</div>
           ) : filtered.length === 0 ? (
-            <div className="text-center py-12 text-gray-400 bg-white rounded-xl border border-gray-200">
+            <div className="text-center py-12 text-gray-500 bg-white rounded-xl border border-gray-200">
               {searchTerm ? 'Aucun produit trouvé.' : 'Aucun produit disponible. Ajoutez des produits d\'abord.'}
             </div>
           ) : (
@@ -260,7 +260,7 @@ export default function PosClient({
                     <div className="text-xs font-semibold text-gray-800 line-clamp-2 text-center">{product.name}</div>
                     <div className="text-xs text-brand-600 font-bold mt-1 text-center">{fmtFcfa(product.price_fcfa)}</div>
                     {product.stock_quantity !== null && (
-                      <div className={`text-[10px] mt-0.5 text-center ${product.stock_quantity <= 3 ? 'text-red-500' : 'text-gray-400'}`}>
+                      <div className={`text-[10px] mt-0.5 text-center ${product.stock_quantity <= 3 ? 'text-red-500' : 'text-gray-500'}`}>
                         {outOfStock ? 'Épuisé' : `Stock: ${product.stock_quantity}`}
                       </div>
                     )}
@@ -282,7 +282,7 @@ export default function PosClient({
             <h2 className="font-bold text-gray-800 mb-3 text-sm">🛒 Ticket en cours</h2>
 
             {cart.length === 0 ? (
-              <div className="text-center py-6 text-gray-400 text-sm">
+              <div className="text-center py-6 text-gray-500 text-sm">
                 Tapez sur un produit pour l&apos;ajouter
               </div>
             ) : (
@@ -294,7 +294,7 @@ export default function PosClient({
                       <span className="text-lg">{item.product.emoji ?? '📦'}</span>
                       <div className="flex-1 min-w-0">
                         <div className="text-xs font-medium text-gray-800 truncate">{item.product.name}</div>
-                        <div className="text-xs text-gray-400">{fmtFcfa(item.product.price_fcfa)} × {item.qty}</div>
+                        <div className="text-xs text-gray-500">{fmtFcfa(item.product.price_fcfa)} × {item.qty}</div>
                       </div>
                       <div className="flex items-center gap-1">
                         <button
@@ -356,7 +356,7 @@ export default function PosClient({
                     onChange={e => setBuyerPhone(e.target.value)}
                     className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand-400"
                   />
-                  <p className="text-[10px] text-gray-400 mt-1">Si membre GreenFlame → cashback activé</p>
+                  <p className="text-[10px] text-gray-500 mt-1">Si membre GreenFlame → cashback activé</p>
                 </div>
 
                 {/* Bouton confirmer */}
@@ -370,7 +370,7 @@ export default function PosClient({
 
                 <button
                   onClick={() => setCart([])}
-                  className="w-full mt-2 text-xs text-gray-400 py-1.5 hover:text-red-400 transition-colors"
+                  className="w-full mt-2 text-xs text-gray-500 py-1.5 hover:text-red-400 transition-colors"
                 >
                   Vider le panier
                 </button>
@@ -400,3 +400,4 @@ export default function PosClient({
     </div>
   )
 }
+

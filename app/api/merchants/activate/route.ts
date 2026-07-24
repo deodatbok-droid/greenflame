@@ -2,6 +2,18 @@
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import QRCode from 'qrcode'
 
+function toSlug(text: string): string {
+  return (
+    text
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[̀-ͯ]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+    || 'boutique'
+  ) + '-' + Date.now().toString(36)
+}
+
 export async function POST(req: NextRequest) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -9,9 +21,9 @@ export async function POST(req: NextRequest) {
 
   const service = createServiceClient()
 
-  // Verifier qu'il n'est pas deja marchand
-  const { data: existing } = await service.from('merchants').select('id').eq('user_id', user.id).single()
-  if (existing) return NextResponse.json({ error: 'Vous avez deja une boutique' }, { status: 400 })
+  // Si le marchand existe déjà (ex: seedé en mode démo), retourner succès directement
+  const { data: existing } = await service.from('merchants').select('id').eq('user_id', user.id).maybeSingle()
+  if (existing) return NextResponse.json({ ok: true, merchantId: existing.id })
 
   const { businessName, businessCategory, addressText } = await req.json()
   if (!businessName?.trim() || !businessCategory) {
@@ -29,12 +41,13 @@ export async function POST(req: NextRequest) {
   const { data: merchant, error: merchantErr } = await service
     .from('merchants')
     .insert({
-      user_id: user.id,
-      business_name: businessName.trim(),
+      user_id:           user.id,
+      business_name:     businessName.trim(),
       business_category: businessCategory,
-      commission_rate: commissionRate,
-      address_text: addressText?.trim() || null,
-      onboarded_by: user.id,
+      commission_rate:   commissionRate,
+      address_text:      addressText?.trim() || null,
+      onboarded_by:      user.id,
+      public_slug:       toSlug(businessName.trim()),
     })
     .select()
     .single()

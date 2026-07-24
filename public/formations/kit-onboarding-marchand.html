@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kit d'Onboarding Marchand — GreenFlame</title>
+  <style>
+    :root {
+      --green-900: #14532d;
+      --green-800: #166534;
+      --green-700: #15803d;
+      --green-600: #16a34a;
+      --green-100: #dcfce7;
+      --green-50:  #f0fdf4;
+      --amber-700: #b45309;
+      --amber-600: #d97706;
+      --amber-100: #fef3c7;
+      --amber-50:  #fffbeb;
+      --gray-900: #111827;
+      --gray-700: #374151;
+      --gray-500: #6b7280;
+      --gray-300: #d1d5db;
+      --gray-100: #f3f4f6;
+      --gray-50:  #f9fafb;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--gray-900);
+      background: #fff;
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 0;
+    }
+
+    /* ── COUVERTURE ── */
+    .cover {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 60px 52px;
+      background: var(--green-800);
+      color: #fff;
+      page-break-after: always;
+    }
+    .cover-logo { font-size: 48px; letter-spacing: -1px; }
+    .cover-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.8);
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 4px 10px; border-radius: 20px; margin-top: 8px;
+    }
+    .cover-title {
+      font-size: 42px; font-weight: 800;
+      line-height: 1.1; margin-top: 80px; letter-spacing: -1px;
+    }
+    .cover-sub {
+      font-size: 17px; color: rgba(255,255,255,0.7);
+      margin-top: 12px; font-weight: 400;
+      max-width: 480px; line-height: 1.5;
+    }
+    .cover-fields {
+      margin-top: 64px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+    }
+    .cover-field label {
+      display: block; font-size: 10px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: rgba(255,255,255,0.5); margin-bottom: 6px;
+    }
+    .cover-field .line { border-bottom: 1px solid rgba(255,255,255,0.3); height: 28px; }
+    .cover-footer {
+      margin-top: 64px; display: flex;
+      align-items: center; justify-content: space-between;
+    }
+    .cover-footer-left { font-size: 12px; color: rgba(255,255,255,0.5); }
+    .cover-footer-right { font-size: 12px; color: rgba(255,255,255,0.5); text-align: right; }
+
+    /* ── PAGES INTÉRIEURES ── */
+    .page { padding: 52px; page-break-after: always; }
+    .page:last-child { page-break-after: auto; }
+
+    .page-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-bottom: 16px; border-bottom: 2px solid var(--green-800); margin-bottom: 32px;
+    }
+    .page-header-brand { font-size: 13px; font-weight: 700; color: var(--green-800); letter-spacing: 0.04em; }
+    .page-header-section { font-size: 11px; color: var(--gray-500); font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; }
+
+    .section-eyebrow {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--green-700); margin-bottom: 6px;
+    }
+    h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; color: var(--gray-900); line-height: 1.15; }
+    h2 { font-size: 20px; font-weight: 700; color: var(--gray-900); letter-spacing: -0.3px; margin-bottom: 12px; }
+    h3 { font-size: 15px; font-weight: 700; color: var(--gray-900); margin-bottom: 8px; }
+    .lead { font-size: 15px; color: var(--gray-700); line-height: 1.65; margin-bottom: 24px; }
+
+    /* Étapes */
+    .steps { display: flex; flex-direction: column; gap: 20px; margin: 24px 0; }
+    .step { display: flex; gap: 16px; align-items: flex-start; }
+    .step-num {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--green-800); color: #fff;
+      font-size: 13px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px;
+    }
+    .step-body { flex: 1; }
+    .step-title { font-size: 15px; font-weight: 700; color: var(--gray-900); margin-bottom: 3px; }
+    .step-desc { font-size: 13px; color: var(--gray-500); line-height: 1.55; }
+    .step-action {
+      display: inline-block; margin-top: 8px;
+      font-size: 11px; font-weight: 700; color: var(--green-700);
+      background: var(--green-50); border: 1px solid var(--green-100);
+      padding: 3px 10px; border-radius: 20px; letter-spacing: 0.03em;
+    }
+    .step-checkbox {
+      width: 16px; height: 16px; border: 2px solid var(--gray-300);
+      border-radius: 4px; display: inline-block;
+      margin-right: 6px; vertical-align: middle;
+    }
+
+    /* Callouts */
+    .callout { border-radius: 10px; padding: 16px 20px; margin: 20px 0; }
+    .callout-green { background: var(--green-50); border-left: 3px solid var(--green-600); }
+    .callout-amber { background: var(--amber-50); border-left: 3px solid var(--amber-600); }
+    .callout-gray  { background: var(--gray-50); border: 1px solid var(--gray-300); }
+    .callout-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+    .callout-green .callout-title { color: var(--green-800); }
+    .callout-amber .callout-title { color: var(--amber-700); }
+
+    /* Listes */
+    ul, ol { padding-left: 20px; }
+    li { margin-bottom: 6px; font-size: 13.5px; line-height: 1.55; color: var(--gray-700); }
+    li strong { color: var(--gray-900); }
+
+    hr { border: none; border-top: 1px solid var(--gray-100); margin: 28px 0; }
+
+    /* Tables */
+    table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+    th { background: var(--green-800); color: #fff; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; padding: 10px 14px; text-align: left; }
+    td { padding: 10px 14px; font-size: 13px; border-bottom: 1px solid var(--gray-100); vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+    tr:nth-child(even) td { background: var(--gray-50); }
+
+    /* Signatures */
+    .sig-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 32px; }
+    .sig-label { font-size: 11px; color: var(--gray-500); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 36px; }
+    .sig-line { border-bottom: 1px solid var(--gray-900); margin-bottom: 6px; }
+    .sig-name-label { font-size: 11px; color: var(--gray-500); }
+
+    /* Dialogues */
+    .dialogue { background: var(--gray-50); border-radius: 10px; padding: 20px 24px; margin: 16px 0; }
+    .dialogue-role { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray-500); margin-bottom: 4px; }
+    .dialogue-text { font-size: 14px; color: var(--gray-900); line-height: 1.6; font-style: italic; }
+    .dialogue-marchand .dialogue-role { color: var(--green-700); }
+
+    /* Référence */
+    .ref-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .ref-card { border: 1.5px solid var(--gray-300); border-radius: 10px; padding: 14px 16px; }
+    .ref-num { font-size: 24px; font-weight: 900; color: var(--green-100); line-height: 1; margin-bottom: 4px; }
+    .ref-title { font-size: 13px; font-weight: 700; color: var(--gray-900); margin-bottom: 4px; }
+    .ref-desc { font-size: 12px; color: var(--gray-500); line-height: 1.4; }
+
+    /* Fiche */
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .info-label { font-size: 11px; color: var(--gray-500); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 28px; }
+    .info-line { border-bottom: 1.5px solid var(--gray-300); }
+
+    /* Highlights */
+    .hl-green { background: var(--green-100); color: var(--green-800); padding: 1px 6px; border-radius: 4px; font-weight: 600; font-size: 0.92em; }
+    .hl-amber { background: var(--amber-100); color: var(--amber-700); padding: 1px 6px; border-radius: 4px; font-weight: 600; font-size: 0.92em; }
+
+    /* Impression */
+    @media print {
+      body { max-width: none; font-size: 11.5px; line-height: 1.45; }
+      .cover { min-height: 100vh; padding: 44px 48px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .page { padding: 32px 44px; }
+      .page-header { margin-bottom: 20px; padding-bottom: 10px; }
+      h1 { font-size: 22px; }
+      h2 { font-size: 16px; margin-bottom: 8px; }
+      .lead { font-size: 13px; line-height: 1.5; margin-bottom: 16px; }
+      .steps { gap: 14px; margin: 16px 0; }
+      .step-title { font-size: 13.5px; }
+      .step-desc { font-size: 11.5px; line-height: 1.45; }
+      .callout { padding: 11px 16px; margin: 14px 0; break-inside: avoid; page-break-inside: avoid; }
+      .ref-grid { gap: 10px; }
+      .ref-card { padding: 11px 14px; break-inside: avoid; page-break-inside: avoid; }
+      .ref-desc { font-size: 11px; }
+      li { font-size: 12px; margin-bottom: 4px; }
+      td { padding: 8px 12px; font-size: 11.5px; }
+      th { padding: 8px 12px; }
+      hr { margin: 18px 0; }
+      .sig-grid { margin-top: 24px; }
+      .sig-label { margin-bottom: 28px; }
+      .step { break-inside: avoid; page-break-inside: avoid; }
+      .cover { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      th { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .step-num { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .info-grid { margin: 20px 0; }
+      .info-label { margin-bottom: 22px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- COUVERTURE -->
+<div class="cover">
+  <div>
+    <img src="../logo-transparent.png" alt="GreenFlame" style="height:72px;width:auto;display:block;margin-bottom:8px">
+    <div class="cover-badge">GreenFlame · Commerce Communautaire</div>
+  </div>
+  <div>
+    <div class="cover-title">Kit d'Onboarding<br>Marchand</div>
+    <div class="cover-sub">Tout ce qu'il faut pour être pleinement opérationnel — prêt à encaisser, à être trouvé, et à faire grandir votre activité avec GreenFlame.</div>
+    <div class="cover-fields">
+      <div class="cover-field"><label>Nom du marchand</label><div class="line"></div></div>
+      <div class="cover-field"><label>Nom de la boutique</label><div class="line"></div></div>
+      <div class="cover-field"><label>Date d'onboarding</label><div class="line"></div></div>
+      <div class="cover-field"><label>Leader communautaire</label><div class="line"></div></div>
+      <div class="cover-field"><label>Téléphone</label><div class="line"></div></div>
+      <div class="cover-field"><label>N° d'adhésion</label><div class="line"></div></div>
+    </div>
+  </div>
+  <div class="cover-footer">
+    <div class="cover-footer-left">greenflameafrica.com<br>Support · WhatsApp : +229 97 02 50 83</div>
+    <div class="cover-footer-right">Version 1.0 · Juillet 2026<br>Cotonou, Bénin</div>
+  </div>
+</div>
+
+
+<!-- PAGE 1 · COMPRENDRE GREENFLAME -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-brand"><img src="../logo-transparent.png" alt="" style="height:22px;width:auto;vertical-align:middle;margin-right:6px">GreenFlame</span>
+    <span class="page-header-section">Section 1 · Comprendre GreenFlame</span>
+  </div>
+  <div class="section-eyebrow">Bienvenue</div>
+  <h1>GreenFlame en 3 minutes</h1>
+  <p class="lead">GreenFlame est un marché communautaire digital. Chaque vente que vous réalisez génère automatiquement du cashback pour votre client et des commissions pour toute la chaîne de communauté — sans que vous n'ayez à gérer quoi que ce soit.</p>
+
+  <h2>Comment ça fonctionne</h2>
+  <p style="font-size:13px;color:var(--gray-700);margin-bottom:16px">Quand un client vous paie via GreenFlame, voici ce qui se passe en une fraction de seconde :</p>
+  <table>
+    <thead><tr><th>Destinataire</th><th>Part</th><th>Ce que c'est</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Vous (le marchand)</strong></td>
+        <td><span class="hl-green">~85%</span></td>
+        <td>Vos revenus nets — virés sur votre Wallet boutique GreenFlame, retirable vers MTN MoMo ou Moov Money à tout moment.</td>
+      </tr>
+      <tr>
+        <td>Cashback client</td>
+        <td>~7,5%</td>
+        <td>Crédité automatiquement sur le wallet de votre client. C'est ce qui le fidélise.</td>
+      </tr>
+      <tr>
+        <td>Commissions communauté</td>
+        <td>~7,5%</td>
+        <td>Réparties entre les membres de la communauté qui vous ont amené ce client (jusqu'à 5 niveaux).</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-green">
+    <div class="callout-title">💡 En résumé pour le marchand</div>
+    Vous encaissez <strong>vos ventes normalement</strong>. GreenFlame s'occupe du reste : fidéliser votre client (cashback automatique) et vous amener de nouveaux clients via la communauté.<br>
+    Vous n'avez rien à avancer. Les frais sont prélevés <em>sur le montant encaissé</em>, pas en plus.
+  </div>
+
+  <hr>
+  <h2>Ce que GreenFlame change pour vous</h2>
+  <div class="ref-grid">
+    <div class="ref-card">
+      <div class="ref-title">🏪 Visibilité digitale</div>
+      <div class="ref-desc">Votre boutique est accessible en ligne — vos clients peuvent partager votre lien, parcourir vos produits, et payer directement depuis leur téléphone.</div>
+    </div>
+    <div class="ref-card">
+      <div class="ref-title">💰 Clients fidèles</div>
+      <div class="ref-desc">Le cashback donne à chaque client une raison de revenir. Plus ils achètent chez vous, plus ils accumulent — et plus ils reviennent.</div>
+    </div>
+    <div class="ref-card">
+      <div class="ref-title">🤝 Nouveaux clients</div>
+      <div class="ref-desc">La communauté GreenFlame vous apporte des clients que vous n'auriez jamais touchés seul. Chaque membre a intérêt à vous recommander.</div>
+    </div>
+    <div class="ref-card">
+      <div class="ref-title">📊 Visibilité sur vos ventes</div>
+      <div class="ref-desc">Votre tableau de bord vous montre vos ventes du jour, du mois, vos revenus nets, et l'historique complet — en temps réel.</div>
+    </div>
+  </div>
+  <div class="callout callout-amber" style="margin-top:24px">
+    <div class="callout-title">⚠️ Ce que GreenFlame ne change PAS</div>
+    Vos prix restent les vôtres — vous ne faites aucune réduction. Le cashback vient des frais de plateforme, pas de votre marge. Vous encaissez exactement comme avant, mais via GreenFlame.
+  </div>
+</div>
+
+
+<!-- PAGE 2 · ENGAGEMENT MARCHAND -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-brand"><img src="../logo-transparent.png" alt="" style="height:22px;width:auto;vertical-align:middle;margin-right:6px">GreenFlame</span>
+    <span class="page-header-section">Section 2 · Votre engagement</span>
+  </div>
+  <div class="section-eyebrow">Convention simplifiée</div>
+  <h1>L'engagement du marchand GreenFlame</h1>
+  <p class="lead">En rejoignant GreenFlame, vous acceptez de respecter les règles suivantes. Ces règles protègent vos clients, vous, et la communauté entière.</p>
+
+  <h2>Je m'engage à…</h2>
+  <ul>
+    <li><strong>Afficher mes prix réels</strong> — aucune majoration pour les paiements via GreenFlame. Le cashback est financé par la plateforme, pas par vous.</li>
+    <li><strong>Encaisser honnêtement</strong> — saisir le bon montant dans le POS à chaque transaction, sans erreur volontaire.</li>
+    <li><strong>Honorer mes commandes</strong> — livrer ce que le client a payé, dans le délai prévu.</li>
+    <li><strong>Gérer les litiges avec bonne foi</strong> — en cas de problème avec un client, le résoudre directement ou escalader au support GreenFlame.</li>
+    <li><strong>Ne pas détourner le cashback</strong> — ne pas proposer de cashback parallèle en dehors de GreenFlame pour contourner le système.</li>
+    <li><strong>Maintenir mon compte actif</strong> — me connecter régulièrement et retirer mes revenus si nécessaire.</li>
+  </ul>
+
+  <div class="callout callout-amber" style="margin:24px 0">
+    <div class="callout-title">⚠️ Sanctions possibles</div>
+    Le non-respect de ces règles peut entraîner la suspension temporaire ou définitive du compte marchand, et le gel des fonds en attente le temps d'une vérification.
+  </div>
+
+  <h2>Ce que GreenFlame s'engage à faire pour vous</h2>
+  <ul>
+    <li>Vous verser vos revenus nets <strong>sans délai</strong> sur votre Wallet boutique, et permettre leur retrait vers MoMo à tout moment (minimum 1 000 FCFA).</li>
+    <li>Vous fournir un <strong>tableau de bord clair</strong> : ventes du jour, du mois, revenus nets, historique complet.</li>
+    <li>Vous accompagner via le <strong>support WhatsApp</strong> du lundi au samedi.</li>
+    <li>Vous intégrer dans la <strong>communauté GreenFlame</strong> — mise en avant, visibilité sur la marketplace, accès aux outils.</li>
+  </ul>
+
+  <div class="sig-grid" style="margin-top:40px">
+    <div class="sig-field">
+      <div class="sig-label">Signature du marchand</div>
+      <div class="sig-line"></div>
+      <div class="sig-name-label">Nom complet · Date</div>
+    </div>
+    <div class="sig-field">
+      <div class="sig-label">Signature du leader GreenFlame</div>
+      <div class="sig-line"></div>
+      <div class="sig-name-label">Nom du leader · Date</div>
+    </div>
+  </div>
+
+  <div class="callout callout-gray" style="margin-top:32px;font-size:12px;color:var(--gray-500)">
+    Ce document est une version simplifiée de la convention marchand GreenFlame. La convention complète est disponible sur greenflameafrica.com/terms. En signant, le marchand reconnaît avoir pris connaissance des deux documents.
+  </div>
+</div>
+
+
+<!-- PAGE 3 · CONFIGURATION ÉTAPES 1–4 -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-brand"><img src="../logo-transparent.png" alt="" style="height:22px;width:auto;vertical-align:middle;margin-right:6px">GreenFlame</span>
+    <span class="page-header-section">Section 3 · Configuration — Étapes 1 à 4</span>
+  </div>
+  <div class="section-eyebrow">Mise en route</div>
+  <h1>Configuration de votre boutique</h1>
+  <p class="lead">Suivez ces 6 étapes dans l'ordre. À la fin, vous serez pleinement opérationnel. Durée estimée : <strong>20 à 30 minutes</strong>.</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <div class="step-title">Créer votre compte marchand</div>
+        <div class="step-desc">
+          Rendez-vous sur <strong>greenflameafrica.com</strong> → <em>S'inscrire</em>. Entrez votre numéro de téléphone béninois (+229). Vous recevrez un code OTP par SMS à saisir.<br><br>
+          Complétez ensuite votre profil : nom complet, puis activez votre compte marchand dans <em>Dashboard → Devenir marchand</em>.
+        </div>
+        <span class="step-action">→ greenflameafrica.com/register</span>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <div class="step-title">Configurer votre profil boutique</div>
+        <div class="step-desc">
+          Dans votre Dashboard marchand → <em>Produits</em>, ajoutez :
+          <ul style="margin-top:8px">
+            <li><strong>Nom de boutique</strong> — celui que vos clients reconnaîtront</li>
+            <li><strong>Catégorie</strong> — alimentaire, cosmétiques, textile, etc.</li>
+            <li><strong>Photo de bannière</strong> — une photo de votre boutique ou de vos produits</li>
+          </ul>
+          Votre URL boutique sera : <span class="hl-green">greenflameafrica.com/boutique/[votre-slug]</span>
+        </div>
+        <span class="step-action">→ /merchant/products</span>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <div class="step-title">Ajouter au moins 3 produits</div>
+        <div class="step-desc">
+          Chaque produit doit avoir : un <strong>nom clair</strong>, un <strong>prix en FCFA</strong>, et si possible <strong>une photo</strong>. Plus vous avez de produits, plus votre boutique est crédible.<br><br>
+          Pour chaque produit, cliquez <em>+ Ajouter un produit</em> et remplissez le formulaire. La photo peut être prise directement avec votre téléphone.
+        </div>
+        <span class="step-action">→ /merchant/products → + Nouveau produit</span>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <div class="step-title">Tester le POS — votre caisse digitale</div>
+        <div class="step-desc">
+          Le POS (Point de Vente) est l'outil que vous utiliserez à chaque encaissement. Faites un <strong>test avec un montant réel ou symbolique</strong> pour comprendre le flux avant votre premier vrai client.<br><br>
+          <strong>Flux de vente GreenFlame :</strong>
+          <ol style="margin-top:8px">
+            <li>Client arrive en caisse ou paie en ligne</li>
+            <li>Vous ouvrez <em>Encaisser</em> ou le <em>POS Rapide</em></li>
+            <li>Vous entrez le montant ou sélectionnez le produit</li>
+            <li>Le client paie (Wallet GF / MTN MoMo / Moov / Espèces)</li>
+            <li>La transaction est confirmée — cashback crédité automatiquement</li>
+          </ol>
+        </div>
+        <span class="step-action">→ /merchant/receive ou /merchant/pos</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- PAGE 4 · CONFIGURATION ÉTAPES 5–6 + CHECKLIST -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-brand"><img src="../logo-transparent.png" alt="" style="height:22px;width:auto;vertical-align:middle;margin-right:6px">GreenFlame</span>
+    <span class="page-header-section">Section 3 (suite) · Étapes 5 et 6</span>
+  </div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <div class="step-title">Enregistrer et télécharger votre QR Code</div>
+        <div class="step-desc">
+          Votre QR Code est votre caisse en un scan. Un client qui le scanne depuis son téléphone est directement dirigé vers votre boutique ou votre page de paiement.<br><br>
+          <strong>Comment l'obtenir :</strong>
+          <ol style="margin-top:8px">
+            <li>Dashboard → onglet <em>QR Code</em></li>
+            <li>Cliquez <em>Télécharger</em> pour sauvegarder l'image sur votre téléphone</li>
+            <li>Imprimez-le ou affichez-le sur écran à votre caisse</li>
+          </ol><br>
+          <strong>Où l'afficher :</strong> à l'entrée, sur votre comptoir, sur votre devanture, en fond d'écran de l'écran de votre caisse.
+        </div>
+        <span class="step-action">→ Dashboard → onglet QR Code</span>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <div class="step-title">Partager votre lien boutique</div>
+        <div class="step-desc">
+          Votre lien boutique, c'est votre adresse digitale. Partagez-le partout :
+          <ul style="margin-top:8px">
+            <li>Votre statut et bio <strong>WhatsApp</strong></li>
+            <li>Votre page <strong>Facebook</strong> ou <strong>Instagram</strong></li>
+            <li>Vos clients réguliers par message direct</li>
+            <li>Vos cartes de visite physiques (si vous en avez)</li>
+          </ul>
+          Copiez votre lien depuis Dashboard → <em>Partager ma boutique</em>.
+        </div>
+        <div style="margin-top:12px;font-size:13px;color:var(--gray-700)">
+          Mon lien boutique : <span class="hl-green">greenflameafrica.com/boutique/___________</span>
+        </div>
+        <span class="step-action">→ Dashboard → Copier le lien</span>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="callout callout-green">
+    <div class="callout-title">✅ Checklist de fin de configuration</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
+      <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--gray-700)"><span class="step-checkbox"></span> Compte créé et vérifié</label>
+      <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--gray-700)"><span class="step-checkbox"></span> Profil boutique complété</label>
+      <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--gray-700)"><span class="step-checkbox"></span> 3+ produits ajoutés</label>
+      <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--gray-700)"><span class="step-checkbox"></span> POS testé avec succès</label>
+      <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--gray-700)"><span class="step-checkbox"></span> QR Code téléchargé</label>
+      <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--gray-700)"><span class="step-checkbox"></span> Lien boutique partagé</label>
+    </div>
+  </div>
+
+  <div class="callout callout-amber" style="margin-top:16px">
+    <div class="callout-title">🎯 Objectif de la première semaine</div>
+    Réalisez votre <strong>première vraie vente via GreenFlame</strong> avec un client réel — pas un test. Ce premier encaissement ancre le comportement et valide que tout fonctionne de bout en bout.
+    Si besoin, votre leader communautaire peut jouer le rôle du premier client pour vous accompagner.
+  </div>
+</div>
+
+
+<!-- PAGE 5 · SCRIPT CASHBACK -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-brand"><img src="../logo-transparent.png" alt="" style="height:22px;width:auto;vertical-align:middle;margin-right:6px">GreenFlame</span>
+    <span class="page-header-section">Section 4 · Parler du cashback à vos clients</span>
+  </div>
+  <div class="section-eyebrow">Script de vente</div>
+  <h1>Comment présenter GreenFlame en 30 secondes</h1>
+  <p class="lead">Le cashback est votre principal argument pour convaincre un client de payer via GreenFlame plutôt qu'en cash direct. Voici comment le présenter sans le confondre avec une réduction.</p>
+
+  <h2>Le script — 30 secondes chrono</h2>
+  <div class="dialogue dialogue-client">
+    <div class="dialogue-role">Client</div>
+    <div class="dialogue-text">« Je paie combien ? »</div>
+  </div>
+  <div class="dialogue dialogue-marchand">
+    <div class="dialogue-role">Vous (le marchand)</div>
+    <div class="dialogue-text">« Le prix est <strong>[montant] FCFA</strong>. Si vous payez via GreenFlame — que ce soit avec votre wallet ou MTN MoMo — vous recevez du cashback directement sur votre compte. C'est de l'argent que vous pouvez réutiliser pour vos prochains achats.<br><br>Vous avez l'app GreenFlame sur votre téléphone ? »</div>
+  </div>
+  <div class="dialogue dialogue-client">
+    <div class="dialogue-role">Client — s'il n'a pas l'app</div>
+    <div class="dialogue-text">« Non, pas encore. »</div>
+  </div>
+  <div class="dialogue dialogue-marchand">
+    <div class="dialogue-role">Vous</div>
+    <div class="dialogue-text">« Je vous envoie mon lien boutique par WhatsApp maintenant — vous vous inscrivez en 2 minutes, et votre cashback est crédité dès ce premier achat. »</div>
+  </div>
+
+  <hr>
+  <h2>Ce qu'il ne faut PAS dire</h2>
+  <table>
+    <thead><tr><th>❌ À éviter</th><th>✅ À dire à la place</th></tr></thead>
+    <tbody>
+      <tr><td>« Je vous fais une réduction »</td><td>« Vous recevez du cashback — c'est de l'argent sur votre wallet »</td></tr>
+      <tr><td>« C'est moins cher sur GreenFlame »</td><td>« Le prix est le même — mais vous êtes remboursé en partie »</td></tr>
+      <tr><td>« C'est compliqué, je vous explique… »</td><td>« C'est simple — vous payez normalement, l'app fait le reste »</td></tr>
+      <tr><td>« Je dois vous prendre des frais »</td><td>(Ne dites rien sur les frais — ce n'est pas le sujet du client)</td></tr>
+    </tbody>
+  </table>
+
+  <hr>
+  <h2>La question qui convertit</h2>
+  <div class="callout callout-green">
+    <div class="callout-title">💬 La question à poser à chaque client</div>
+    <div style="font-size:15px;font-style:italic;color:var(--gray-900);margin-bottom:8px">« Vous avez un compte GreenFlame ? »</div>
+    Cette question est binaire — soit le client a un compte, soit il n'en a pas. Dans les deux cas, vous savez quoi faire :
+    <ul style="margin-top:8px">
+      <li><strong>Oui</strong> → il paie directement via son wallet ou son MoMo</li>
+      <li><strong>Non</strong> → vous lui envoyez votre lien de parrainage maintenant</li>
+    </ul>
+  </div>
+
+  <h2 style="margin-top:24px">Votre lien de parrainage client</h2>
+  <p style="font-size:13px;color:var(--gray-700);margin-bottom:12px">Quand un client s'inscrit avec votre lien, il est lié à votre communauté. Ses achats chez vous et ailleurs vous génèrent des commissions communauté.</p>
+  <div style="font-size:13px;color:var(--gray-700)">Mon lien de parrainage : <span class="hl-green">greenflameafrica.com/register?ref=___________</span></div>
+  <p style="font-size:12px;color:var(--gray-500);margin-top:8px">Copiez ce lien depuis votre Dashboard → <em>Partager ma boutique</em>.</p>
+</div>
+
+
+<!-- PAGE 6 · RÉFÉRENCE QUOTIDIENNE -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-brand"><img src="../logo-transparent.png" alt="" style="height:22px;width:auto;vertical-align:middle;margin-right:6px">GreenFlame</span>
+    <span class="page-header-section">Section 5 · Référence quotidienne</span>
+  </div>
+  <div class="section-eyebrow">Les 5 actions du quotidien</div>
+  <h1>Votre routine marchand GreenFlame</h1>
+  <p class="lead">Ces 5 actions couvrent 95% de ce que vous ferez au quotidien. Gardez cette page plastifiée à votre caisse.</p>
+
+  <div class="ref-grid" style="gap:16px">
+    <div class="ref-card" style="border-color:var(--green-600);border-width:2px">
+      <div class="ref-num" style="color:var(--green-600)">01</div>
+      <div class="ref-title">💳 Encaisser un client</div>
+      <div class="ref-desc">Dashboard → <strong>Encaisser</strong><br>Entrez le montant → sélectionnez la méthode de paiement → confirmez.<br><em>Le cashback est crédité automatiquement.</em></div>
+    </div>
+    <div class="ref-card" style="border-color:var(--green-600);border-width:2px">
+      <div class="ref-num" style="color:var(--green-600)">02</div>
+      <div class="ref-title">📊 Vérifier vos ventes du jour</div>
+      <div class="ref-desc">Dashboard → onglet <strong>Dashboard</strong><br>Ventes du jour visibles en haut. Historique complet → onglet <strong>Commandes</strong>.</div>
+    </div>
+    <div class="ref-card">
+      <div class="ref-num" style="color:var(--gray-300)">03</div>
+      <div class="ref-title">💰 Vérifier votre solde</div>
+      <div class="ref-desc">Dashboard → encadré vert en haut<br><strong>Wallet boutique</strong> = vos revenus de ventes.<br><strong>Wallet perso</strong> = cashback + commissions communauté.</div>
+    </div>
+    <div class="ref-card">
+      <div class="ref-num" style="color:var(--gray-300)">04</div>
+      <div class="ref-title">📤 Faire un retrait</div>
+      <div class="ref-desc">Dashboard → bouton <strong>Retirer</strong> dans l'encadré vert<br>Minimum : 1 000 FCFA<br>Choisissez MTN MoMo ou Moov Flooz → entrez votre numéro → confirmez.</div>
+    </div>
+    <div class="ref-card" style="grid-column:1/-1">
+      <div class="ref-num" style="color:var(--gray-300)">05</div>
+      <div class="ref-title">🔗 Partager ma boutique</div>
+      <div class="ref-desc">Dashboard → bas de page → bouton <strong>Copier le lien</strong><br>Collez dans WhatsApp, Instagram, SMS. Chaque client qui s'inscrit via votre lien entre dans votre communauté.</div>
+    </div>
+  </div>
+
+  <hr>
+  <h2>En cas de problème</h2>
+  <table>
+    <thead><tr><th>Situation</th><th>Que faire</th></tr></thead>
+    <tbody>
+      <tr><td>Le client dit que le paiement n'est pas passé</td><td>Vérifiez l'onglet Commandes. Si la transaction n'y est pas, demandez au client de réessayer ou passez en paiement espèces.</td></tr>
+      <tr><td>Mon solde n'est pas crédité</td><td>Attendez 2 à 5 minutes — le traitement est automatique. Si toujours absent après 10 min, contactez le support.</td></tr>
+      <tr><td>Un retrait est en attente depuis plus de 24h</td><td>Contactez le support WhatsApp avec le numéro de référence du retrait.</td></tr>
+      <tr><td>Litige avec un client</td><td>Réglez directement si possible. Si besoin d'arbitrage, contactez le support avec le numéro de transaction.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- PAGE 7 · FICHE MARCHAND + CONTACTS -->
+<div class="page" style="page-break-after:auto">
+  <div class="page-header">
+    <span class="page-header-brand"><img src="../logo-transparent.png" alt="" style="height:22px;width:auto;vertical-align:middle;margin-right:6px">GreenFlame</span>
+    <span class="page-header-section">Section 6 · Ma fiche marchand</span>
+  </div>
+  <div class="section-eyebrow">À conserver</div>
+  <h1>Ma fiche marchand</h1>
+  <p class="lead">Remplissez cette fiche pendant la session d'onboarding. Gardez-la avec ce kit.</p>
+
+  <div class="info-grid" style="margin:28px 0">
+    <div><div class="info-label">Mon code marchand / Slug boutique</div><div class="info-line"></div></div>
+    <div><div class="info-label">Mon numéro de retrait MoMo</div><div class="info-line"></div></div>
+    <div><div class="info-label">Mon lien boutique</div><div class="info-line"></div></div>
+    <div><div class="info-label">Mon lien de parrainage</div><div class="info-line"></div></div>
+    <div><div class="info-label">Mon leader communautaire</div><div class="info-line"></div></div>
+    <div><div class="info-label">Téléphone du leader</div><div class="info-line"></div></div>
+    <div><div class="info-label">Date d'activation</div><div class="info-line"></div></div>
+    <div><div class="info-label">Mon plan (Standard / VIP)</div><div class="info-line"></div></div>
+  </div>
+
+  <hr>
+  <h2>Contacts utiles</h2>
+  <table>
+    <thead><tr><th>Contact</th><th>Canal</th><th>Disponibilité</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Support GreenFlame</strong><br>Déodat BOKONONHOUI</td>
+        <td>WhatsApp : <span class="hl-green">+229 97 02 50 83</span></td>
+        <td>Lun–Sam, 8h–20h</td>
+      </tr>
+      <tr>
+        <td><strong>Mon leader communautaire</strong></td>
+        <td>WhatsApp : ___________________</td>
+        <td>Selon disponibilité</td>
+      </tr>
+      <tr>
+        <td><strong>Plateforme</strong></td>
+        <td>greenflameafrica.com</td>
+        <td>24h/24</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <hr>
+  <h2>Prochaines étapes recommandées</h2>
+  <ol>
+    <li style="margin-bottom:10px"><strong>Cette semaine</strong> — Réalisez votre 1ère vraie vente via GreenFlame. Invitez 3 clients réguliers à créer un compte avec votre lien.</li>
+    <li style="margin-bottom:10px"><strong>Ce mois</strong> — Ajoutez vos 10 meilleurs produits en boutique. Affichez votre QR Code à la caisse. Consultez votre tableau de bord chaque soir.</li>
+    <li style="margin-bottom:10px"><strong>Dans 3 mois</strong> — Évaluez avec votre leader si le plan VIP vous apporte de la valeur (vitrine publique avancée, multi-caissiers, outils sectoriels).</li>
+  </ol>
+
+  <div class="callout callout-green" style="margin-top:28px;text-align:center">
+    <div style="font-size:28px;margin-bottom:8px">🔥</div>
+    <div style="font-size:16px;font-weight:700;color:var(--green-800)">Bienvenue dans la communauté GreenFlame.</div>
+    <div style="font-size:13px;color:var(--green-700);margin-top:6px">Vous n'êtes pas seul — votre leader, votre communauté, et l'équipe GreenFlame sont là pour vous accompagner à chaque étape.</div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -74,12 +74,12 @@ export default function ToolGate({
               : 'border-gray-200 bg-white hover:border-gray-300'
           }`}
         >
-          <p className={`text-xs font-semibold uppercase tracking-wide mb-1 ${plan === 'monthly' ? 'text-brand-600' : 'text-gray-400'}`}>Mensuel</p>
+          <p className={`text-xs font-semibold uppercase tracking-wide mb-1 ${plan === 'monthly' ? 'text-brand-600' : 'text-gray-500'}`}>Mensuel</p>
           <p className={`text-xl font-bold ${plan === 'monthly' ? 'text-brand-700' : 'text-gray-700'}`}>
             {fmt(monthlyPrice)}
             <span className="text-xs font-normal text-gray-500"> F</span>
           </p>
-          <p className="text-[10px] text-gray-400 mt-0.5">par mois</p>
+          <p className="text-[10px] text-gray-500 mt-0.5">par mois</p>
         </button>
 
         {/* Plan annuel */}
@@ -94,12 +94,12 @@ export default function ToolGate({
           <span className="absolute -top-2 right-2 text-[10px] bg-green-500 text-white font-bold px-2 py-0.5 rounded-full">
             Économie {fmt(savings)} F
           </span>
-          <p className={`text-xs font-semibold uppercase tracking-wide mb-1 ${plan === 'annual' ? 'text-green-700' : 'text-gray-400'}`}>Annuel</p>
+          <p className={`text-xs font-semibold uppercase tracking-wide mb-1 ${plan === 'annual' ? 'text-green-700' : 'text-gray-500'}`}>Annuel</p>
           <p className={`text-xl font-bold ${plan === 'annual' ? 'text-green-700' : 'text-gray-700'}`}>
             {fmt(annualPrice)}
             <span className="text-xs font-normal text-gray-500"> F</span>
           </p>
-          <p className="text-[10px] text-gray-400 mt-0.5">par an · {fmt(Math.round(annualPrice / 12))} F/mois</p>
+          <p className="text-[10px] text-gray-500 mt-0.5">par an · {fmt(Math.round(annualPrice / 12))} F/mois</p>
         </button>
       </div>
 
@@ -119,7 +119,7 @@ export default function ToolGate({
           </li>
         </ul>
 
-        <p className="text-[10px] text-gray-400 leading-relaxed border-t border-gray-100 pt-2">
+        <p className="text-[10px] text-gray-500 leading-relaxed border-t border-gray-100 pt-2">
           Activation gratuite pendant la phase MVP · La facturation débutera au lancement commercial
         </p>
 
@@ -138,7 +138,7 @@ export default function ToolGate({
         </button>
       </div>
 
-      <Link href="/merchant/tools" className="text-sm text-gray-400 hover:text-gray-600">
+      <Link href="/merchant/tools" className="text-sm text-gray-500 hover:text-gray-600">
         ← Retour aux outils
       </Link>
     </div>

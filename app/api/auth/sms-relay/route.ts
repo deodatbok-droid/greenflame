@@ -20,6 +20,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createHmac, timingSafeEqual } from 'crypto'
 import { sendEmail } from '@/lib/email'
 import { sendWhatsApp, waOtp } from '@/lib/whatsapp/wasender'
+import { createServiceClient } from '@/lib/supabase/server'
+import { DEMO_PHONE } from '@/lib/demo/data'
 
 const RELAY_SECRET = process.env.SMS_RELAY_SECRET ?? ''
 
@@ -116,6 +118,33 @@ export async function POST(req: NextRequest) {
     month:     '2-digit',
     year:      'numeric',
   })
+
+  // ── Compte démo : stocker l'OTP pour auto-complétion, pas d'envoi WhatsApp ──
+  const barePhone = phone.replace(/^\+/, '')
+  const bareDemo  = DEMO_PHONE.replace(/^\+/, '')
+  if (phone === DEMO_PHONE || barePhone === bareDemo) {
+    const svc = createServiceClient()
+    const otp6 = String(code).trim()
+
+    // Stockage primaire : Supabase Storage (synchrone, pas de race condition)
+    await svc.storage
+      .from('kyc-documents')
+      .upload('_demo/otp.json', Buffer.from(JSON.stringify({ otp: otp6 })), {
+        upsert: true,
+        contentType: 'application/json',
+      })
+      .catch(() => { /* log silencieux si bucket inaccessible */ })
+
+    // Stockage secondaire : app_metadata (si userId dispo dans le hook body)
+    const userId = userObj?.id as string | undefined
+    if (userId) {
+      await svc.auth.admin.updateUserById(userId, {
+        app_metadata: { is_demo: true, demo_otp: otp6 },
+      }).catch(() => { /* silently ignore */ })
+    }
+
+    return NextResponse.json({ message_id: `demo-${Date.now()}`, recipient: phone }, { status: 200 })
+  }
 
   // Envoi WhatsApp direct à l'utilisateur (non-bloquant)
   if (phone && phone !== '—') {

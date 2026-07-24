@@ -27,7 +27,7 @@ function ClientStatus({ last }: { last: string }) {
   const days = Math.floor((Date.now() - new Date(last).getTime()) / 86_400_000)
   if (days <= 30)  return <span className="text-xs text-green-600 font-medium">Actif</span>
   if (days <= 90)  return <span className="text-xs text-amber-500 font-medium">Récent</span>
-  return <span className="text-xs text-gray-400">Dormant</span>
+  return <span className="text-xs text-gray-500">Dormant</span>
 }
 
 export default function ClientsClient({ merchantId }: { merchantId: string }) {
@@ -150,9 +150,9 @@ export default function ClientsClient({ merchantId }: { merchantId: string }) {
 
       {/* Liste clients */}
       {loading ? (
-        <div className="text-center py-12 text-gray-400">Chargement…</div>
+        <div className="text-center py-12 text-gray-500">Chargement…</div>
       ) : sorted.length === 0 ? (
-        <div className="text-center py-12 text-gray-400 bg-white rounded-xl border border-gray-200">
+        <div className="text-center py-12 text-gray-500 bg-white rounded-xl border border-gray-200">
           <div className="text-4xl mb-2">👥</div>
           <div className="font-medium">Aucun client encore</div>
           <div className="text-sm mt-1">Créez vos premiers devis ou factures pour voir vos clients ici.</div>
@@ -186,7 +186,7 @@ export default function ClientsClient({ merchantId }: { merchantId: string }) {
                     <td className="px-4 py-3">
                       <div className="font-medium text-gray-900">{c.client_name}</div>
                       {c.client_phone && (
-                        <div className="text-xs text-gray-400">{c.client_phone}</div>
+                        <div className="text-xs text-gray-500">{c.client_phone}</div>
                       )}
                     </td>
                     <td className="px-4 py-3 text-center">
@@ -214,7 +214,7 @@ export default function ClientsClient({ merchantId }: { merchantId: string }) {
                         </span>
                       ) : '—'}
                     </td>
-                    <td className="px-4 py-3 text-gray-400 text-xs">{fmtDate(c.derniere_interaction)}</td>
+                    <td className="px-4 py-3 text-gray-500 text-xs">{fmtDate(c.derniere_interaction)}</td>
                     <td className="px-4 py-3">
                       <div className="flex gap-2">
                         <Link href="/merchant/tools/facture" className="text-xs text-brand-600 hover:underline whitespace-nowrap">
@@ -237,3 +237,4 @@ export default function ClientsClient({ merchantId }: { merchantId: string }) {
     </div>
   )
 }
+

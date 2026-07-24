@@ -4,6 +4,7 @@ import { createServiceClient } from '@/lib/supabase/server'
 import { getMoMoAdapter } from '@/lib/mobile-money'
 import { insertNotification } from '@/lib/utils/notify'
 import { sendSubscriptionAlertEmail } from '@/lib/email'
+import { getToolBySlug } from '@/lib/merchant/tools-catalog'
 
 const TIER_PRICES: Record<string, number> = {
   standard:    0,
@@ -26,11 +27,12 @@ export async function POST(req: NextRequest) {
     if (!user) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
 
     const body = await req.json()
-    const { tier = 'pro', operator, phone, payment_method } = body as {
+    const { tier = 'pro', operator, phone, payment_method, tool_slug } = body as {
       tier: 'pro' | 'vip' | 'vip_annual' | 'vip_upgrade' | 'agent'
       operator?: 'mtn_momo' | 'moov_money'
       phone?: string
       payment_method?: 'mtn_momo' | 'moov_money' | 'cash' | 'vip_free'
+      tool_slug?: string | null
     }
 
     const isCash = payment_method === 'cash'
@@ -113,9 +115,37 @@ export async function POST(req: NextRequest) {
 
     const amount = TIER_PRICES[tier]
 
-    // ── Cas espèces : notifier Déodat et confirmer la demande ──
+    // ── Cas espèces : activer immédiatement + notifier Déodat ──
     if (isCash) {
       const svc = createServiceClient()
+
+      if (tier === 'agent') {
+        await svc.rpc('activate_agent_service', { p_merchant_id: merchant.id })
+      } else {
+        const rpcTier = tier === 'vip_annual' ? 'vip' : tier
+        await svc.rpc('activate_merchant_subscription', {
+          p_merchant_id: merchant.id,
+          p_tier:        rpcTier,
+          p_amount_fcfa: amount,
+          p_payment_ref: `cash-${merchant.id}-${Date.now()}`,
+          p_method:      'cash',
+        })
+        if (tier === 'vip_annual') {
+          const expiresAt = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
+          await svc.from('merchants').update({ subscription_expires_at: expiresAt }).eq('id', merchant.id)
+        }
+        if (tool_slug && ['vip', 'vip_annual'].includes(tier)) {
+          const { data: updatedMerchant } = await svc.from('merchants').select('subscription_expires_at').eq('id', merchant.id).single()
+          const toolExpiresAt = updatedMerchant?.subscription_expires_at ?? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
+          const tool = getToolBySlug(tool_slug)
+          if (tool?.status === 'available') {
+            await svc.from('tool_subscriptions').upsert({ merchant_id: merchant.id, tool_slug, plan: 'vip', started_at: new Date().toISOString(), expires_at: toolExpiresAt }, { onConflict: 'merchant_id,tool_slug' })
+          } else if (tool?.status === 'coming_soon') {
+            await svc.from('tool_requests').insert({ merchant_id: merchant.id, tool_slug, sector_label: tool.label })
+          }
+        }
+      }
+
       const { data: upline } = await svc
         .from('users')
         .select('id')
@@ -126,8 +156,8 @@ export async function POST(req: NextRequest) {
         void insertNotification({
           userId: upline.id,
           type:   'subscription_cash_request',
-          title:  `💵 Demande ${TIER_LABELS[tier] ?? tier}`,
-          body:   `${merchant.business_name} veut payer ${amount.toLocaleString('fr-FR')} FCFA en espèces pour le plan ${TIER_LABELS[tier] ?? tier}.${phone ? ` Tél: ${phone}` : ''}`,
+          title:  `✅ ${TIER_LABELS[tier] ?? tier} activé (espèces)`,
+          body:   `${merchant.business_name} — plan ${TIER_LABELS[tier] ?? tier} activé. Paiement ${amount.toLocaleString('fr-FR')} FCFA en espèces à encaisser.${phone ? ` Tél: ${phone}` : ''}`,
           referenceId: merchant.id,
         })
         void sendSubscriptionAlertEmail({
@@ -136,11 +166,18 @@ export async function POST(req: NextRequest) {
           amount,
           method: 'cash',
           phone,
-          status: 'pending_cash',
+          status: 'paid',
         })
       }
 
-      return NextResponse.json({ success: true, message: 'Demande enregistrée.' })
+      const labels: Record<string, string> = {
+        vip:         'Plan VIP activé ! Vitrine publique, multi-caissier et gestion d\'entreprise débloqués.',
+        vip_annual:  'Plan VIP Annuel activé ! 365 jours d\'accès complet.',
+        agent:       'Service Agent activé !',
+        pro:         'Plan Pro activé !',
+        vip_upgrade: 'Upgrade VIP activé !',
+      }
+      return NextResponse.json({ success: true, message: labels[tier] ?? `${tier.toUpperCase()} activé !` })
     }
 
     const externalId = `sub-${merchant.id}-${Date.now()}`
@@ -183,6 +220,33 @@ export async function POST(req: NextRequest) {
               .from('merchants')
               .update({ subscription_expires_at: expiresAt })
               .eq('id', merchant.id)
+          }
+
+          // Activer l'outil sectoriel si sélectionné
+          if (tool_slug && ['vip', 'vip_annual'].includes(tier)) {
+            const { data: updatedMerchant } = await service
+              .from('merchants')
+              .select('subscription_expires_at')
+              .eq('id', merchant.id)
+              .single()
+            const toolExpiresAt = updatedMerchant?.subscription_expires_at
+              ?? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
+            const tool = getToolBySlug(tool_slug)
+            if (tool?.status === 'available') {
+              await service.from('tool_subscriptions').upsert({
+                merchant_id: merchant.id,
+                tool_slug,
+                plan:       'vip',
+                started_at: new Date().toISOString(),
+                expires_at: toolExpiresAt,
+              }, { onConflict: 'merchant_id,tool_slug' })
+            } else if (tool?.status === 'coming_soon') {
+              await service.from('tool_requests').insert({
+                merchant_id:  merchant.id,
+                tool_slug,
+                sector_label: tool.label,
+              })
+            }
           }
         }
 

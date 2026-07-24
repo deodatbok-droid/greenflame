@@ -165,14 +165,14 @@ export default function MerchantTontinesPage() {
       {!selected && (
         <>
           {loading && (
-            <div className="text-center py-10 text-gray-400">
+            <div className="text-center py-10 text-gray-500">
               <div className="w-8 h-8 border-2 border-brand-500 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
               <p className="text-sm">{t('merchant.tontines.loading')}</p>
             </div>
           )}
 
           {!loading && items.length === 0 && (
-            <div className="card text-center py-10 text-gray-400">
+            <div className="card text-center py-10 text-gray-500">
               <p className="text-4xl mb-3">🛒</p>
               <p className="font-medium text-gray-600">{t('merchant.tontines.empty')}</p>
               <p className="text-xs mt-1">{t('merchant.tontines.emptyHint')}</p>
@@ -194,7 +194,7 @@ export default function MerchantTontinesPage() {
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="font-semibold text-gray-900">{item.product_name}</p>
-                      <p className="text-xs text-gray-400 mt-0.5">
+                      <p className="text-xs text-gray-500 mt-0.5">
                         {item.tontines?.name} · {item.tontines?.tontine_membres?.length ?? 0} {t('merchant.tontines.participants').toLowerCase()} · {FREQ_LABELS[item.tontines?.frequency] ?? '—'}
                       </p>
                       <p className="text-sm font-semibold text-brand-700 mt-1">
@@ -247,12 +247,12 @@ export default function MerchantTontinesPage() {
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <p className="font-semibold text-gray-900">{item.product_name}</p>
-                        <p className="text-xs text-gray-400 mt-0.5">{item.tontines?.name} · {item.tontines?.tontine_membres?.length ?? 0} {t('merchant.tontines.participants').toLowerCase()}</p>
+                        <p className="text-xs text-gray-500 mt-0.5">{item.tontines?.name} · {item.tontines?.tontine_membres?.length ?? 0} {t('merchant.tontines.participants').toLowerCase()}</p>
                       </div>
                       <span className="text-xs bg-green-50 text-green-700 border border-green-200 px-2 py-1 rounded-full font-semibold flex-shrink-0">{t('merchant.tontines.validated')}</span>
                     </div>
                     {orders.length > 0 && (
-                      <div className="mt-2 flex items-center gap-3 text-xs text-gray-400">
+                      <div className="mt-2 flex items-center gap-3 text-xs text-gray-500">
                         <span>📦 {enAttente} {t('merchant.tontines.pendingDeliveries')}</span>
                         <span>✅ {livre} {t('merchant.tontines.deliveredCount')}</span>
                         <span className="ml-auto text-brand-600 font-semibold">{t('merchant.tontines.manageLivraisons')}</span>
@@ -291,7 +291,7 @@ export default function MerchantTontinesPage() {
 
             {/* Infos produit */}
             <div className="card">
-              <p className="text-xs text-gray-400 mb-3 font-semibold uppercase tracking-wide">{t('merchant.tontines.resume')}</p>
+              <p className="text-xs text-gray-500 mb-3 font-semibold uppercase tracking-wide">{t('merchant.tontines.resume')}</p>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-500">{t('merchant.tontines.product')}</span>
@@ -322,7 +322,7 @@ export default function MerchantTontinesPage() {
 
             {/* Liste des membres / ordre de tirage */}
             <div className="card">
-              <p className="text-xs text-gray-400 mb-3 font-semibold uppercase tracking-wide">{t('merchant.tontines.deliveryOrder')}</p>
+              <p className="text-xs text-gray-500 mb-3 font-semibold uppercase tracking-wide">{t('merchant.tontines.deliveryOrder')}</p>
               <div className="space-y-2">
                 {membres.map(m => (
                   <div key={m.id} className="flex items-center gap-3">
@@ -341,7 +341,7 @@ export default function MerchantTontinesPage() {
             {/* Bons de livraison */}
             {orders.length > 0 && (
               <div className="card">
-                <p className="text-xs text-gray-400 mb-3 font-semibold uppercase tracking-wide">{t('merchant.tontines.deliveryOrders')}</p>
+                <p className="text-xs text-gray-500 mb-3 font-semibold uppercase tracking-wide">{t('merchant.tontines.deliveryOrders')}</p>
                 <div className="space-y-3">
                   {orders.map(o => {
                     const cfg = DELIVERY_LABELS[o.status]
@@ -356,7 +356,7 @@ export default function MerchantTontinesPage() {
                           <div className="min-w-0">
                             <p className="text-sm font-medium text-gray-900 truncate">{winner?.full_name ?? '—'}</p>
                             {o.delivered_at && (
-                              <p className="text-xs text-gray-400">
+                              <p className="text-xs text-gray-500">
                                 {new Date(o.delivered_at).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' })}
                               </p>
                             )}
@@ -376,7 +376,7 @@ export default function MerchantTontinesPage() {
                     )
                   })}
                 </div>
-                <p className="text-xs text-gray-400 mt-3 text-center">
+                <p className="text-xs text-gray-500 mt-3 text-center">
                   {t('merchant.tontines.clickAdvance')}
                 </p>
               </div>

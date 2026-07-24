@@ -44,3 +44,5 @@ certs/
 *.p12
 *.jks
 *.keystore
+
+.vercel

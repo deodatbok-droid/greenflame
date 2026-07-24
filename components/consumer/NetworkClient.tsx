@@ -302,11 +302,11 @@ export default function NetworkClient({ levels, totalEarnings30d, passifMois, re
   const n2to5Earnings = levels.slice(1).reduce((s, l) => s + l.earnings30d, 0)
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="bg-gray-50">
 
       {/* ── Header avec photo ── */}
-      <div className="relative overflow-hidden bg-brand-800 px-4 pt-10 pb-16">
-        <div className="absolute inset-0">
+      <div className="relative overflow-hidden bg-brand-800 px-4 pt-10 pb-16 md:rounded-b-3xl">
+        <div className="absolute inset-0 md:rounded-b-3xl overflow-hidden">
           <img
             src="/images/communaut%C3%A9%20%E2%80%94%20header.png"
             alt=""

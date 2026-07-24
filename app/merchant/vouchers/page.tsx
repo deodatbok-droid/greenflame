@@ -233,7 +233,7 @@ export default function MerchantVouchersPage() {
             >
               {t('merchant.vouchers.vipGateCta')}
             </Link>
-            <Link href="/merchant/dashboard" className="block text-sm text-gray-400 text-center hover:text-gray-600 transition-colors">
+            <Link href="/merchant/dashboard" className="block text-sm text-gray-500 text-center hover:text-gray-600 transition-colors">
               {t('merchant.vouchers.vipGateBack')}
             </Link>
           </div>
@@ -288,7 +288,7 @@ export default function MerchantVouchersPage() {
               <button
                 onClick={handleLookup}
                 disabled={looking || !code.trim()}
-                className="px-5 bg-brand-600 hover:bg-brand-700 disabled:bg-gray-200 text-white disabled:text-gray-400 font-semibold rounded-xl transition-colors flex items-center gap-1"
+                className="px-5 bg-brand-600 hover:bg-brand-700 disabled:bg-gray-200 text-white disabled:text-gray-500 font-semibold rounded-xl transition-colors flex items-center gap-1"
               >
                 {looking
                   ? <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -301,7 +301,7 @@ export default function MerchantVouchersPage() {
               </p>
             )}
           </div>
-          <p className="text-xs text-gray-400">{t('merchant.vouchers.codeHint')}</p>
+          <p className="text-xs text-gray-500">{t('merchant.vouchers.codeHint')}</p>
         </div>
       )}
 
@@ -352,11 +352,11 @@ export default function MerchantVouchersPage() {
                     <span className="text-gray-500">{t('merchant.vouchers.feesPool')}</span>
                     <span className="text-gray-600 font-medium">{formatFcfa(totalFee)} FCFA</span>
                   </div>
-                  <div className="flex justify-between text-xs text-gray-400">
+                  <div className="flex justify-between text-xs text-gray-500">
                     <span>{t('merchant.vouchers.yourFeeEst')}</span>
                     <span className="text-green-500">≈ +{formatFcfa(estMerchantFee)} FCFA</span>
                   </div>
-                  <div className="flex justify-between text-xs text-gray-400">
+                  <div className="flex justify-between text-xs text-gray-500">
                     <span>{t('merchant.vouchers.gfFee')}</span>
                     <span>≈ {formatFcfa(gfFee)} FCFA</span>
                   </div>
@@ -435,11 +435,11 @@ export default function MerchantVouchersPage() {
       <div>
         <h2 className="font-semibold text-gray-900 mb-3">{t('merchant.vouchers.historyTitle')}</h2>
         {loadingHistory ? (
-          <div className="text-center py-6 text-gray-400">
+          <div className="text-center py-6 text-gray-500">
             <div className="w-6 h-6 border-2 border-brand-500 border-t-transparent rounded-full animate-spin mx-auto" />
           </div>
         ) : history.length === 0 ? (
-          <div className="card text-center py-8 text-gray-400">
+          <div className="card text-center py-8 text-gray-500">
             <p className="text-3xl mb-2">📋</p>
             <p className="text-sm font-medium text-gray-600">{t('merchant.vouchers.historyEmpty')}</p>
             <p className="text-xs mt-1">{t('merchant.vouchers.historyEmptySub')}</p>
@@ -453,7 +453,7 @@ export default function MerchantVouchersPage() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-mono text-xs text-gray-500 truncate">{v.code}</p>
-                  <p className="text-xs text-gray-400 mt-0.5">
+                  <p className="text-xs text-gray-500 mt-0.5">
                     {new Date(v.redeemed_at).toLocaleDateString(undefined, {
                       day: '2-digit', month: 'short', year: 'numeric',
                       hour: '2-digit', minute: '2-digit',
@@ -470,7 +470,7 @@ export default function MerchantVouchersPage() {
                   <p className="font-bold text-green-600 text-sm">
                     +{formatFcfa(v.amount_fcfa - (v.fee_fcfa - v.merchant_fee_fcfa))} F
                   </p>
-                  <p className="text-xs text-gray-400">{t('merchant.vouchers.netLabel')}</p>
+                  <p className="text-xs text-gray-500">{t('merchant.vouchers.netLabel')}</p>
                 </div>
               </div>
             ))}

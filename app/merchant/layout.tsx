@@ -69,9 +69,9 @@ export default async function MerchantLayout({ children }: { children: React.Rea
         </div>
         {/* Droite */}
         <div className="flex items-center justify-end gap-1.5 min-w-0">
-          <LangToggle className="text-gray-400 shrink-0" />
+          <LangToggle className="text-gray-500 shrink-0" />
           <Link
-            href="/merchant/upgrade"
+            href="/merchant/abonnements"
             className={`text-[10px] font-bold px-2 py-0.5 rounded-full border shrink-0 ${tierColor} transition-opacity hover:opacity-80`}
           >
             {tierLabel}

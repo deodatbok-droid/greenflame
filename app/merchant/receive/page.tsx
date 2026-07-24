@@ -536,7 +536,7 @@ export default function ReceivePage() {
                   : paymentType === 'proxy_cash' ? 'Achat client — Espèces'
                   : PAYMENT_TYPES.find(p => p.type === paymentType)?.label ?? t('merchant.receive.title')}
               </h1>
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-gray-500">
                 {paymentType === 'proxy_purchase' || paymentType === 'proxy_cash'
                   ? 'PIN client requis · Cashback automatique'
                   : PAYMENT_TYPES.find(p => p.type === paymentType)?.commissionNote}
@@ -572,7 +572,7 @@ export default function ReceivePage() {
             <div>
               <label className="label">
                 {t('merchant.receive.amountInputLabel')}
-                <span className="text-gray-400 text-xs ml-1 font-normal">{t('merchant.receive.voiceHint')}</span>
+                <span className="text-gray-500 text-xs ml-1 font-normal">{t('merchant.receive.voiceHint')}</span>
               </label>
               <VoiceAmountInput value={amount} onChange={setAmount} autoFocus />
             </div>
@@ -594,7 +594,7 @@ export default function ReceivePage() {
                     <span>{t('merchant.receive.walletCredit')}</span>
                     <span className="font-bold">+{formatFcfa(amountNum)} FCFA</span>
                   </div>
-                  <div className="flex justify-between text-gray-400 text-xs border-t pt-2">
+                  <div className="flex justify-between text-gray-500 text-xs border-t pt-2">
                     <span>{t('merchant.receive.serviceFeeLabel')}</span>
                     <span>{t('merchant.receive.serviceFree')}</span>
                   </div>
@@ -607,7 +607,7 @@ export default function ReceivePage() {
                     <span>{t('merchant.receive.platformRevenue')}</span>
                     <span className="font-bold">+{formatFcfa(amountNum)} FCFA</span>
                   </div>
-                  <div className="flex justify-between text-gray-400 text-xs border-t pt-2">
+                  <div className="flex justify-between text-gray-500 text-xs border-t pt-2">
                     <span>{t('merchant.receive.autoActivation')}</span>
                     <span>✓</span>
                   </div>
@@ -624,7 +624,7 @@ export default function ReceivePage() {
                     <span>{t('merchant.receive.youReceive')}</span>
                     <span>{formatFcfa(amountNum - commissionTotal)} FCFA</span>
                   </div>
-                  <div className="flex justify-between text-gray-400 text-xs">
+                  <div className="flex justify-between text-gray-500 text-xs">
                     <span>{t('merchant.receive.cashbackClientLabel')}</span>
                     <span>{cashbackDisplay.label} 🔥</span>
                   </div>
@@ -637,7 +637,7 @@ export default function ReceivePage() {
                     <span>{t('merchant.receive.walletCredit')}</span>
                     <span className="font-bold">+{formatFcfa(amountNum)} FCFA</span>
                   </div>
-                  <div className="flex justify-between text-gray-400 text-xs border-t pt-2">
+                  <div className="flex justify-between text-gray-500 text-xs border-t pt-2">
                     <span>{t('merchant.receive.agentFee')}</span>
                     <span>{commissionCode(commissionRate)}</span>
                   </div>
@@ -709,7 +709,7 @@ export default function ReceivePage() {
               {t('merchant.receive.confirmWindow')}
             </p>
             <p className={`text-4xl font-bold font-mono tracking-wider ${
-              secondsLeft > 60 ? 'text-amber-800 dark:text-amber-300' : secondsLeft > 0 ? 'text-red-600 dark:text-red-400' : 'text-gray-400'
+              secondsLeft > 60 ? 'text-amber-800 dark:text-amber-300' : secondsLeft > 0 ? 'text-red-600 dark:text-red-400' : 'text-gray-500'
             }`}>
               {timerLabel}
             </p>
@@ -773,7 +773,7 @@ export default function ReceivePage() {
             className="w-64 h-64 mx-auto border-4 border-brand-100 rounded-2xl shadow-lg"
           />
 
-          <p className="text-xs text-gray-400">{t('merchant.receive.qrHint')}</p>
+          <p className="text-xs text-gray-500">{t('merchant.receive.qrHint')}</p>
 
           <div className="flex gap-2 justify-center">
             <button
@@ -833,7 +833,7 @@ export default function ReceivePage() {
                 </div>
                 <div>
                   <p className="font-semibold text-white">{buyerInfo.name}</p>
-                  <p className="text-xs text-gray-400">{t('merchant.receive.buyerPhone')}</p>
+                  <p className="text-xs text-gray-500">{t('merchant.receive.buyerPhone')}</p>
                 </div>
               </div>
 
@@ -843,7 +843,7 @@ export default function ReceivePage() {
                     <p className="text-xs text-brand-300 font-medium uppercase tracking-wide mb-1">{t('merchant.receive.creditAvailable')}</p>
                     <p className="text-2xl font-bold text-brand-400">{formatFcfa(buyerInfo.balance_fcfa)} FCFA</p>
                     {(buyerInfo.balance_gfp ?? 0) > 0 && (
-                      <p className="text-xs text-gray-400 mt-0.5">+ {buyerInfo.balance_gfp?.toLocaleString()} GFP</p>
+                      <p className="text-xs text-gray-500 mt-0.5">+ {buyerInfo.balance_gfp?.toLocaleString()} GFP</p>
                     )}
                   </div>
 
@@ -872,7 +872,7 @@ export default function ReceivePage() {
                       <p className="text-sm font-medium text-white group-hover:text-brand-300 transition-colors">
                         {t('merchant.receive.applyCredit')}
                       </p>
-                      <p className="text-xs text-gray-400">
+                      <p className="text-xs text-gray-500">
                         {t('merchant.receive.applyCreditHint')
                           .replace('{discounted}', formatFcfa(Math.max(0, amountNum - Math.min(buyerInfo.balance_fcfa, amountNum))))
                           .replace('{full}', formatFcfa(amountNum))}
@@ -881,7 +881,7 @@ export default function ReceivePage() {
                   </label>
                 </>
               ) : (
-                <p className="text-sm text-gray-400">
+                <p className="text-sm text-gray-500">
                   {t('merchant.receive.noCredit')}
                 </p>
               )}
@@ -897,7 +897,7 @@ export default function ReceivePage() {
           {/* Updated totals when cashback applied */}
           {applyCashback && cashbackApplied > 0 && (
             <div className="card space-y-2 text-sm">
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">{t('merchant.receive.summaryWithDiscount')}</p>
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{t('merchant.receive.summaryWithDiscount')}</p>
               <div className="flex justify-between">
                 <span className="text-gray-500">{t('merchant.receive.initialAmount')}</span>
                 <span>{formatFcfa(amountNum)} FCFA</span>
@@ -1062,3 +1062,4 @@ export default function ReceivePage() {
     </div>
   )
 }
+

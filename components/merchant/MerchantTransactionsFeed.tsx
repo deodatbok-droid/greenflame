@@ -112,7 +112,7 @@ export default function MerchantTransactionsFeed({ merchantUserId }: { merchantU
 
   if (transactions.length === 0) {
     return (
-      <div className="text-center py-16 text-gray-400">
+      <div className="text-center py-16 text-gray-500">
         <p className="text-4xl mb-3">🧾</p>
         <p className="font-semibold text-gray-600">Aucune vente pour le moment</p>
         <p className="text-sm mt-1">Vos transactions apparaîtront ici en temps réel</p>
@@ -128,7 +128,7 @@ export default function MerchantTransactionsFeed({ merchantUserId }: { merchantU
           <span className="bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full">
             🔔 {newCount} nouvelle{newCount > 1 ? 's' : ''} vente{newCount > 1 ? 's' : ''}
           </span>
-          <button onClick={() => setNewCount(0)} className="text-xs text-gray-400 hover:text-gray-600">
+          <button onClick={() => setNewCount(0)} className="text-xs text-gray-500 hover:text-gray-600">
             Effacer
           </button>
         </div>
@@ -153,7 +153,7 @@ export default function MerchantTransactionsFeed({ merchantUserId }: { merchantU
                 </div>
                 <div>
                   <p className="font-semibold text-gray-900 text-sm">{tx.buyer_name}</p>
-                  <p className="text-xs text-gray-400">{timeAgo(tx.created_at)}</p>
+                  <p className="text-xs text-gray-500">{timeAgo(tx.created_at)}</p>
                 </div>
               </div>
               <span className="text-lg">{METHOD_ICONS[method] ?? '💰'}</span>
@@ -174,7 +174,7 @@ export default function MerchantTransactionsFeed({ merchantUserId }: { merchantU
               </div>
             ) : (
               <div className="px-4 py-2 border-t border-gray-50">
-                <p className="text-sm text-gray-400 italic">Vente directe</p>
+                <p className="text-sm text-gray-500 italic">Vente directe</p>
               </div>
             )}
 
@@ -188,12 +188,12 @@ export default function MerchantTransactionsFeed({ merchantUserId }: { merchantU
               {/* Montants */}
               <div className="flex items-center gap-3 ml-auto">
                 <div className="text-right">
-                  <p className="text-xs text-gray-400">Encaissé</p>
+                  <p className="text-xs text-gray-500">Encaissé</p>
                   <p className="text-sm font-semibold text-gray-700">{formatFcfa(tx.amount_fcfa)}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-xs text-gray-400">Frais GF</p>
-                  <p className="text-sm font-medium text-gray-400">−{formatFcfa(tx.commission_total)}</p>
+                  <p className="text-xs text-gray-500">Frais GF</p>
+                  <p className="text-sm font-medium text-gray-600">−{formatFcfa(tx.commission_total)}</p>
                 </div>
                 <div className="text-right bg-green-50 rounded-xl px-3 py-1.5">
                   <p className="text-[10px] text-green-600 font-semibold uppercase tracking-wide">Net reçu</p>

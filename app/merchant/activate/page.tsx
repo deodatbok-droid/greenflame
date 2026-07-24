@@ -8,13 +8,20 @@ export default async function MerchantActivatePage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const { count } = await supabase
-    .from('transactions')
-    .select('id', { count: 'exact', head: true })
-    .eq('buyer_id', user.id)
-    .eq('status', 'completed')
+  const [{ count }, { data: userRow }] = await Promise.all([
+    supabase
+      .from('transactions')
+      .select('id', { count: 'exact', head: true })
+      .eq('buyer_id', user.id)
+      .eq('status', 'completed'),
+    supabase
+      .from('users')
+      .select('is_active')
+      .eq('id', user.id)
+      .maybeSingle(),
+  ])
 
-  const isActivated = (count ?? 0) > 0
+  const isActivated = (count ?? 0) > 0 || userRow?.is_active === true
 
   if (!isActivated) {
     return (

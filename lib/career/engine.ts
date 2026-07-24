@@ -515,13 +515,17 @@ export async function updateCareerMetrics(userId: string, metrics: {
     promoted = true
 
     // Forced Matrix : mise a jour max_direct_slots si rang change de tier
+    // Exception : platform_upline a des slots illimités — jamais écrasés par la progression
     const newSlots = SLOT_BY_RANK[newRank]          ?? 5
     const oldSlots = SLOT_BY_RANK[state.currentRank] ?? 5
 
     if (newSlots > oldSlots) {
       const gateOk = await checkSlotGate(userId, oldSlots, svc)
       if (gateOk) {
-        await svc.from('users').update({ max_direct_slots: newSlots }).eq('id', userId)
+        const { data: roleRow } = await svc.from('users').select('role').eq('id', userId).single()
+        if (!(roleRow?.role ?? []).includes('platform_upline')) {
+          await svc.from('users').update({ max_direct_slots: newSlots }).eq('id', userId)
+        }
       }
     }
   }

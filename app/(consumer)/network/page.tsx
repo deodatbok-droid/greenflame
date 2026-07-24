@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { getServerT } from '@/lib/i18n/server'
 import CercleUplineCard from '@/components/messaging/CercleUplineCard'
 import Palier2Messaging from '@/components/messaging/Palier2Messaging'
+import { DEMO_EMAIL } from '@/lib/demo/data'
 
 export default async function NetworkPage() {
   const supabase = await createClient()
@@ -93,7 +94,14 @@ export default async function NetworkPage() {
     byLevel[c.level] = (byLevel[c.level] ?? 0) + c.amount_fcfa
   }
 
-  const counts = [c1.count ?? 0, c2.count ?? 0, c3.count ?? 0, c4.count ?? 0, c5.count ?? 0]
+  // En mode démo (compte mature seedé) : les niveaux L2-L5 ne peuvent pas être
+  // insérés en DB (FK auth.users), on affiche le potentiel attendu sur les counts.
+  const isDemo       = user.email === DEMO_EMAIL
+  const demoSeeded   = isDemo && (c1.count ?? 0) >= 5
+  const DEMO_COUNTS  = [5, 25, 125, 625, 3125]
+  const counts = demoSeeded
+    ? DEMO_COUNTS
+    : [c1.count ?? 0, c2.count ?? 0, c3.count ?? 0, c4.count ?? 0, c5.count ?? 0]
   const allMembers = [members1, members2, members3, members4, members5]
 
   const levels = [1, 2, 3, 4, 5].map((level, i) => ({
@@ -109,7 +117,7 @@ export default async function NetworkPage() {
   const eligiblePalier2 = (profileRes.data?.kyc_level ?? 0) >= 1 && (palier2TxRes.count ?? 0) >= 1
 
   return (
-    <div>
+    <div className="max-w-4xl mx-auto">
       <div className="px-4 pt-10 pb-2 flex items-center">
         <BackButton href="/dashboard" />
       </div>

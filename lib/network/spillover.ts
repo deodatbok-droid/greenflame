@@ -39,7 +39,7 @@ export async function resolveSpilloverPlacement(
   // ── Étape 1 : l'enrolleur a-t-il un slot disponible ? ───────────────────
   const { data: enroller } = await service
     .from('users')
-    .select('id, max_direct_slots, last_active_at')
+    .select('id, max_direct_slots, last_active_at, role')
     .eq('id', enrollerId)
     .single()
 
@@ -54,7 +54,8 @@ export async function resolveSpilloverPlacement(
     .select('id', { count: 'exact', head: true })
     .eq('upline_id', enrollerId)
 
-  const enrollerHasSlot = (enrollerDirectCount ?? 0) < enroller.max_direct_slots
+  const isPlatformUpline = (enroller.role ?? []).includes('platform_upline')
+  const enrollerHasSlot  = isPlatformUpline || (enrollerDirectCount ?? 0) < enroller.max_direct_slots
 
   if (enrollerHasSlot) {
     // Placement direct — pas besoin de vérifier actif/recrues pour le premier placement

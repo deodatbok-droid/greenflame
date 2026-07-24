@@ -7,12 +7,15 @@ import toast from 'react-hot-toast'
 import Logo from '@/components/Logo'
 import PhoneInput from '@/components/ui/PhoneInput'
 import { useLocale } from '@/components/providers/LocaleProvider'
+import { useDemo } from '@/lib/demo/DemoContext'
+import { DEMO_PROFILE } from '@/lib/demo/data'
 
 function CompleteProfileForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const supabase = createClient()
   const { t } = useLocale()
+  const { isDemo, markStepComplete } = useDemo()
 
   const refFromUrl = searchParams.get('ref') ?? ''
   // Lien de retour après création de profil (ex. invitation tontine) — sinon
@@ -107,6 +110,7 @@ function CompleteProfileForm() {
     }
 
     toast.success(t('completeProfile.successToast'))
+    if (isDemo) markStepComplete('profil')
     router.push(next || '/dashboard')
     router.refresh()
   }
@@ -141,6 +145,23 @@ function CompleteProfileForm() {
 
       <div className="card w-full max-w-sm">
         <form onSubmit={handleSubmit} className="space-y-5">
+
+          {/* Remplissage démo */}
+          {isDemo && (
+            <button
+              type="button"
+              onClick={() => {
+                setFullName(DEMO_PROFILE.fullName)
+                setEmail(DEMO_PROFILE.email)
+                setPin(DEMO_PROFILE.pin)
+                setPinConfirm(DEMO_PROFILE.pinConfirm)
+              }}
+              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold"
+              style={{ background: 'rgba(22,163,74,0.08)', color: '#16a34a', border: '1px solid rgba(22,163,74,0.2)' }}
+            >
+              🎬 ✦ Remplir automatiquement
+            </button>
+          )}
 
           <div>
             <h2 className="text-xl font-bold text-gray-900">{t('completeProfile.yourProfile')}</h2>

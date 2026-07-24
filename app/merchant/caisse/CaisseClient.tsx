@@ -246,9 +246,9 @@ export default function CaisseClient({ merchantId, businessName }: { merchantId:
       <div>
         <h2 className="font-semibold text-gray-800 mb-3">Journal — {monthLabel(viewMonth)}</h2>
         {loading ? (
-          <div className="text-center py-8 text-gray-400">Chargement…</div>
+          <div className="text-center py-8 text-gray-500">Chargement…</div>
         ) : monthEntries.length === 0 ? (
-          <div className="text-center py-8 text-gray-400 bg-white rounded-xl border border-gray-200">
+          <div className="text-center py-8 text-gray-500 bg-white rounded-xl border border-gray-200">
             Aucune opération ce mois-ci.
           </div>
         ) : (
@@ -266,7 +266,7 @@ export default function CaisseClient({ merchantId, businessName }: { merchantId:
               <tbody className="divide-y divide-gray-100">
                 {monthEntries.map(e => (
                   <tr key={e.id} className="hover:bg-gray-50">
-                    <td className="px-4 py-3 text-gray-400 text-xs">{fmtDate(e.date_entree)}</td>
+                    <td className="px-4 py-3 text-gray-500 text-xs">{fmtDate(e.date_entree)}</td>
                     <td className="px-4 py-3 text-gray-500 text-xs">{e.categorie}</td>
                     <td className="px-4 py-3 text-gray-800">{e.libelle}</td>
                     <td className={`px-4 py-3 text-right font-semibold ${e.type === 'recette' ? 'text-green-600' : 'text-red-500'}`}>
@@ -275,7 +275,7 @@ export default function CaisseClient({ merchantId, businessName }: { merchantId:
                     <td className="px-4 py-3">
                       <button
                         onClick={() => deleteEntry(e.id)}
-                        className="text-xs text-gray-300 hover:text-red-400 transition-colors"
+                        className="text-xs text-gray-500 hover:text-red-500 transition-colors"
                       >
                         ✕
                       </button>

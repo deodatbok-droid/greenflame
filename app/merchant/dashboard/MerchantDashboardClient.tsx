@@ -201,7 +201,7 @@ export default function MerchantDashboardClient({
                   </span>
                 )}
               </div>
-              <p className="text-xs text-gray-400">{merchant.business_category}</p>
+              <p className="text-xs text-gray-500">{merchant.business_category}</p>
             </div>
           </div>
           <Link
@@ -222,7 +222,7 @@ export default function MerchantDashboardClient({
                 className={`text-xs sm:text-sm py-3 border-b-2 transition-colors whitespace-nowrap flex-shrink-0 px-1 ${
                   activeTab === tab.id
                     ? 'border-brand-600 text-brand-700 font-medium'
-                    : 'border-transparent text-gray-400 hover:text-gray-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700'
                 }`}
               >
                 {tab.label}
@@ -284,7 +284,7 @@ export default function MerchantDashboardClient({
             <div className="bg-brand-700 rounded-2xl p-5 text-white">
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-brand-200 text-xs mb-0.5">{t('merchantDash.walletBalance')}</p>
+                  <p className="text-brand-100 text-xs mb-0.5">{t('merchantDash.walletBalance')}</p>
                   <p className="text-3xl font-bold">
                     {merchantWallet ? formatFcfa(merchantWallet.balance_fcfa) : '—'}{' '}
                     <span className="text-lg font-medium">FCFA</span>
@@ -303,28 +303,28 @@ export default function MerchantDashboardClient({
               {/* Ventilation all-time */}
               {merchant.total_gmv > 0 && (
                 <div className="mt-4 border-t border-white/20 pt-4 space-y-1.5">
-                  <p className="text-brand-200 text-xs font-medium mb-2">
+                  <p className="text-brand-100 text-xs font-medium mb-2">
                     {t('merchantDash.walletVolume')} {formatFcfa(merchant.total_gmv)} FCFA
                   </p>
                   <div className="grid grid-cols-3 gap-2">
                     <div className="bg-white/10 rounded-xl p-2.5 text-center">
-                      <p className="text-[10px] text-brand-300 mb-0.5">💵 {locale === 'en' ? 'Cash' : 'Espèces'}</p>
+                      <p className="text-[10px] text-brand-100 mb-0.5">💵 {locale === 'en' ? 'Cash' : 'Espèces'}</p>
                       <p className="text-sm font-bold">{formatFcfa(revenueByMethod.cash)}</p>
-                      <p className="text-[9px] text-brand-400 mt-0.5">{t('merchantDash.walletCashPhysical')}</p>
+                      <p className="text-[9px] text-white/70 mt-0.5">{t('merchantDash.walletCashPhysical')}</p>
                     </div>
                     <div className="bg-white/10 rounded-xl p-2.5 text-center">
-                      <p className="text-[10px] text-brand-300 mb-0.5">🔥 Wallet GF</p>
+                      <p className="text-[10px] text-brand-100 mb-0.5">🔥 Wallet GF</p>
                       <p className="text-sm font-bold">{formatFcfa(revenueByMethod.walletGf)}</p>
-                      <p className="text-[9px] text-brand-400 mt-0.5">{t('merchantDash.walletNetWallet')}</p>
+                      <p className="text-[9px] text-white/70 mt-0.5">{t('merchantDash.walletNetWallet')}</p>
                     </div>
                     <div className="bg-white/10 rounded-xl p-2.5 text-center">
-                      <p className="text-[10px] text-brand-300 mb-0.5">📱 Mobile Money</p>
+                      <p className="text-[10px] text-brand-100 mb-0.5">📱 Mobile Money</p>
                       <p className="text-sm font-bold">{formatFcfa(revenueByMethod.momo)}</p>
-                      <p className="text-[9px] text-brand-400 mt-0.5">{t('merchantDash.walletNetWallet')}</p>
+                      <p className="text-[9px] text-white/70 mt-0.5">{t('merchantDash.walletNetWallet')}</p>
                     </div>
                   </div>
                   {revenueByMethod.cash > 0 && (
-                    <p className="text-brand-400 text-[10px] mt-1 italic">
+                    <p className="text-white/70 text-[10px] mt-1 italic">
                       {t('merchantDash.walletCashNote')}
                     </p>
                   )}
@@ -410,11 +410,11 @@ export default function MerchantDashboardClient({
               <div className="card">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs text-gray-400 mb-0.5">{t('merchantDash.personalAccount')}</p>
+                    <p className="text-xs text-gray-500 mb-0.5">{t('merchantDash.personalAccount')}</p>
                     <p className="text-sm font-semibold text-gray-500">{t('merchantDash.personalSubtitle')}</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold text-gray-900">{formatFcfa(personalWallet.balance_fcfa)} <span className="text-xs font-normal text-gray-400">FCFA</span></p>
+                    <p className="font-bold text-gray-900">{formatFcfa(personalWallet.balance_fcfa)} <span className="text-xs font-normal text-gray-500">FCFA</span></p>
                     {personalWallet.balance_gfp > 0 && (
                       <p className="text-xs text-brand-600">{personalWallet.balance_gfp.toLocaleString()} GFP</p>
                     )}
@@ -428,7 +428,7 @@ export default function MerchantDashboardClient({
 
             {/* Stats du mois */}
             <div>
-              <p className="text-xs text-gray-400 font-medium uppercase tracking-wide mb-2 capitalize">{moisLabel}</p>
+              <p className="text-xs text-gray-500 font-medium uppercase tracking-wide mb-2 capitalize">{moisLabel}</p>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {[
                   { label: t('merchantDash.statSalesMonth'), value: String(monthStats.count), sub: t('merchantDash.statTransactions') },
@@ -448,7 +448,7 @@ export default function MerchantDashboardClient({
             {/* Stats aujourd'hui */}
             {todayStats.count > 0 && (
               <div>
-                <p className="text-xs text-gray-400 font-medium uppercase tracking-wide mb-2">{t('merchantDash.today')}</p>
+                <p className="text-xs text-gray-500 font-medium uppercase tracking-wide mb-2">{t('merchantDash.today')}</p>
                 <div className="grid grid-cols-3 gap-3">
                   <div className="card text-center">
                     <p className="text-2xl font-bold text-gray-900">{todayStats.count}</p>
@@ -472,7 +472,7 @@ export default function MerchantDashboardClient({
                 <h2 className="font-semibold text-gray-900 mb-1">
                   {t('merchantDash.breakdownTitle').replace('{amount}', formatFcfa(monthStats.commission))}
                 </h2>
-                <p className="text-xs text-gray-400 mb-4">{t('merchantDash.breakdownSubtitle')}</p>
+                <p className="text-xs text-gray-500 mb-4">{t('merchantDash.breakdownSubtitle')}</p>
                 <div className="flex flex-wrap gap-3">
                   {breakdown.map(c => (
                     <div key={c.label} className={`${c.color} rounded-xl px-4 py-3.5 flex-1 min-w-[140px] text-center`}>
@@ -505,7 +505,7 @@ export default function MerchantDashboardClient({
           {/* ── Bande latérale outils — desktop uniquement ── */}
           <div className="hidden md:flex flex-col gap-3 sticky top-20">
             <div className="card">
-              <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-3">{t('merchantDash.toolTools')}</p>
+              <p className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-3">{t('merchantDash.toolTools')}</p>
               <div className="space-y-0.5">
                 <Link href="/merchant/receive">
                   <div className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg bg-brand-600 hover:bg-brand-700 transition-colors cursor-pointer mb-1.5">
@@ -518,7 +518,7 @@ export default function MerchantDashboardClient({
                     <span className="text-sm">📄</span>
                     <div className="min-w-0">
                       <p className="text-xs font-medium text-gray-700 leading-tight">{t('merchantDash.toolQuote')}</p>
-                      <p className="text-[10px] text-gray-400">{isPro ? t('merchantDash.toolUnlimited') : t('merchantDash.toolMonthly')}</p>
+                      <p className="text-[10px] text-gray-500">{isPro ? t('merchantDash.toolUnlimited') : t('merchantDash.toolMonthly')}</p>
                     </div>
                   </div>
                 </Link>
@@ -527,7 +527,7 @@ export default function MerchantDashboardClient({
                     <span className="text-sm">🧾</span>
                     <div className="min-w-0">
                       <p className="text-xs font-medium text-gray-700 leading-tight">{t('merchantDash.toolInvoice')}</p>
-                      <p className="text-[10px] text-gray-400">{isPro ? t('merchantDash.toolUnlimited') : t('merchantDash.toolMonthly')}</p>
+                      <p className="text-[10px] text-gray-500">{isPro ? t('merchantDash.toolUnlimited') : t('merchantDash.toolMonthly')}</p>
                     </div>
                   </div>
                 </Link>
@@ -573,7 +573,7 @@ export default function MerchantDashboardClient({
         {/* ── COMMANDES ── */}
         {activeTab === 'commandes' && (
           <div className="space-y-4">
-            <p className="text-xs text-gray-400 font-medium uppercase tracking-wide">{t('merchantDash.ordersRealtime')}</p>
+            <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">{t('merchantDash.ordersRealtime')}</p>
             <MerchantTransactionsFeed merchantUserId={merchantUserId} />
           </div>
         )}
@@ -585,10 +585,10 @@ export default function MerchantDashboardClient({
             {/* Résumé all-time */}
             {pnlTotals && (
               <div className="bg-gradient-to-br from-brand-700 to-brand-900 rounded-2xl p-5 text-white">
-                <p className="text-brand-200 text-xs font-medium uppercase tracking-wide mb-3">{t('merchantDash.pnlAllTime')}</p>
+                <p className="text-brand-100 text-xs font-medium uppercase tracking-wide mb-3">{t('merchantDash.pnlAllTime')}</p>
                 <div className="grid grid-cols-3 gap-3">
                   <div>
-                    <p className="text-brand-300 text-xs">{t('merchantDash.pnlGross')}</p>
+                    <p className="text-brand-100 text-xs">{t('merchantDash.pnlGross')}</p>
                     <p className="font-bold text-lg leading-tight">{formatFcfa(pnlTotals.ca)}</p>
                     <p className="text-brand-300 text-xs">FCFA</p>
                   </div>
@@ -615,7 +615,7 @@ export default function MerchantDashboardClient({
               <div className="px-5 py-4 border-b border-gray-50 flex items-center justify-between">
                 <div>
                   <h3 className="font-semibold text-gray-900 text-sm">{t('merchantDash.pnlMonthlyTitle')}</h3>
-                  <p className="text-xs text-gray-400 mt-0.5">{t('merchantDash.pnlMonthlySubtitle')}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">{t('merchantDash.pnlMonthlySubtitle')}</p>
                 </div>
                 <span className="text-xs bg-brand-50 text-brand-700 font-medium px-2.5 py-1 rounded-full">
                   {t('merchantDash.pnlMonths').replace('{n}', String(pnlMonths.length))}
@@ -630,7 +630,7 @@ export default function MerchantDashboardClient({
                 <div className="text-center py-14">
                   <p className="text-4xl mb-3">📊</p>
                   <p className="font-semibold text-gray-600">{t('merchantDash.pnlNoSales')}</p>
-                  <p className="text-xs text-gray-400 mt-1">{t('merchantDash.pnlNoSalesSub')}</p>
+                  <p className="text-xs text-gray-500 mt-1">{t('merchantDash.pnlNoSalesSub')}</p>
                 </div>
               ) : (
                 <div className="divide-y divide-gray-50">
@@ -648,7 +648,7 @@ export default function MerchantDashboardClient({
                         <div className="flex items-center justify-between mb-3">
                           <div>
                             <p className="font-semibold text-gray-900 capitalize text-sm">{label}</p>
-                            <p className="text-xs text-gray-400">
+                            <p className="text-xs text-gray-500">
                               {(m.count > 1
                                 ? t('merchantDash.pnlSales')
                                 : t('merchantDash.pnlSale')
@@ -656,8 +656,8 @@ export default function MerchantDashboardClient({
                             </p>
                           </div>
                           <div className="text-right">
-                            <p className="font-bold text-brand-700">{formatFcfa(m.net)} <span className="text-xs font-normal text-gray-400">{t('merchantDash.pnlNetLabel')}</span></p>
-                            <p className="text-xs text-gray-400">{t('merchantDash.pnlRetained').replace('{pct}', String(netRatio))}</p>
+                            <p className="font-bold text-brand-700">{formatFcfa(m.net)} <span className="text-xs font-normal text-gray-500">{t('merchantDash.pnlNetLabel')}</span></p>
+                            <p className="text-xs text-gray-500">{t('merchantDash.pnlRetained').replace('{pct}', String(netRatio))}</p>
                           </div>
                         </div>
 
@@ -670,11 +670,11 @@ export default function MerchantDashboardClient({
                         {/* Chiffres */}
                         <div className="grid grid-cols-3 gap-2 text-xs">
                           <div className="bg-gray-50 rounded-lg p-2 text-center">
-                            <p className="text-gray-400">{t('merchantDash.pnlGross')}</p>
+                            <p className="text-gray-600">{t('merchantDash.pnlGross')}</p>
                             <p className="font-semibold text-gray-900">{formatFcfa(m.ca)}</p>
                           </div>
                           <div className="bg-red-50 rounded-lg p-2 text-center">
-                            <p className="text-red-400">{t('merchantDash.pnlFees')}</p>
+                            <p className="text-red-600">{t('merchantDash.pnlFees')}</p>
                             <p className="font-semibold text-red-600">-{formatFcfa(m.commission)}</p>
                           </div>
                           <div className="bg-green-50 rounded-lg p-2 text-center">
@@ -727,13 +727,13 @@ export default function MerchantDashboardClient({
           <div className="space-y-4">
             <div className="bg-white rounded-xl border border-gray-100 p-5">
               <h2 className="font-semibold text-gray-900 mb-1">{t('merchantDash.communityTitle')}</h2>
-              <p className="text-sm text-gray-400 mb-4">{t('merchantDash.communitySubtitle')}</p>
+              <p className="text-sm text-gray-500 mb-4">{t('merchantDash.communitySubtitle')}</p>
 
               {recentBuyers.length === 0 ? (
                 <div className="text-center py-8">
                   <p className="text-3xl mb-2">🌱</p>
                   <p className="font-medium text-gray-600">{t('merchantDash.communityEmpty')}</p>
-                  <p className="text-xs text-gray-400 mt-1">{t('merchantDash.communityEmptySub')}</p>
+                  <p className="text-xs text-gray-500 mt-1">{t('merchantDash.communityEmptySub')}</p>
                 </div>
               ) : (
                 <div className="divide-y divide-gray-50">
@@ -745,7 +745,7 @@ export default function MerchantDashboardClient({
                         </div>
                         <div>
                           <p className="text-sm font-medium text-gray-900">{buyer.name}</p>
-                          <p className="text-xs text-gray-400">
+                          <p className="text-xs text-gray-500">
                             {(buyer.purchaseCount > 1
                               ? t('merchantDash.communityPurchases')
                               : t('merchantDash.communityPurchase')
@@ -757,7 +757,7 @@ export default function MerchantDashboardClient({
                         <p className="text-sm font-semibold text-brand-700">
                           +{formatFcfa(buyer.totalGenerated)} F
                         </p>
-                        <p className="text-xs text-gray-400">{t('merchantDash.communityGenerated')}</p>
+                        <p className="text-xs text-gray-500">{t('merchantDash.communityGenerated')}</p>
                       </div>
                     </div>
                   ))}
@@ -792,7 +792,7 @@ export default function MerchantDashboardClient({
                     alt="QR Code marchand"
                     className="w-56 h-56 mx-auto rounded-xl border-4 border-brand-100 shadow-sm"
                   />
-                  <p className="text-xs text-gray-400 mt-3">{t('merchantDash.qrInstruction')}</p>
+                  <p className="text-xs text-gray-500 mt-3">{t('merchantDash.qrInstruction')}</p>
                   <div className="flex gap-2 mt-4">
                     <button
                       onClick={downloadQR}
@@ -902,7 +902,7 @@ function OnboardingChecklist({
                 {step.done ? '✓' : i + 1}
               </div>
               <div className="flex-1 min-w-0">
-                <p className={`text-sm font-medium leading-tight ${step.done ? 'text-gray-400 line-through' : 'text-brand-900'}`}>
+                <p className={`text-sm font-medium leading-tight ${step.done ? 'text-gray-500 line-through' : 'text-brand-900'}`}>
                   {step.icon} {step.label}
                 </p>
                 {!step.done && <p className="text-xs text-brand-500 mt-0.5">{step.sub}</p>}

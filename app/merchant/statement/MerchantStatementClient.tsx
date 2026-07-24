@@ -94,7 +94,7 @@ export default function MerchantStatementClient({ merchant, period, transactions
           <div className="text-right">
             <p className="text-xs text-gray-500 uppercase tracking-wide font-semibold">Relevé de ventes</p>
             <p className="text-2xl font-black text-gray-900 capitalize">{periodLabel}</p>
-            <p className="text-xs text-gray-400 mt-0.5">Généré le {new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+            <p className="text-xs text-gray-500 mt-0.5">Généré le {new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
           </div>
         </div>
 
@@ -121,12 +121,12 @@ export default function MerchantStatementClient({ merchant, period, transactions
           <div className="border border-gray-200 rounded-xl p-4 text-center">
             <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Chiffre d'affaires</p>
             <p className="text-xl font-black text-gray-900">{fmt(summary.ca)}</p>
-            <p className="text-xs text-gray-400 mt-0.5">{summary.count} vente{summary.count > 1 ? 's' : ''}</p>
+            <p className="text-xs text-gray-500 mt-0.5">{summary.count} vente{summary.count > 1 ? 's' : ''}</p>
           </div>
           <div className="border border-red-100 rounded-xl p-4 text-center bg-red-50">
             <p className="text-xs text-red-500 uppercase tracking-wide mb-1">Frais GreenFlame</p>
             <p className="text-xl font-black text-red-700">−{fmt(summary.commission)}</p>
-            <p className="text-xs text-red-400 mt-0.5">{fmtPct(merchant.commission_rate)} · cashback + communauté</p>
+            <p className="text-xs text-red-600 mt-0.5">{fmtPct(merchant.commission_rate)} · cashback + communauté</p>
           </div>
           <div className="border border-green-200 rounded-xl p-4 text-center bg-green-50">
             <p className="text-xs text-green-600 uppercase tracking-wide mb-1">Net reçu</p>
@@ -141,7 +141,7 @@ export default function MerchantStatementClient({ merchant, period, transactions
         <div>
           <p className="text-xs text-gray-500 uppercase tracking-wide font-semibold mb-3">Détail des transactions</p>
           {transactions.length === 0 ? (
-            <p className="text-center text-gray-400 py-8 text-sm">Aucune transaction sur cette période</p>
+            <p className="text-center text-gray-500 py-8 text-sm">Aucune transaction sur cette période</p>
           ) : (
             <div className="overflow-x-auto">
             <table className="min-w-full w-full text-sm">
@@ -164,12 +164,12 @@ export default function MerchantStatementClient({ merchant, period, transactions
                     <tr key={tx.id} className={`border-b border-gray-100 ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
                       <td className="py-2.5 text-gray-600">
                         <span className="font-medium">{dateStr}</span>
-                        <span className="text-gray-400 ml-1 text-xs">{timeStr}</span>
+                        <span className="text-gray-500 ml-1 text-xs">{timeStr}</span>
                       </td>
                       <td className="py-2.5">
                         <p className="font-medium text-gray-800 truncate max-w-[120px]">{tx.buyer_name}</p>
                         {tx.items.length > 0 && (
-                          <p className="text-xs text-gray-400 truncate max-w-[120px]">
+                          <p className="text-xs text-gray-500 truncate max-w-[120px]">
                             {tx.items.map(it => `${it.quantity > 1 ? `${it.quantity}× ` : ''}${it.product_name}`).join(', ')}
                           </p>
                         )}
@@ -190,7 +190,7 @@ export default function MerchantStatementClient({ merchant, period, transactions
                   <td className="pt-3 text-right font-black text-green-800 pr-0">+{summary.net.toLocaleString('fr-FR')}</td>
                 </tr>
                 <tr>
-                  <td colSpan={6} className="pt-1 text-right text-xs text-gray-400">Montants en FCFA</td>
+                  <td colSpan={6} className="pt-1 text-right text-xs text-gray-500">Montants en FCFA</td>
                 </tr>
               </tfoot>
             </table>
@@ -199,7 +199,7 @@ export default function MerchantStatementClient({ merchant, period, transactions
         </div>
 
         {/* Pied de page */}
-        <div className="mt-10 pt-6 border-t border-gray-200 flex items-center justify-between text-xs text-gray-400">
+        <div className="mt-10 pt-6 border-t border-gray-200 flex items-center justify-between text-xs text-gray-500">
           <div>
             <p className="font-semibold text-gray-600">GreenFlame Africa SAS</p>
             <p>Cotonou, Bénin · greenflame.africa</p>

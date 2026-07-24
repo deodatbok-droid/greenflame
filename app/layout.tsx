@@ -6,6 +6,8 @@ import { headers } from 'next/headers'
 import { LocaleProvider } from '@/components/providers/LocaleProvider'
 import ServiceWorkerRegister from '@/components/ServiceWorkerRegister'
 import SplashScreen from '@/components/SplashScreen'
+import { DemoProvider } from '@/lib/demo/DemoContext'
+import DemoRemote from '@/components/demo/DemoRemote'
 import type { Locale } from '@/lib/i18n'
 import './globals.css'
 
@@ -56,10 +58,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       </head>
       <body className={inter.className}>
         <LocaleProvider locale={locale}>
-          <SplashScreen />
-          <ServiceWorkerRegister />
-          {children}
-          <Toaster
+          <DemoProvider>
+            <SplashScreen />
+            <ServiceWorkerRegister />
+            {children}
+            <DemoRemote />
+            <Toaster
             position="top-center"
             toastOptions={{
               duration: 4000,
@@ -68,6 +72,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             }}
           />
           <Analytics />
+          </DemoProvider>
         </LocaleProvider>
       </body>
     </html>

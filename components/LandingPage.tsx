@@ -169,7 +169,7 @@ export default function LandingPage({ isLoggedIn = false }: { isLoggedIn?: boole
         <div className="absolute top-1/2 left-1/4 w-32 h-32 bg-emerald-400/10 rounded-full pointer-events-none" />
 
         <div className="relative max-w-6xl mx-auto px-4 pt-44 pb-20 md:pt-52 md:pb-28 text-center">
-          <div className="absolute top-8 inset-x-0 flex justify-center pointer-events-none">
+          <div className="absolute top-20 inset-x-0 flex justify-center pointer-events-none">
             <div className="inline-flex items-center gap-2 bg-white/15 text-white text-xs font-medium px-4 py-1.5 rounded-full border border-white/20 backdrop-blur-sm">
               {t('landing.heroBadge')}
             </div>

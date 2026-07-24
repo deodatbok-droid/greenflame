@@ -10,6 +10,7 @@ import PhoneInput from '@/components/ui/PhoneInput'
 import LangToggle from '@/components/ui/LangToggle'
 import { useLocale } from '@/components/providers/LocaleProvider'
 import { normalizePhone } from '@/lib/utils/phone'
+import { DEMO_PHONE } from '@/lib/demo/data'
 
 type Step = 'phone' | 'otp'
 
@@ -19,14 +20,15 @@ function LoginForm() {
   const supabase = createClient()
   const { t } = useLocale()
 
-  // Lien de retour après connexion (ex. invitation tontine) — sinon
-  // comportement par défaut (dashboard ou complete-profile).
-  const next = searchParams.get('next') ?? ''
+  const next    = searchParams.get('next') ?? ''
+  const isDemo  = searchParams.get('demo') === 'true'
 
-  const [step, setStep] = useState<Step>('phone')
-  const [phone, setPhone] = useState('')
-  const [otp, setOtp] = useState('')
+  const [step,    setStep]    = useState<Step>('phone')
+  const [phone,   setPhone]   = useState(isDemo ? DEMO_PHONE : '')
+  const [otp,     setOtp]     = useState('')
   const [loading, setLoading] = useState(false)
+
+  const isPhoneDemo = normalizePhone(phone) === DEMO_PHONE
 
   async function handleSendOTP(e: React.FormEvent) {
     e.preventDefault()
@@ -34,11 +36,18 @@ function LoginForm() {
     setLoading(true)
     const normalized = normalizePhone(phone)
 
+    if (isPhoneDemo) {
+      // Démo : on affiche l'écran OTP sans envoyer de vrai code
+      setLoading(false)
+      setOtp('123456')
+      setStep('otp')
+      return
+    }
+
     const { error } = await supabase.auth.signInWithOtp({
       phone: normalized,
       options: { channel: 'sms' },
     })
-
     setLoading(false)
     if (error) { toast.error(error.message); return }
     toast.success(`Code envoyé au ${normalized}`)
@@ -51,16 +60,42 @@ function LoginForm() {
     setLoading(true)
     const normalized = normalizePhone(phone)
 
+    // ── Mode démo : authentification email+password côté serveur ──
+    if (isPhoneDemo) {
+      const res  = await fetch('/api/demo/signin', { method: 'POST' })
+      const data = await res.json()
+      if (!res.ok) {
+        setLoading(false)
+        toast.error(data.error ?? 'Connexion démo impossible')
+        return
+      }
+      // Rafraîchir la session récupérée via cookie
+      await supabase.auth.refreshSession()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        const { data: profile } = await supabase
+          .from('users')
+          .select('full_name')
+          .eq('id', user.id)
+          .maybeSingle()
+        if (!profile?.full_name) {
+          router.push(next ? `/complete-profile?next=${encodeURIComponent(next)}` : '/complete-profile')
+          return
+        }
+      }
+      toast.success('Connexion réussie !')
+      router.push(next || '/dashboard')
+      return
+    }
+
+    // ── Flux normal ──
     const { error } = await supabase.auth.verifyOtp({
       phone: normalized,
       token: otp,
-      type: 'sms',
+      type:  'sms',
     })
-
     if (error) { setLoading(false); toast.error('Code incorrect ou expiré'); return }
 
-    // Vérifier si le profil est complet (nom manquant = nouvel utilisateur)
-    // Note : on reste en loading=true pendant cette vérification pour éviter le clignotement
     const { data: { user } } = await supabase.auth.getUser()
     if (user) {
       const { data: profile } = await supabase
@@ -68,16 +103,13 @@ function LoginForm() {
         .select('full_name')
         .eq('id', user.id)
         .maybeSingle()
-
       if (!profile?.full_name) {
         router.push(next ? `/complete-profile?next=${encodeURIComponent(next)}` : '/complete-profile')
         return
       }
     }
-
     toast.success('Connexion réussie !')
     router.push(next || '/dashboard')
-    router.refresh()
   }
 
   return (
@@ -100,6 +132,14 @@ function LoginForm() {
       </div>
 
       <div className="card w-full max-w-sm">
+        {/* Bandeau mode démo */}
+        {isPhoneDemo && (
+          <div className="mb-4 flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold"
+            style={{ background: 'rgba(22,163,74,0.08)', border: '1px solid rgba(22,163,74,0.2)', color: '#16a34a' }}>
+            🎬 <span>MODE DÉMO — GreenFlame Africa</span>
+          </div>
+        )}
+
         {step === 'phone' ? (
           <form onSubmit={handleSendOTP} className="space-y-5">
             <div>
@@ -114,6 +154,16 @@ function LoginForm() {
                 placeholder="01 97 00 00 00"
                 autoFocus
               />
+              {isDemo && (
+                <button
+                  type="button"
+                  onClick={() => setPhone(DEMO_PHONE)}
+                  className="mt-1.5 text-xs font-semibold px-3 py-1 rounded-lg"
+                  style={{ background: 'rgba(22,163,74,0.08)', color: '#16a34a' }}
+                >
+                  ✦ Remplir automatiquement
+                </button>
+              )}
             </div>
             <button type="submit" disabled={loading} className="btn-primary">
               {loading ? t('common.sending') : t('login.sendCode')}
@@ -165,7 +215,7 @@ function LoginForm() {
             <div>
               <button
                 type="button"
-                onClick={() => setStep('phone')}
+                onClick={() => { setStep('phone'); setOtp('') }}
                 className="text-brand-600 text-sm font-medium mb-3 flex items-center gap-1"
               >
                 {t('login.changeNumber')}

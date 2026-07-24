@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  serverExternalPackages: ['qrcode', 'pdfkit'],
+  serverExternalPackages: ['qrcode', 'pdfkit', '@react-pdf/renderer'],
   async headers() {
     return [
       {

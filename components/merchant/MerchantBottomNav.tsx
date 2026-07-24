@@ -79,14 +79,14 @@ export default function MerchantBottomNav() {
                 key={item.href}
                 href={item.href}
                 onClick={() => setShowMore(false)}
-                className={`relative flex-1 flex flex-col items-center gap-0.5 pt-2 pb-2.5 min-w-0 transition-all active:scale-95 ${
-                  isActive ? 'text-brand-600' : 'text-gray-400'
+                className={`relative flex-1 flex flex-col items-center gap-0.5 pt-1.5 pb-1.5 min-w-0 transition-all active:scale-95 ${
+                  isActive ? 'text-brand-600' : 'text-gray-500'
                 }`}
               >
                 <span className={`absolute top-0 h-0.5 rounded-full transition-all duration-300 ${
                   isActive ? 'w-8 bg-brand-500' : 'w-0'
                 }`} />
-                <div className={`flex items-center justify-center mt-0.5 h-8 rounded-2xl transition-all duration-300 ${
+                <div className={`flex items-center justify-center mt-0.5 h-7 rounded-2xl transition-all duration-300 ${
                   isActive ? 'bg-brand-100 px-3' : 'px-1'
                 }`}>
                   <span className={`leading-none transition-all duration-300 ${
@@ -104,8 +104,8 @@ export default function MerchantBottomNav() {
           <button
             onClick={() => setShowMore(o => !o)}
             aria-label="Plus d'options"
-            className={`relative flex-1 flex flex-col items-center gap-0.5 pt-2 pb-2.5 min-w-0 transition-all active:scale-95 ${
-              isMoreActive || showMore ? 'text-brand-600' : 'text-gray-400'
+            className={`relative flex-1 flex flex-col items-center gap-0.5 pt-1.5 pb-1.5 min-w-0 transition-all active:scale-95 ${
+              isMoreActive || showMore ? 'text-brand-600' : 'text-gray-500'
             }`}
           >
             <span className={`absolute top-0 h-0.5 rounded-full transition-all duration-300 ${

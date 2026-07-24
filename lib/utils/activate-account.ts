@@ -97,7 +97,10 @@ export async function maybeActivateAccount(
         .insert(treeEntry)
     }
 
-    // 5. Notifications (non-bloquant)
+    // 5. Activer le compte (premier achat = compte activé)
+    await svc.from('users').update({ is_active: true }).eq('id', buyerId)
+
+    // 6. Notifications (non-bloquant)
     //    → Acheteur : confirmation d'activation
     //    → Parrain (marchand) : nouveau filleul
     const { data: buyerProfile } = await svc

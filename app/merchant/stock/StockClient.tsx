@@ -26,10 +26,10 @@ type Movement = {
 }
 
 const TYPE_LABELS: Record<string, { label: string; color: string; sign: string }> = {
-  in:         { label: 'Approvisionnement', color: 'text-green-400',  sign: '+' },
-  out:        { label: 'Vente directe',     color: 'text-blue-400',   sign: '-' },
-  adjustment: { label: 'Ajustement',        color: 'text-amber-400',  sign: '±' },
-  loss:       { label: 'Perte / Casse',     color: 'text-red-400',    sign: '-' },
+  in:         { label: 'Approvisionnement', color: 'text-green-700',  sign: '+' },
+  out:        { label: 'Vente directe',     color: 'text-blue-600',   sign: '-' },
+  adjustment: { label: 'Ajustement',        color: 'text-amber-600',  sign: '±' },
+  loss:       { label: 'Perte / Casse',     color: 'text-red-600',    sign: '-' },
 }
 
 function fmtDate(iso: string) {
@@ -241,9 +241,9 @@ export default function StockClient({ merchantId }: { merchantId: string }) {
       <div>
         <h2 className="font-semibold text-gray-800 mb-3">Stock par produit</h2>
         {loading ? (
-          <div className="text-center py-8 text-gray-400">Chargement…</div>
+          <div className="text-center py-8 text-gray-500">Chargement…</div>
         ) : products.length === 0 ? (
-          <div className="text-center py-8 text-gray-400">Aucun produit actif.</div>
+          <div className="text-center py-8 text-gray-500">Aucun produit actif.</div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
             {products.map(p => {
@@ -261,9 +261,9 @@ export default function StockClient({ merchantId }: { merchantId: string }) {
                   </div>
                   <div className="font-medium text-gray-800 text-sm">{p.name}</div>
                   <div className="text-2xl font-bold text-gray-900 mt-1">{stock}</div>
-                  <div className="text-xs text-gray-400">unités en stock</div>
+                  <div className="text-xs text-gray-500">unités en stock</div>
                   {alert !== null && (
-                    <div className="text-xs text-gray-400 mt-1">Alerte à {alert} unités</div>
+                    <div className="text-xs text-gray-500 mt-1">Alerte à {alert} unités</div>
                   )}
                   <button
                     onClick={() => { setSelectedProduct(p.id); setShowForm(true) }}
@@ -295,7 +295,7 @@ export default function StockClient({ merchantId }: { merchantId: string }) {
         </div>
 
         {filteredMovements.length === 0 ? (
-          <div className="text-center py-8 text-gray-400 bg-white rounded-xl border border-gray-200">
+          <div className="text-center py-8 text-gray-500 bg-white rounded-xl border border-gray-200">
             Aucun mouvement enregistré.
           </div>
         ) : (
@@ -316,7 +316,7 @@ export default function StockClient({ merchantId }: { merchantId: string }) {
                   const tc = TYPE_LABELS[m.type]
                   return (
                     <tr key={m.id} className="hover:bg-gray-50">
-                      <td className="px-4 py-3 text-gray-400 text-xs whitespace-nowrap">{fmtDate(m.created_at)}</td>
+                      <td className="px-4 py-3 text-gray-500 text-xs whitespace-nowrap">{fmtDate(m.created_at)}</td>
                       <td className="px-4 py-3">
                         <span className="mr-1">{m.product_emoji}</span>
                         <span className="text-gray-800">{m.product_name}</span>
@@ -340,3 +340,4 @@ export default function StockClient({ merchantId }: { merchantId: string }) {
     </div>
   )
 }
+

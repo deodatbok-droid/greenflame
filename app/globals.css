@@ -174,3 +174,22 @@
   .safe-top { padding-top: max(env(safe-area-inset-top), 16px); }
   .safe-bottom { padding-bottom: max(env(safe-area-inset-bottom), 16px); }
 }
+
+/* Scrollbar fine pour les panneaux sombres (DemoRemote, modales dark) */
+.scrollbar-dark {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.22) transparent;
+}
+.scrollbar-dark::-webkit-scrollbar {
+  width: 5px;
+}
+.scrollbar-dark::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-dark::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.22);
+  border-radius: 10px;
+}
+.scrollbar-dark::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.38);
+}

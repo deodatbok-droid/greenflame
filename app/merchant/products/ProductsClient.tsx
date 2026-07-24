@@ -7,6 +7,8 @@ import { formatFcfa } from '@/lib/utils/format'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useLocale } from '@/components/providers/LocaleProvider'
+import { useDemo } from '@/lib/demo/DemoContext'
+import { DEMO_PRODUCT } from '@/lib/demo/data'
 
 // ── Types ──────────────────────────────────────────────────────
 type MktCategory = {
@@ -46,6 +48,7 @@ type Props = { tier: 'free' | 'pro' | 'vip'; productLimit: number; isHub?: boole
 export default function ProductsClient({ tier, productLimit, isHub = false }: Props) {
   const supabase = createClient()
   const { t } = useLocale()
+  const { isDemo, markStepComplete } = useDemo()
   const isFree = tier === 'free'
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -135,6 +138,24 @@ export default function ProductsClient({ tier, productLimit, isHub = false }: Pr
   function openNew() {
     resetForm()
     setStep('category')
+    setShowForm(true)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  function openDemoProduct() {
+    resetForm()
+    const alimCat = rootCats.find(c =>
+      c.slug?.toLowerCase().includes('aliment') ||
+      c.name?.toLowerCase().includes('aliment')
+    )
+    if (alimCat) setSelectedCatId(alimCat.id)
+    setName(DEMO_PRODUCT.name)
+    setDescription(DEMO_PRODUCT.description)
+    setPrice(String(DEMO_PRODUCT.price))
+    setEmoji('🛢️')
+    setStockType('quantity')
+    setQuantity(String(DEMO_PRODUCT.stock))
+    setStep('form')
     setShowForm(true)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
@@ -275,6 +296,7 @@ export default function ProductsClient({ tier, productLimit, isHub = false }: Pr
         mkt_cat_name: mktCategories.find(c => c.id === selectedCatId)?.name ?? null,
         mkt_sub_name: mktCategories.find(c => c.id === selectedSubId)?.name ?? null,
       }])
+      markStepComplete('produits')
       toast.success(tier === 'vip' ? t('merchant.products.vipAdded') : t('merchant.products.productAdded'))
     }
     setSaving(false)
@@ -301,7 +323,7 @@ export default function ProductsClient({ tier, productLimit, isHub = false }: Pr
     toast.success(t('merchant.products.productDeleted'))
   }
 
-  if (loading) return <div className="p-8 text-center text-gray-400">{t('merchant.products.loading')}</div>
+  if (loading) return <div className="p-8 text-center text-gray-500">{t('merchant.products.loading')}</div>
 
   return (
     <div className="max-w-3xl mx-auto p-4 space-y-4 pb-24">
@@ -310,7 +332,7 @@ export default function ProductsClient({ tier, productLimit, isHub = false }: Pr
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold">{t('merchant.products.title')}</h1>
-          <p className="text-xs text-gray-400 mt-0.5">
+          <p className="text-xs text-gray-500 mt-0.5">
             {t('merchant.products.count').replace('{n}', String(products.length))}
           </p>
         </div>
@@ -350,14 +372,25 @@ export default function ProductsClient({ tier, productLimit, isHub = false }: Pr
         </div>
       ) : (
         !showForm && (
-          <button onClick={openNew} className="btn-primary w-full py-3.5 text-base">
-            {t('merchant.products.addProduct')}
-            {isFree && (
-              <span className="ml-2 text-brand-200 text-xs">
-                ({productLimit - products.length} {t('merchant.products.remaining')})
-              </span>
+          <div className="space-y-2">
+            {isDemo && (
+              <button
+                onClick={openDemoProduct}
+                className="w-full py-3 rounded-xl text-sm font-bold text-white"
+                style={{ background: 'linear-gradient(135deg,#16a34a,#15803d)', boxShadow: '0 4px 16px rgba(22,163,74,0.25)' }}
+              >
+                🎬 ✦ Ajouter un produit démo
+              </button>
             )}
-          </button>
+            <button onClick={openNew} className="btn-primary w-full py-3.5 text-base">
+              {t('merchant.products.addProduct')}
+              {isFree && (
+                <span className="ml-2 text-brand-200 text-xs">
+                  ({productLimit - products.length} {t('merchant.products.remaining')})
+                </span>
+              )}
+            </button>
+          </div>
         )
       )}
 
@@ -370,10 +403,10 @@ export default function ProductsClient({ tier, productLimit, isHub = false }: Pr
             <div className="p-4 space-y-3">
               <div className="flex items-center justify-between">
                 <p className="font-bold text-gray-900">{t('merchant.products.chooseCategory')}</p>
-                <button onClick={closeForm} className="text-gray-400 hover:text-gray-600 text-xl leading-none">×</button>
+                <button onClick={closeForm} className="text-gray-500 hover:text-gray-600 text-xl leading-none">×</button>
               </div>
               {rootCats.length === 0 ? (
-                <p className="text-sm text-gray-400 text-center py-4">{t('merchant.products.loadingCategories')}</p>
+                <p className="text-sm text-gray-500 text-center py-4">{t('merchant.products.loadingCategories')}</p>
               ) : (
                 <div className="grid grid-cols-2 gap-2">
                   {rootCats.map(c => (
@@ -422,7 +455,7 @@ export default function ProductsClient({ tier, productLimit, isHub = false }: Pr
                     {t('merchant.products.changeCategory')}
                   </button>
                 </div>
-                <button onClick={closeForm} className="text-gray-400 hover:text-gray-600 text-xl leading-none">×</button>
+                <button onClick={closeForm} className="text-gray-500 hover:text-gray-600 text-xl leading-none">×</button>
               </div>
 
               <div className="p-4 space-y-3">
@@ -551,7 +584,7 @@ export default function ProductsClient({ tier, productLimit, isHub = false }: Pr
                     <button
                       onClick={() => fileInputRef.current?.click()}
                       disabled={uploading}
-                      className="w-full h-24 border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center gap-1.5 text-gray-400 hover:border-brand-300 hover:text-brand-500 transition-colors disabled:opacity-50"
+                      className="w-full h-24 border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center gap-1.5 text-gray-500 hover:border-brand-300 hover:text-brand-500 transition-colors disabled:opacity-50"
                     >
                       {uploading ? (
                         <span className="text-sm">{t('merchant.products.uploading')}</span>
@@ -674,7 +707,7 @@ export default function ProductsClient({ tier, productLimit, isHub = false }: Pr
 
       {/* ── LISTE DES PRODUITS ── */}
       {products.length === 0 && !showForm ? (
-        <div className="text-center py-16 text-gray-400">
+        <div className="text-center py-16 text-gray-500">
           <p className="text-5xl mb-3">🛍️</p>
           <p className="font-semibold text-gray-600">{t('merchant.products.emptyTitle')}</p>
           <p className="text-sm mt-1">{t('merchant.products.emptyDesc')}</p>
@@ -780,3 +813,4 @@ export default function ProductsClient({ tier, productLimit, isHub = false }: Pr
     </div>
   )
 }
+

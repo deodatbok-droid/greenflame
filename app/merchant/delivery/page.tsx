@@ -83,7 +83,7 @@ export default async function MerchantDeliveryPage() {
       <div>
         <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">En cours ({pending.length})</h2>
         {pending.length === 0 ? (
-          <div className="bg-white rounded-xl border border-gray-200 p-6 text-center text-gray-400 text-sm">
+          <div className="bg-white rounded-xl border border-gray-200 p-6 text-center text-gray-500 text-sm">
             Aucune livraison en cours.
           </div>
         ) : (
@@ -98,7 +98,7 @@ export default async function MerchantDeliveryPage() {
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <div>
                       <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${st.color}`}>{st.label}</span>
-                      <div className="text-xs text-gray-400 mt-1">{fmtDate(order.created_at)}</div>
+                      <div className="text-xs text-gray-500 mt-1">{fmtDate(order.created_at)}</div>
                     </div>
                     {tx && (
                       <div className="text-right">
@@ -111,18 +111,18 @@ export default async function MerchantDeliveryPage() {
                   </div>
                   <div className="space-y-1 text-xs text-gray-600">
                     <div className="flex gap-2">
-                      <span className="text-gray-400 shrink-0">📍</span>
+                      <span className="text-gray-500 shrink-0">📍</span>
                       <span>{order.delivery_address}</span>
                     </div>
                     {buyer && (
                       <div className="flex gap-2">
-                        <span className="text-gray-400 shrink-0">👤</span>
+                        <span className="text-gray-500 shrink-0">👤</span>
                         <span>{buyer.full_name} — {buyer.phone}</span>
                       </div>
                     )}
                     {provider ? (
                       <div className="flex gap-2">
-                        <span className="text-gray-400 shrink-0">🚴</span>
+                        <span className="text-gray-500 shrink-0">🚴</span>
                         <span>{provider.display_name} ({provider.phone})</span>
                       </div>
                     ) : (
@@ -147,7 +147,7 @@ export default async function MerchantDeliveryPage() {
       {/* Commandes terminées */}
       {done.length > 0 && (
         <div>
-          <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-3">Terminées ({done.length})</h2>
+          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Terminées ({done.length})</h2>
           <div className="space-y-2">
             {done.slice(0, 10).map(order => {
               const st = STATUS_LABELS[order.status] ?? { label: order.status, color: 'bg-gray-100 text-gray-500' }
@@ -156,8 +156,8 @@ export default async function MerchantDeliveryPage() {
                 <div key={order.id} className="bg-gray-50 rounded-xl border border-gray-100 p-3 flex items-center justify-between">
                   <div>
                     <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${st.color}`}>{st.label}</span>
-                    <div className="text-xs text-gray-400 mt-1">{order.delivery_address}</div>
-                    <div className="text-[10px] text-gray-400">{fmtDate(order.created_at)}</div>
+                    <div className="text-xs text-gray-500 mt-1">{order.delivery_address}</div>
+                    <div className="text-[10px] text-gray-500">{fmtDate(order.created_at)}</div>
                   </div>
                   {tx && <div className="font-semibold text-gray-600 text-sm">{fmtFcfa(tx.amount_fcfa)}</div>}
                 </div>

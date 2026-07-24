@@ -46,10 +46,10 @@ export default function ProGate({
           </div>
           <p className="font-semibold text-gray-900 mb-1">{featureName}</p>
           <p className="text-xs text-gray-500 mb-4 leading-relaxed">
-            Disponible avec le plan VIP — 5 000 FCFA/mois.
+            Disponible avec le plan VIP — 15 000 FCFA/an.
           </p>
           <Link
-            href="/merchant/upgrade?tier=vip"
+            href="/merchant/abonnements"
             className="inline-block bg-amber-600 text-white text-sm font-medium px-5 py-2.5 rounded-xl hover:bg-amber-700 transition-colors"
           >
             Passer en VIP →
@@ -84,11 +84,11 @@ export function UpgradeBanner({ tier }: { tier: string }) {
           </p>
           <h3 className="font-semibold text-base mb-1">Vitrine publique, multi-caissier & gestion d&apos;entreprise</h3>
           <p className="text-sm text-amber-200 leading-relaxed">
-            Développez votre activité avec les outils VIP GreenFlame — <strong className="text-white">5 000 FCFA/mois</strong>.
+            Développez votre activité avec les outils VIP GreenFlame — <strong className="text-white">15 000 FCFA/an</strong>.
           </p>
         </div>
         <Link
-          href="/merchant/upgrade?tier=vip"
+          href="/merchant/abonnements"
           className="flex-shrink-0 bg-white text-amber-700 text-sm font-bold px-4 py-2.5 rounded-xl hover:bg-amber-50 transition-colors whitespace-nowrap"
         >
           Voir les offres →

@@ -129,7 +129,7 @@ export default async function MerchantToolsPage() {
           <div className="card text-center py-5 hover:border-brand-300 transition-colors cursor-pointer">
             <span className="text-3xl">📄</span>
             <p className="font-semibold text-gray-800 mt-2 text-sm">{t('merchant.tools.devisDesc')}</p>
-            <p className="text-xs text-gray-400 mt-1">
+            <p className="text-xs text-gray-500 mt-1">
               {isPro ? t('merchant.tools.devisSubUnlimited') : t('merchant.tools.devisSubFree')}
             </p>
           </div>
@@ -140,7 +140,7 @@ export default async function MerchantToolsPage() {
           <div className="card text-center py-5 hover:border-brand-300 transition-colors cursor-pointer">
             <span className="text-3xl">🧾</span>
             <p className="font-semibold text-gray-800 mt-2 text-sm">{t('merchant.tools.factureDesc')}</p>
-            <p className="text-xs text-gray-400 mt-1">
+            <p className="text-xs text-gray-500 mt-1">
               {isPro ? t('merchant.tools.factureSubUnlimited') : t('merchant.tools.factureSubFree')}
             </p>
           </div>
@@ -151,7 +151,7 @@ export default async function MerchantToolsPage() {
           <div className="card text-center py-5 hover:border-brand-300 transition-colors cursor-pointer border-brand-100 bg-brand-50">
             <span className="text-3xl">💳</span>
             <p className="font-semibold text-brand-700 mt-2 text-sm">{t('merchant.tools.receiveTitle')}</p>
-            <p className="text-xs text-brand-400 mt-1">{t('merchant.tools.receiveDesc')}</p>
+            <p className="text-xs text-brand-700 mt-1">{t('merchant.tools.receiveDesc')}</p>
           </div>
         </Link>
 
@@ -160,7 +160,7 @@ export default async function MerchantToolsPage() {
           <div className="card text-center py-5 hover:border-brand-300 transition-colors cursor-pointer">
             <span className="text-3xl">📊</span>
             <p className="font-semibold text-gray-800 mt-2 text-sm">{t('merchant.tools.analyticsTitle')}</p>
-            <p className="text-xs text-gray-400 mt-1">{t('merchant.tools.analyticsDesc')}</p>
+            <p className="text-xs text-gray-500 mt-1">{t('merchant.tools.analyticsDesc')}</p>
           </div>
         </Link>
 
@@ -168,27 +168,19 @@ export default async function MerchantToolsPage() {
           <div className="card text-center py-5 hover:border-brand-300 transition-colors cursor-pointer border-dashed">
             <span className="text-3xl">🎤</span>
             <p className="font-semibold text-gray-800 mt-2 text-sm">{t('merchant.tools.voiceTitle')}</p>
-            <p className="text-xs text-gray-400 mt-1">{t('merchant.tools.voiceDesc')}</p>
+            <p className="text-xs text-gray-500 mt-1">{t('merchant.tools.voiceDesc')}</p>
           </div>
         </Link>
 
         {/* VIP : Vitrine publique */}
         {isVip && merchant.public_slug ? (
-          <div className="card text-center py-5 border-amber-200 bg-amber-50">
-            <span className="text-3xl">🏪</span>
-            <p className="font-semibold text-amber-800 mt-2 text-sm">{t('merchant.tools.storefrontTitle')}</p>
-            <div className="flex gap-1 justify-center mt-2">
-              <a
-                href={`/boutique/${merchant.public_slug}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[10px] bg-amber-600 text-white px-2 py-1 rounded-lg font-medium"
-              >
-                {t('merchant.tools.storefrontOpen')}
-              </a>
+          <a href={`/boutique/${merchant.public_slug}`} target="_blank" rel="noopener noreferrer">
+            <div className="card text-center py-5 border-amber-200 bg-amber-50 hover:border-amber-300 transition-colors cursor-pointer">
+              <span className="text-3xl">🏪</span>
+              <p className="font-semibold text-amber-800 mt-2 text-sm">{t('merchant.tools.storefrontTitle')}</p>
+              <p className="text-[10px] text-amber-600 mt-1">/boutique/{merchant.public_slug}</p>
             </div>
-            <p className="text-[10px] text-amber-600 mt-1">/boutique/{merchant.public_slug}</p>
-          </div>
+          </a>
         ) : isVip && !merchant.public_slug ? (
           <div className="card text-center py-5 border-amber-200 bg-amber-50">
             <span className="text-3xl">🏪</span>
@@ -203,7 +195,7 @@ export default async function MerchantToolsPage() {
                 <p className="font-semibold text-gray-500 text-sm">{t('merchant.tools.storefrontTitle')}</p>
                 <span className="text-[9px] bg-amber-100 text-amber-700 font-bold px-1.5 py-0.5 rounded-full">VIP</span>
               </div>
-              <p className="text-xs text-gray-400 mt-1">{t('merchant.tools.storefrontDesc')}</p>
+              <p className="text-xs text-gray-500 mt-1">{t('merchant.tools.storefrontDesc')}</p>
             </div>
           </Link>
         )}
@@ -225,7 +217,7 @@ export default async function MerchantToolsPage() {
                 <p className="font-semibold text-gray-500 text-sm">{t('merchant.tools.multiCashierTitle')}</p>
                 <span className="text-[9px] bg-amber-100 text-amber-700 font-bold px-1.5 py-0.5 rounded-full">VIP</span>
               </div>
-              <p className="text-xs text-gray-400 mt-1">{t('merchant.tools.multiCashierSubDesc')}</p>
+              <p className="text-xs text-gray-500 mt-1">{t('merchant.tools.multiCashierSubDesc')}</p>
             </div>
           </Link>
         )}
@@ -247,7 +239,7 @@ export default async function MerchantToolsPage() {
                 <p className="font-semibold text-gray-500 text-sm">{t('merchant.tools.agentServiceTitle')}</p>
                 <span className="text-[9px] bg-blue-100 text-blue-700 font-bold px-1.5 py-0.5 rounded-full">Gratuit</span>
               </div>
-              <p className="text-xs text-gray-400 mt-1">{t('merchant.tools.agentServicePrice')}</p>
+              <p className="text-xs text-gray-500 mt-1">{t('merchant.tools.agentServicePrice')}</p>
             </div>
           </Link>
         ) : (
@@ -258,7 +250,7 @@ export default async function MerchantToolsPage() {
                 <p className="font-semibold text-gray-500 text-sm">{t('merchant.tools.agentServiceTitle')}</p>
                 <span className="text-[9px] bg-amber-100 text-amber-700 font-bold px-1.5 py-0.5 rounded-full">VIP requis</span>
               </div>
-              <p className="text-xs text-gray-400 mt-1">VIP requis · activation gratuite en VIP</p>
+              <p className="text-xs text-gray-500 mt-1">VIP requis · activation gratuite en VIP</p>
             </div>
           </Link>
         )}
@@ -275,8 +267,8 @@ export default async function MerchantToolsPage() {
         ) : (
           <div className="card text-center py-5 border-dashed opacity-40">
             <span className="text-3xl">💵</span>
-            <p className="font-semibold text-gray-400 mt-2 text-sm">Recharge wallet</p>
-            <p className="text-xs text-gray-400 mt-1">{isVip ? 'Service Agent requis' : 'VIP + Agent requis'}</p>
+            <p className="font-semibold text-gray-500 mt-2 text-sm">Recharge wallet</p>
+            <p className="text-xs text-gray-500 mt-1">{isVip ? 'Service Agent requis' : 'VIP + Agent requis'}</p>
           </div>
         )}
 
@@ -292,7 +284,7 @@ export default async function MerchantToolsPage() {
 
       {/* ── GESTION D'ACTIVITÉ ── */}
       <div className="border-t border-gray-100 pt-2">
-        <p className="text-xs text-gray-400 font-semibold uppercase tracking-wide mb-3">
+        <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide mb-3">
           Gestion d'activité
         </p>
       </div>
@@ -314,7 +306,7 @@ export default async function MerchantToolsPage() {
                 <p className="font-semibold text-gray-500 text-sm">POS Rapide</p>
                 <span className="text-[9px] bg-amber-100 text-amber-700 font-bold px-1.5 py-0.5 rounded-full">VIP</span>
               </div>
-              <p className="text-xs text-gray-400 mt-1">Vente en caisse — stock + caisse en une action</p>
+              <p className="text-xs text-gray-500 mt-1">Vente en caisse — stock + caisse en une action</p>
             </div>
           </Link>
         )}
@@ -336,7 +328,7 @@ export default async function MerchantToolsPage() {
                 <p className="font-semibold text-gray-500 text-sm">Gestion de stock</p>
                 <span className="text-[9px] bg-amber-100 text-amber-700 font-bold px-1.5 py-0.5 rounded-full">VIP</span>
               </div>
-              <p className="text-xs text-gray-400 mt-1">Entrées, sorties, alertes seuil bas</p>
+              <p className="text-xs text-gray-500 mt-1">Entrées, sorties, alertes seuil bas</p>
             </div>
           </Link>
         )}
@@ -373,7 +365,7 @@ export default async function MerchantToolsPage() {
                 <p className="font-semibold text-gray-500 text-sm">Livre de caisse</p>
                 <span className="text-[9px] bg-amber-100 text-amber-700 font-bold px-1.5 py-0.5 rounded-full">VIP</span>
               </div>
-              <p className="text-xs text-gray-400 mt-1">Recettes, dépenses, P&L mensuel simplifié</p>
+              <p className="text-xs text-gray-500 mt-1">Recettes, dépenses, P&L mensuel simplifié</p>
             </div>
           </Link>
         )}
@@ -381,7 +373,7 @@ export default async function MerchantToolsPage() {
 
       {/* ── SÉPARATEUR OUTILS SECTORIELS ── */}
       <div className="border-t border-gray-100 pt-2">
-        <p className="text-xs text-gray-400 font-semibold uppercase tracking-wide mb-3">
+        <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide mb-3">
           {t('merchant.tools.sectoralTools')}
         </p>
       </div>
@@ -412,7 +404,7 @@ export default async function MerchantToolsPage() {
           <div className="card text-center py-4 hover:border-brand-300 transition-colors cursor-pointer">
             <span className="text-3xl">✂️</span>
             <p className="font-semibold text-gray-800 mt-2 text-sm">{t('merchant.tools.salonTitle')}</p>
-            <p className="text-xs text-gray-400 mt-0.5">{t('merchant.tools.salonDesc')}</p>
+            <p className="text-xs text-gray-500 mt-0.5">{t('merchant.tools.salonDesc')}</p>
             {toolActive['salon'] ? (
               <p className="text-[10px] text-green-600 font-medium mt-1.5">
                 {t('merchant.tools.toolActiveExpires').replace('{date}', fmtExpiry(toolExpiry['salon']) ?? '')}
@@ -427,7 +419,7 @@ export default async function MerchantToolsPage() {
           <div className="card text-center py-4 hover:border-brand-300 transition-colors cursor-pointer">
             <span className="text-3xl">🪡</span>
             <p className="font-semibold text-gray-800 mt-2 text-sm">{t('merchant.tools.coutureTitle')}</p>
-            <p className="text-xs text-gray-400 mt-0.5">{t('merchant.tools.coutureDesc')}</p>
+            <p className="text-xs text-gray-500 mt-0.5">{t('merchant.tools.coutureDesc')}</p>
             {toolActive['couture'] ? (
               <p className="text-[10px] text-green-600 font-medium mt-1.5">
                 {t('merchant.tools.toolActiveExpires').replace('{date}', fmtExpiry(toolExpiry['couture']) ?? '')}
@@ -442,7 +434,7 @@ export default async function MerchantToolsPage() {
           <div className="card text-center py-4 hover:border-brand-300 transition-colors cursor-pointer">
             <span className="text-3xl">🍲</span>
             <p className="font-semibold text-gray-800 mt-2 text-sm">{t('merchant.tools.restoTitle')}</p>
-            <p className="text-xs text-gray-400 mt-0.5">{t('merchant.tools.restoDesc')}</p>
+            <p className="text-xs text-gray-500 mt-0.5">{t('merchant.tools.restoDesc')}</p>
             {toolActive['resto'] ? (
               <p className="text-[10px] text-green-600 font-medium mt-1.5">
                 {t('merchant.tools.toolActiveExpires').replace('{date}', fmtExpiry(toolExpiry['resto']) ?? '')}
@@ -457,7 +449,7 @@ export default async function MerchantToolsPage() {
           <div className="card text-center py-4 hover:border-brand-300 transition-colors cursor-pointer">
             <span className="text-3xl">🏗️</span>
             <p className="font-semibold text-gray-800 mt-2 text-sm">{t('merchant.tools.btpTitle')}</p>
-            <p className="text-xs text-gray-400 mt-0.5">{t('merchant.tools.btpDesc')}</p>
+            <p className="text-xs text-gray-500 mt-0.5">{t('merchant.tools.btpDesc')}</p>
             {toolActive['btp'] ? (
               <p className="text-[10px] text-green-600 font-medium mt-1.5">
                 {t('merchant.tools.toolActiveExpires').replace('{date}', fmtExpiry(toolExpiry['btp']) ?? '')}
@@ -471,7 +463,7 @@ export default async function MerchantToolsPage() {
 
       {/* ── SÉPARATEUR ── */}
       <div className="border-t border-gray-100 pt-2">
-        <p className="text-xs text-gray-400 font-semibold uppercase tracking-wide mb-3">
+        <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide mb-3">
           {t('merchant.tools.statistics')}
         </p>
       </div>
@@ -481,28 +473,28 @@ export default async function MerchantToolsPage() {
         <div className="card">
           <p className="text-xs text-gray-500">{t('merchant.tools.thisMonth')}</p>
           <p className="text-2xl font-bold text-gray-900">{formatFcfa(monthGmv)}</p>
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-gray-500">
             {monthTxs.length} {t('merchant.tools.transactions')}
           </p>
         </div>
         <div className="card">
           <p className="text-xs text-gray-500">{t('merchant.tools.netReceived')}</p>
           <p className="text-2xl font-bold text-brand-600">{formatFcfa(monthNet)}</p>
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-gray-500">
             {t('merchant.tools.afterCommission').replace('{amount}', formatFcfa(monthCommission))}
           </p>
         </div>
         <div className="card">
           <p className="text-xs text-gray-500">{t('merchant.tools.thisWeek')}</p>
           <p className="text-xl font-bold text-gray-900">{formatFcfa(weekGmv)}</p>
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-gray-500">
             {weekTxs.length} {t('merchant.tools.sales')}
           </p>
         </div>
         <div className="card">
           <p className="text-xs text-gray-500">{t('merchant.tools.gmvTotal')}</p>
           <p className="text-xl font-bold text-gray-900">{formatFcfa(merchant.total_gmv)}</p>
-          <p className="text-xs text-gray-400">{t('merchant.tools.sinceBeginning')}</p>
+          <p className="text-xs text-gray-500">{t('merchant.tools.sinceBeginning')}</p>
         </div>
       </div>
 
@@ -516,7 +508,7 @@ export default async function MerchantToolsPage() {
                 className="w-full rounded-t-lg bg-brand-500 transition-all"
                 style={{ height: `${Math.max((d.gmv / maxGmv) * 100, d.gmv > 0 ? 4 : 0)}%`, minHeight: d.gmv > 0 ? '4px' : '0' }}
               />
-              <p className="text-[9px] text-gray-400 text-center leading-tight">{d.label}</p>
+              <p className="text-[9px] text-gray-500 text-center leading-tight">{d.label}</p>
             </div>
           ))}
         </div>
@@ -558,15 +550,15 @@ export default async function MerchantToolsPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-100">
-                <th className="text-left text-xs text-gray-400 py-2 font-medium">{t('merchant.tools.clientHeader')}</th>
-                <th className="text-right text-xs text-gray-400 py-2 font-medium">{t('merchant.tools.amountHeader')}</th>
-                <th className="text-right text-xs text-gray-400 py-2 font-medium">{t('merchant.tools.netHeader')}</th>
-                <th className="text-right text-xs text-gray-400 py-2 font-medium">{t('merchant.tools.dateHeader')}</th>
+                <th className="text-left text-xs text-gray-500 py-2 font-medium">{t('merchant.tools.clientHeader')}</th>
+                <th className="text-right text-xs text-gray-500 py-2 font-medium">{t('merchant.tools.amountHeader')}</th>
+                <th className="text-right text-xs text-gray-500 py-2 font-medium">{t('merchant.tools.netHeader')}</th>
+                <th className="text-right text-xs text-gray-500 py-2 font-medium">{t('merchant.tools.dateHeader')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
               {allTxs.length === 0 && (
-                <tr><td colSpan={4} className="py-8 text-center text-gray-400 text-xs">{t('merchant.tools.noSales')}</td></tr>
+                <tr><td colSpan={4} className="py-8 text-center text-gray-500 text-xs">{t('merchant.tools.noSales')}</td></tr>
               )}
               {allTxs.map((tx, i) => {
                 const buyer = tx.buyers as unknown as { full_name: string } | null
@@ -575,7 +567,7 @@ export default async function MerchantToolsPage() {
                     <td className="py-2 text-gray-700">{buyer?.full_name ?? 'Client'}</td>
                     <td className="py-2 text-right font-medium">{formatFcfa(tx.amount_fcfa)}</td>
                     <td className="py-2 text-right text-brand-600">{formatFcfa(tx.amount_fcfa - tx.commission_total)}</td>
-                    <td className="py-2 text-right text-gray-400 text-xs">
+                    <td className="py-2 text-right text-gray-500 text-xs">
                       {new Date(tx.created_at).toLocaleDateString(localeCode, { day: '2-digit', month: 'short' })}
                     </td>
                   </tr>

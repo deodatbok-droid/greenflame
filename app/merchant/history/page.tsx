@@ -119,11 +119,11 @@ export default async function MerchantHistoryPage() {
           <div>
             <p className="font-semibold text-gray-900 text-sm">{buyer?.full_name ?? 'Client'}</p>
             <p className="text-xs text-gray-500">{buyer?.phone}</p>
-            <p className="text-xs text-gray-400 mt-0.5">{fmtDate(tx.created_at)}</p>
+            <p className="text-xs text-gray-500 mt-0.5">{fmtDate(tx.created_at)}</p>
           </div>
           <div className="text-right flex-shrink-0">
             <p className="font-bold text-gray-900">{formatFcfa(tx.amount_fcfa)}</p>
-            <p className="text-xs text-gray-400">net : {formatFcfa(tx.amount_fcfa - tx.commission_total)}</p>
+            <p className="text-xs text-gray-500">net : {formatFcfa(tx.amount_fcfa - tx.commission_total)}</p>
             <span className={`text-xs font-semibold ${color}`}>{label}</span>
           </div>
         </div>
@@ -137,7 +137,7 @@ export default async function MerchantHistoryPage() {
                   <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold transition-colors ${
                     i < step ? 'bg-green-500 text-white' :
                     i === step ? 'bg-brand-600 text-white ring-2 ring-brand-200' :
-                    'bg-gray-200 text-gray-400'
+                    'bg-gray-200 text-gray-500'
                   }`}>
                     {i < step ? '✓' : i + 1}
                   </div>
@@ -149,7 +149,7 @@ export default async function MerchantHistoryPage() {
             </div>
             <div className="flex justify-between mt-1">
               {PIPELINE_STEPS.map((s, i) => (
-                <p key={i} className={`text-[9px] ${i === step ? 'text-brand-600 font-semibold' : 'text-gray-400'}`}>
+                <p key={i} className={`text-[9px] ${i === step ? 'text-brand-600 font-semibold' : 'text-gray-500'}`}>
                   {s}
                 </p>
               ))}
@@ -162,7 +162,7 @@ export default async function MerchantHistoryPage() {
           <div className="text-xs text-gray-600 mb-2 flex items-center gap-1.5">
             <span>🚴</span>
             <span>{provider.display_name}</span>
-            <span className="text-gray-400">·</span>
+            <span className="text-gray-500">·</span>
             <a href={`tel:${provider.phone}`} className="text-brand-600">{provider.phone}</a>
           </div>
         )}
@@ -204,7 +204,7 @@ export default async function MerchantHistoryPage() {
           <h1 className="font-bold text-lg text-gray-900">📦 Mes Commandes</h1>
           <Link href="/merchant/dashboard" className="text-sm text-brand-600">← Retour</Link>
         </div>
-        <p className="text-xs text-gray-400 mt-0.5">{merchant.business_name}</p>
+        <p className="text-xs text-gray-500 mt-0.5">{merchant.business_name}</p>
       </div>
 
       <div className="p-4 space-y-6">
@@ -249,7 +249,7 @@ export default async function MerchantHistoryPage() {
                   <div key={tx.id} className="bg-white rounded-xl border border-gray-100 px-4 py-3 flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-gray-800">{buyer?.full_name ?? 'Client'}</p>
-                      <p className="text-xs text-gray-400">{fmtDate(tx.created_at)}</p>
+                      <p className="text-xs text-gray-500">{fmtDate(tx.created_at)}</p>
                     </div>
                     <div className="text-right">
                       <p className="font-bold text-gray-900 text-sm">{formatFcfa(tx.amount_fcfa)}</p>
@@ -263,7 +263,7 @@ export default async function MerchantHistoryPage() {
         )}
 
         {txs.length === 0 && (
-          <div className="text-center py-16 text-gray-400">
+          <div className="text-center py-16 text-gray-500">
             <p className="text-5xl mb-3">📦</p>
             <p className="font-semibold text-gray-600">Aucune commande</p>
             <p className="text-sm mt-1">Vos ventes apparaîtront ici dès le premier achat.</p>

@@ -159,13 +159,13 @@ export default function MerchantAnalyticsClient({
         <span className="text-gray-300">/</span>
         <Link href="/admin/merchants" className="text-gray-400 hover:text-gray-600 text-sm">Marchands</Link>
         <span className="text-gray-300">/</span>
-        <span className="text-gray-500 text-sm">Analytics</span>
+        <span className="text-gray-400 text-sm">Analytics</span>
       </div>
 
       {/* En-tête */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Analytics Marchands</h1>
-        <p className="text-gray-500 text-sm mt-1">
+        <h1 className="text-2xl font-bold text-white">Analytics Marchands</h1>
+        <p className="text-gray-400 text-sm mt-1">
           Onboarding sectoriel · Données collectées via le questionnaire de personnalisation
         </p>
       </div>

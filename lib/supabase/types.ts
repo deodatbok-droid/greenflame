@@ -6,6 +6,7 @@ export type UserRole =
   | 'merchant'
   | 'kingmaker'
   | 'kingmaker_stockiste'
+  | 'field_agent'
   | 'admin'
   | 'platform_upline'
 

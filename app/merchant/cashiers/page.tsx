@@ -66,7 +66,7 @@ export default function CashiersPage() {
     }
   }
 
-  if (loading) return <div className="text-center py-16 text-gray-400">{t('merchant.cashiers.loading')}</div>
+  if (loading) return <div className="text-center py-16 text-gray-500">{t('merchant.cashiers.loading')}</div>
 
   if (forbidden) return (
     <div className="max-w-lg mx-auto p-6 text-center">
@@ -86,7 +86,7 @@ export default function CashiersPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold text-gray-900">{t('merchant.cashiers.title')}</h1>
-          <p className="text-xs text-gray-400 mt-0.5">
+          <p className="text-xs text-gray-500 mt-0.5">
             {t('merchant.cashiers.count').replace('{n}', String(cashiers.length))}
           </p>
         </div>
@@ -119,7 +119,7 @@ export default function CashiersPage() {
 
       {/* Liste */}
       {cashiers.length === 0 ? (
-        <div className="text-center py-8 text-gray-400">
+        <div className="text-center py-8 text-gray-500">
           <p className="text-3xl mb-2">👤</p>
           <p className="text-sm">{t('merchant.cashiers.empty')}</p>
         </div>
@@ -134,7 +134,7 @@ export default function CashiersPage() {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-semibold text-gray-900 text-sm truncate">{c.users?.full_name}</p>
-                <p className="text-xs text-gray-400">{c.label} · {c.users?.phone}</p>
+                <p className="text-xs text-gray-500">{c.label} · {c.users?.phone}</p>
               </div>
               <button
                 onClick={() => removeCashier(c.id, c.users?.full_name ?? '')}

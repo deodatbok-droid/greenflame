@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { formatFcfa } from '@/lib/utils/format'
 import Link from 'next/link'
 import AnalyticsCharts from './AnalyticsCharts'
+import MerchantReportCard from '@/components/merchant/analytics/MerchantReportCard'
 import { getServerT } from '@/lib/i18n/server'
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -24,11 +25,19 @@ function pct(current: number, previous: number): number | null {
 }
 
 type Tx = {
+  id: string
   amount_fcfa: number
   commission_total: number
   created_at: string
   buyer_id: string
+  payment_method: string | null
   buyers: { full_name: string } | null
+}
+
+type TxItem = {
+  product_name: string | null
+  quantity: number
+  unit_price_fcfa: number
 }
 
 function aggregate(txs: Tx[]) {
@@ -71,7 +80,7 @@ export default async function AnalyticsPage() {
 
   const { data: rawTxs } = await supabase
     .from('transactions')
-    .select('amount_fcfa, commission_total, created_at, buyer_id, buyers:buyer_id(full_name)')
+    .select('id, amount_fcfa, commission_total, created_at, buyer_id, payment_method, buyers:buyer_id(full_name)')
     .eq('merchant_id', merchant.id)
     .eq('status', 'completed')
     .gte('created_at', sixMonthsAgo.toISOString())
@@ -83,6 +92,16 @@ export default async function AnalyticsPage() {
       ? (t.buyers[0] as { full_name: string } | null) ?? null
       : (t.buyers as { full_name: string } | null),
   }))
+
+  // ── Transaction items (produits) ───────────────────────────────────────────
+  const txIds = txs.map(t => t.id)
+  const { data: rawItems } = txIds.length > 0
+    ? await supabase
+        .from('transaction_items')
+        .select('product_name, quantity, unit_price_fcfa')
+        .in('transaction_id', txIds)
+    : { data: [] as TxItem[] }
+  const items: TxItem[] = (rawItems ?? []) as TxItem[]
 
   const { data: allTimeRaw } = await supabase
     .from('transactions')
@@ -213,6 +232,67 @@ export default async function AnalyticsPage() {
 
   const currentMonthLabel = now.toLocaleDateString(localeCode, { month: 'long', year: 'numeric' })
 
+  // ── Rapport IA du mois (depuis DB) ───────────────────────────────────────
+  const periodDate = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10)
+  const { data: latestReport } = await supabase
+    .from('merchant_reports')
+    .select('id, period_date, generated_at, summary, highlights, improvements, recommendations, risk_level, metrics_snapshot')
+    .eq('merchant_id', merchant.id)
+    .eq('period_date', periodDate)
+    .maybeSingle()
+
+  const exportFrom = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10)
+  const exportTo   = now.toISOString().slice(0, 10)
+
+  // ── Top produits ─────────────────────────────────────────────────────────
+  const productMap: Record<string, { revenue: number; qty: number }> = {}
+  for (const item of items) {
+    const name = item.product_name ?? 'Sans nom'
+    if (!productMap[name]) productMap[name] = { revenue: 0, qty: 0 }
+    productMap[name].revenue += (item.unit_price_fcfa ?? 0) * (item.quantity ?? 1)
+    productMap[name].qty += item.quantity ?? 1
+  }
+  const topProducts = Object.entries(productMap)
+    .map(([name, d]) => ({ name, revenue: d.revenue, qty: d.qty }))
+    .sort((a, b) => b.revenue - a.revenue)
+    .slice(0, 10)
+
+  // ── Répartition méthodes de paiement ─────────────────────────────────────
+  const methodMap: Record<string, { count: number; gmv: number }> = {}
+  for (const tx of txs) {
+    const method = tx.payment_method ?? 'autre'
+    if (!methodMap[method]) methodMap[method] = { count: 0, gmv: 0 }
+    methodMap[method].count++
+    methodMap[method].gmv += tx.amount_fcfa
+  }
+  const paymentBreakdown = Object.entries(methodMap)
+    .map(([method, d]) => ({
+      method,
+      count: d.count,
+      gmv: d.gmv,
+      avgBasket: d.count > 0 ? Math.round(d.gmv / d.count) : 0,
+      pct: txs.length > 0 ? Math.round((d.count / txs.length) * 100) : 0,
+    }))
+    .sort((a, b) => b.count - a.count)
+
+  // ── Rétention mensuelle ───────────────────────────────────────────────────
+  const monthBuyerSets: Set<string>[] = []
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
+    const end = new Date(now.getFullYear(), now.getMonth() - i + 1, 1)
+    const slice = txs.filter(t => inRange(t, d, end))
+    monthBuyerSets.push(new Set(slice.map(t => t.buyer_id)))
+  }
+  const retentionData = monthBuyerSets.map((current, i) => {
+    const d = new Date(now.getFullYear(), now.getMonth() - (5 - i), 1)
+    const label = d.toLocaleDateString(localeCode, { month: 'short', year: '2-digit' })
+    const prev = i > 0 ? monthBuyerSets[i - 1] : null
+    const returning = prev ? [...current].filter(id => prev.has(id)).length : 0
+    const newBuyers = Math.max(0, current.size - returning)
+    const retentionRate = prev && prev.size > 0 ? Math.round((returning / prev.size) * 100) : 0
+    return { label, newBuyers, returning, retentionRate }
+  })
+
   // ─────────────────────────────────────────────────────────────────────────
   return (
     <div className="max-w-4xl mx-auto p-4 space-y-6 pb-12">
@@ -221,7 +301,7 @@ export default async function AnalyticsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold text-gray-900">{t('merchant.analytics.title')}</h1>
-          <p className="text-xs text-gray-400 mt-0.5">
+          <p className="text-xs text-gray-500 mt-0.5">
             {merchant.business_name} · {t('merchant.analytics.subtitle')}
           </p>
         </div>
@@ -235,7 +315,7 @@ export default async function AnalyticsPage() {
 
       {/* ── KPIs AUJOURD'HUI ── */}
       <section>
-        <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">
+        <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">
           {t('merchant.analytics.today')}
         </p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -268,7 +348,7 @@ export default async function AnalyticsPage() {
 
       {/* ── KPIs SEMAINE ── */}
       <section>
-        <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">
+        <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">
           {t('merchant.analytics.thisWeek')}
         </p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -301,7 +381,7 @@ export default async function AnalyticsPage() {
 
       {/* ── KPIs MOIS ── */}
       <section>
-        <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">
+        <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">
           {currentMonthLabel}
         </p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -338,6 +418,9 @@ export default async function AnalyticsPage() {
         dailyData={dailyData}
         dowData={dowData}
         hourData={hourData}
+        topProducts={topProducts}
+        paymentBreakdown={paymentBreakdown}
+        retentionData={retentionData}
       />
 
       {/* ── INSIGHTS ── */}
@@ -353,7 +436,7 @@ export default async function AnalyticsPage() {
                 <p className="font-bold text-brand-700 text-lg">{bestDow.label}</p>
               </div>
               <div className="text-right">
-                <p className="text-xs text-gray-400">{t('merchant.analytics.avgSales')}</p>
+                <p className="text-xs text-gray-500">{t('merchant.analytics.avgSales')}</p>
                 <p className="font-semibold text-gray-800">{formatFcfa(bestDow.avgGmv)}</p>
               </div>
             </div>
@@ -363,7 +446,7 @@ export default async function AnalyticsPage() {
                 <p className="font-bold text-green-700 text-lg">{bestHour.label}</p>
               </div>
               <div className="text-right">
-                <p className="text-xs text-gray-400">{t('merchant.analytics.totalSalesLabel')}</p>
+                <p className="text-xs text-gray-500">{t('merchant.analytics.totalSalesLabel')}</p>
                 <p className="font-semibold text-gray-800">{formatFcfa(bestHour.gmv)}</p>
               </div>
             </div>
@@ -383,12 +466,24 @@ export default async function AnalyticsPage() {
               <div key={s.label} className="flex items-center justify-between">
                 <p className="text-sm text-gray-500">{s.label}</p>
                 <p className={`font-bold text-sm ${s.color}`}>
-                  {s.value} <span className="text-xs font-normal text-gray-400">{s.unit}</span>
+                  {s.value} <span className="text-xs font-normal text-gray-500">{s.unit}</span>
                 </p>
               </div>
             ))}
           </div>
         </div>
+      </section>
+
+      {/* ── RAPPORTS & EXPORTS ── */}
+      <section>
+        <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">
+          Rapports &amp; Exports
+        </p>
+        <MerchantReportCard
+          report={latestReport as Parameters<typeof MerchantReportCard>[0]['report']}
+          exportFrom={exportFrom}
+          exportTo={exportTo}
+        />
       </section>
 
       {/* ── TOP CLIENTS ── */}
@@ -410,7 +505,7 @@ export default async function AnalyticsPage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-gray-900 truncate">{c.name}</p>
-                    <p className="text-xs text-gray-400">
+                    <p className="text-xs text-gray-500">
                       {c.count} {c.count > 1
                         ? t('merchant.analytics.purchasePlural')
                         : t('merchant.analytics.purchaseSingular')}
@@ -418,7 +513,7 @@ export default async function AnalyticsPage() {
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-bold text-brand-700">{formatFcfa(c.gmv)}</p>
-                    <p className="text-xs text-gray-400">FCFA</p>
+                    <p className="text-xs text-gray-500">FCFA</p>
                   </div>
                 </div>
               ))}
@@ -443,9 +538,9 @@ function KpiCard({
 
   return (
     <div className={`rounded-xl p-4 border ${accent ? 'bg-brand-700 text-white border-brand-600' : 'bg-white border-gray-100'}`}>
-      <p className={`text-xs mb-1 ${accent ? 'text-brand-200' : 'text-gray-400'}`}>{label}</p>
+      <p className={`text-xs mb-1 ${accent ? 'text-brand-200' : 'text-gray-500'}`}>{label}</p>
       <p className={`text-xl font-bold ${accent ? 'text-white' : 'text-gray-900'}`}>
-        {value} <span className={`text-xs font-normal ${accent ? 'text-brand-200' : 'text-gray-400'}`}>{unit}</span>
+        {value} <span className={`text-xs font-normal ${accent ? 'text-brand-200' : 'text-gray-500'}`}>{unit}</span>
       </p>
       {hasData ? (
         <span className={`inline-flex items-center gap-0.5 text-xs font-medium mt-1 px-1.5 py-0.5 rounded-full ${
@@ -456,9 +551,9 @@ function KpiCard({
           {isPos ? '↑' : '↓'} {Math.abs(delta)}%
         </span>
       ) : (
-        <p className={`text-xs mt-1 ${accent ? 'text-brand-200' : 'text-gray-400'}`}>{sub}</p>
+        <p className={`text-xs mt-1 ${accent ? 'text-brand-200' : 'text-gray-500'}`}>{sub}</p>
       )}
-      {hasData && <p className={`text-xs mt-0.5 ${accent ? 'text-brand-200' : 'text-gray-400'}`}>{sub}</p>}
+      {hasData && <p className={`text-xs mt-0.5 ${accent ? 'text-brand-200' : 'text-gray-500'}`}>{sub}</p>}
     </div>
   )
 }
