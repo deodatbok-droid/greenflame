@@ -35,9 +35,10 @@ self.addEventListener('fetch', (event) => {
   // Ignorer les requêtes cross-origin
   if (url.origin !== self.location.origin) return
 
-  // API + Supabase : network only, pas de cache
+  // API, Supabase, admin : network only, jamais de cache
   if (
     url.pathname.startsWith('/api/') ||
+    url.pathname.startsWith('/admin') ||
     url.hostname.includes('supabase')
   ) return
 
