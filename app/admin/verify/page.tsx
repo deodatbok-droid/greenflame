@@ -1,11 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 import Logo from '@/components/Logo'
 
 export default function AdminVerifyPage() {
-  const router = useRouter()
   const [pin, setPin] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -19,7 +17,7 @@ export default function AdminVerifyPage() {
       .then(r => r.json())
       .then(d => {
         if (d.alreadyVerified) {
-          router.replace('/admin/dashboard')
+          window.location.replace('/admin/dashboard')
         } else if (!d.hasPin) {
           setMode('set')
         } else {
@@ -49,7 +47,7 @@ export default function AdminVerifyPage() {
       return
     }
 
-    router.replace('/admin/dashboard')
+    window.location.replace('/admin/dashboard')
   }
 
   async function handleSetPin(e: React.FormEvent) {
@@ -70,7 +68,7 @@ export default function AdminVerifyPage() {
     if (!res.ok) { setError(data.error ?? 'Erreur'); return }
 
     // PIN défini + cookie posé → redirect direct
-    router.replace('/admin/dashboard')
+    window.location.replace('/admin/dashboard')
   }
 
   if (mode === 'loading') {
