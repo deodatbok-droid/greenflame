@@ -1,5 +1,5 @@
 // GreenFlame Service Worker — cache stratégique + offline
-const CACHE_NAME = 'gf-v3'
+const CACHE_NAME = 'gf-v4'
 const STATIC_PRECACHE = [
   '/',
   '/manifest.json',
