@@ -106,16 +106,18 @@ export default async function MarketplacePage({
 
       <div className="px-4 pb-8 space-y-6 mt-6">
 
-        {/* ── Grille des catégories (toujours visible) ── */}
-        <section>
-          <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-4">
-            {t('marketplace.allCategories')}
-          </h2>
-          <CategoryGrid categories={categories} />
-        </section>
-
-        {/* ── Séparateur ── */}
-        <div className="border-t border-gray-100" />
+        {/* ── Grille des catégories (masquée pendant une recherche active) ── */}
+        {!q.trim() && (
+          <>
+            <section>
+              <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-4">
+                {t('marketplace.allCategories')}
+              </h2>
+              <CategoryGrid categories={categories} />
+            </section>
+            <div className="border-t border-gray-100" />
+          </>
+        )}
 
         {/* ── Produits — grille filtrée/triée côté client ── */}
         <MarketplaceClient
