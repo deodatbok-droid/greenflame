@@ -405,7 +405,7 @@ export default function AdminShell({ children, userName }: AdminShellProps) {
 
     function reset() {
       clearTimeout(timer)
-      timer = setTimeout(() => { logoutAdmin('/admin/verify') }, 30_000)
+      timer = setTimeout(() => { logoutAdmin('/admin/verify') }, 30 * 60 * 1000)
     }
 
     const events = ['mousemove', 'keydown', 'click', 'touchstart', 'scroll']
