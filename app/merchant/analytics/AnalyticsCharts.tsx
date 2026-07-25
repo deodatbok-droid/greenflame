@@ -10,7 +10,7 @@ import { formatFcfa } from '@/lib/utils/format'
 import { useLocale } from '@/components/providers/LocaleProvider'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
-type MonthDatum     = { label: string; gmv: number; net: number; count: number }
+type MonthDatum     = { label: string; gmv: number; net: number; count: number; expenses: number; caisseIncome: number }
 type DayDatum       = { label: string; gmv: number; count: number }
 type DowDatum       = { label: string; avgGmv: number; count: number }
 type HourDatum      = { label: string; gmv: number }
@@ -109,7 +109,7 @@ export default function AnalyticsCharts({
           </div>
         </div>
         <ResponsiveContainer width="100%" height={160}>
-          <AreaChart data={monthViewData} margin={{ top: 4, right: 4, bottom: 0, left: 0 }}>
+          <ComposedChart data={monthViewData} margin={{ top: 4, right: 4, bottom: 0, left: 0 }}>
             <defs>
               <linearGradient id="gradMonth" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%"  stopColor={monthColor} stopOpacity={0.18} />
@@ -123,20 +123,45 @@ export default function AnalyticsCharts({
             <Area
               type="monotone"
               dataKey="value"
-              name={activeMonthView === 'gmv' ? 'GMV' : activeMonthView === 'net' ? 'Net' : 'Transactions'}
+              name={activeMonthView === 'gmv' ? 'GMV' : activeMonthView === 'net' ? 'Net GF' : 'Transactions'}
               stroke={monthColor}
               strokeWidth={2.5}
               fill="url(#gradMonth)"
               dot={false}
               activeDot={{ r: 4, strokeWidth: 0 }}
             />
-          </AreaChart>
+            {activeMonthView !== 'count' && (
+              <Line
+                type="monotone"
+                dataKey="expenses"
+                name="Charges"
+                stroke="#ef4444"
+                strokeWidth={1.5}
+                strokeDasharray="4 3"
+                dot={false}
+                activeDot={{ r: 3, strokeWidth: 0 }}
+              />
+            )}
+          </ComposedChart>
         </ResponsiveContainer>
+        {activeMonthView !== 'count' && monthlyData.some(m => m.expenses > 0) && (
+          <div className="flex items-center gap-4 mt-2 px-1">
+            <span className="flex items-center gap-1 text-[10px] text-gray-500">
+              <span className="inline-block w-4 h-0.5 bg-green-600 rounded" />
+              Revenus GF
+            </span>
+            <span className="flex items-center gap-1 text-[10px] text-gray-500">
+              <span className="inline-block w-4 border-t-2 border-dashed border-red-400" />
+              Charges caisse
+            </span>
+          </div>
+        )}
         <div className="flex justify-between mt-3 pt-3 border-t border-gray-50">
           {monthlyData.slice(-3).map((m, i) => (
             <div key={i} className="text-center">
               <p className="text-xs text-gray-500">{m.label}</p>
               <p className="text-sm font-bold text-gray-800">{fmtShort(m.gmv)} F</p>
+              {m.expenses > 0 && <p className="text-xs text-red-400">−{fmtShort(m.expenses)} F</p>}
               <p className="text-xs text-gray-500">{m.count} tx</p>
             </div>
           ))}

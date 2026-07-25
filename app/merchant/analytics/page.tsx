@@ -145,18 +145,45 @@ export default async function AnalyticsPage() {
   const month         = aggregate(monthTxs)
   const prevMonth     = aggregate(prevMonthTxs)
 
+  // ── Caisse entries (6 derniers mois) ───────────────────────────────────
+  const { data: caisseRaw } = await supabase
+    .from('caisse_entries')
+    .select('type, amount_fcfa, date_entree')
+    .eq('merchant_id', merchant.id)
+    .gte('date_entree', sixMonthsAgo.toISOString().slice(0, 10))
+
+  const caisseEntries = caisseRaw ?? []
+
+  // Agrégats caisse pour le mois courant
+  const currentMonthStr = now.toISOString().slice(0, 7) // "YYYY-MM"
+  const caisseMonthDepenses = caisseEntries
+    .filter(e => e.type === 'depense' && e.date_entree.startsWith(currentMonthStr))
+    .reduce((s, e) => s + (e.amount_fcfa ?? 0), 0)
+  const caisseMonthRecettes = caisseEntries
+    .filter(e => e.type === 'recette' && e.date_entree.startsWith(currentMonthStr))
+    .reduce((s, e) => s + (e.amount_fcfa ?? 0), 0)
+
   // ── 6-month bar chart data ──────────────────────────────────────────────
-  const monthlyData: { label: string; gmv: number; net: number; count: number }[] = []
+  const monthlyData: { label: string; gmv: number; net: number; count: number; expenses: number; caisseIncome: number }[] = []
   for (let i = 5; i >= 0; i--) {
     const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
     const end = new Date(now.getFullYear(), now.getMonth() - i + 1, 1)
     const slice = txs.filter(t => inRange(t, d, end))
     const agg = aggregate(slice)
+    const monthStr = d.toISOString().slice(0, 7)
+    const expenses = caisseEntries
+      .filter(e => e.type === 'depense' && e.date_entree.startsWith(monthStr))
+      .reduce((s, e) => s + (e.amount_fcfa ?? 0), 0)
+    const caisseIncome = caisseEntries
+      .filter(e => e.type === 'recette' && e.date_entree.startsWith(monthStr))
+      .reduce((s, e) => s + (e.amount_fcfa ?? 0), 0)
     monthlyData.push({
       label: d.toLocaleDateString(localeCode, { month: 'short', year: '2-digit' }),
       gmv: agg.gmv,
       net: agg.net,
       count: agg.count,
+      expenses,
+      caisseIncome,
     })
   }
 
@@ -411,6 +438,51 @@ export default async function AnalyticsPage() {
           />
         </div>
       </section>
+
+      {/* ── P&L RÉEL DU MOIS ── */}
+      {(caisseMonthDepenses > 0 || caisseMonthRecettes > 0) && (() => {
+        const vraiResultat = month.net + caisseMonthRecettes - caisseMonthDepenses
+        const totalRevenu  = month.net + caisseMonthRecettes
+        return (
+          <section>
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">
+              Résultat réel · {currentMonthLabel}
+            </p>
+            <div className="bg-white rounded-2xl border border-gray-100 p-5 space-y-3">
+              <div className="flex items-center justify-between py-1">
+                <span className="text-sm text-gray-500">Net GreenFlame (après commissions)</span>
+                <span className="text-sm font-semibold text-brand-700">{formatFcfa(month.net)}</span>
+              </div>
+              {caisseMonthRecettes > 0 && (
+                <div className="flex items-center justify-between py-1">
+                  <span className="text-sm text-gray-500">+ Recettes caisse (hors GF)</span>
+                  <span className="text-sm font-semibold text-green-700">+ {formatFcfa(caisseMonthRecettes)}</span>
+                </div>
+              )}
+              <div className="flex items-center justify-between py-1 border-t border-gray-100">
+                <span className="text-sm text-gray-600 font-medium">= Total revenus</span>
+                <span className="text-sm font-bold text-gray-900">{formatFcfa(totalRevenu)}</span>
+              </div>
+              <div className="flex items-center justify-between py-1 text-red-600">
+                <span className="text-sm">− Charges (loyer, salaires, transport…)</span>
+                <span className="text-sm font-semibold">− {formatFcfa(caisseMonthDepenses)}</span>
+              </div>
+              <div className={`flex items-center justify-between py-2 px-3 rounded-xl ${vraiResultat >= 0 ? 'bg-green-50' : 'bg-red-50'}`}>
+                <span className={`text-sm font-bold ${vraiResultat >= 0 ? 'text-green-800' : 'text-red-800'}`}>
+                  Résultat net estimé
+                </span>
+                <span className={`text-lg font-extrabold ${vraiResultat >= 0 ? 'text-green-700' : 'text-red-600'}`}>
+                  {vraiResultat >= 0 ? '' : '−'}{formatFcfa(Math.abs(vraiResultat))}
+                </span>
+              </div>
+              <p className="text-[11px] text-gray-400 pt-1">
+                Basé sur vos transactions GreenFlame et vos saisies caisse du mois.{' '}
+                <a href="/merchant/caisse" className="text-brand-500 underline">Mettre à jour la caisse →</a>
+              </p>
+            </div>
+          </section>
+        )
+      })()}
 
       {/* ── GRAPHIQUES ── */}
       <AnalyticsCharts

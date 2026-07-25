@@ -14,6 +14,7 @@ const PRIMARY_ITEMS: { href: string; labelKey: TranslationKey; icon: string }[] 
 ]
 
 const MORE_ITEMS: { href: string; labelKey: TranslationKey; icon: string }[] = [
+  { href: '/merchant/rh',       labelKey: 'nav.rh',       icon: '👥' },
   { href: '/merchant/vouchers', labelKey: 'nav.vouchers', icon: '🎟️' },
   { href: '/merchant/cashin',   labelKey: 'nav.cashin',   icon: '💵' },
   { href: '/merchant/promo',    labelKey: 'nav.promo',    icon: '📣' },
