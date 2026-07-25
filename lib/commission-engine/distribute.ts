@@ -14,6 +14,7 @@ import { calculateCommissions } from './calculate'
 import { GOVERNANCE, DIVIDENDE_SPLIT } from './constants'
 import { createServiceClient } from '@/lib/supabase/server'
 import { checkAndAlertStock } from '@/lib/utils/stock-alert'
+import { decrementStockFromTransaction } from '@/lib/utils/stock-transaction'
 import { insertNotifications } from '@/lib/utils/notify'
 import { maybeActivateAccount } from '@/lib/utils/activate-account'
 import { sendWhatsApp, ADMIN_PHONE, waPaymentBuyer, waPaymentMerchant, waAdminTransaction, waDigitalProduct, waCommissionNetwork } from '@/lib/whatsapp/wasender'
@@ -301,8 +302,9 @@ export async function distributeCommissions(transactionId: string): Promise<{
   // ── last_active_at acheteur ──
   await svc.from('users').update({ last_active_at: now }).eq('id', tx.buyer_id)
 
-  // ── Alerte stock + livraison produit numérique (non-bloquant) ──
+  // ── Décrémentation stock + alerte + livraison numérique (non-bloquant) ──
   const txWithProduct = tx as typeof tx & { product_id?: string | null }
+  decrementStockFromTransaction(transactionId, tx.merchant_id, txWithProduct.product_id ?? null).catch(() => {})
   if (txWithProduct.product_id) {
     checkAndAlertStock(txWithProduct.product_id, tx.merchant_id).catch(() => {})
 

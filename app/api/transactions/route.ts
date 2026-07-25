@@ -7,6 +7,7 @@ import { checkRateLimit, rateLimitHeaders } from '@/lib/utils/rateLimit'
 import { calculateCommissions } from '@/lib/commission-engine/calculate'
 import { GOVERNANCE } from '@/lib/commission-engine/constants'
 import { checkAndAlertStock } from '@/lib/utils/stock-alert'
+import { decrementStockFromTransaction } from '@/lib/utils/stock-transaction'
 import { analyzeTransactionFraud } from '@/lib/ai/fraud-detector'
 import { maybeActivateAccount } from '@/lib/utils/activate-account'
 import { sendWhatsApp, ADMIN_PHONE, waPaymentBuyer, waPaymentMerchant, waAdminTransaction, waDigitalProduct, waCommissionNetwork, waCashPending, waCashPendingBuyer } from '@/lib/whatsapp/wasender'
@@ -653,7 +654,8 @@ async function handleWalletGfPayment({
     // 13. Mise à jour last_active_at acheteur
     await service.from('users').update({ last_active_at: now }).eq('id', buyerId)
 
-    // 14. Alerte stock si produit concerné (non-bloquant)
+    // 14. Décrémentation stock + alerte (non-bloquant)
+    decrementStockFromTransaction(transactionId, merchantId, productId ?? null).catch(() => {})
     if (productId) {
       checkAndAlertStock(productId, merchantId).catch(() => {})
     }

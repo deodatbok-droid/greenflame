@@ -15,5 +15,5 @@ export default async function ClientsPage() {
 
   if (!merchant) redirect('/merchant/activate')
 
-  return <ClientsClient merchantId={merchant.id} />
+  return <ClientsClient />
 }
