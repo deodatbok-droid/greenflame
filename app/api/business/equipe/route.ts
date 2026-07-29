@@ -29,7 +29,7 @@ export async function GET() {
     user_id:    m.user_id,
     role:       m.role,
     created_at: m.invited_at,
-    profiles:   m.users ? { full_name: (m.users as { full_name: string }).full_name, phone: (m.users as { phone: string }).phone } : null,
+    profiles:   m.users ? { full_name: (m.users as unknown as { full_name: string; phone: string }).full_name, phone: (m.users as unknown as { full_name: string; phone: string }).phone } : null,
   }))
 
   return NextResponse.json({ members })
