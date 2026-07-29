@@ -38,10 +38,10 @@ export async function getBizSession(): Promise<BizSession> {
     .limit(1)
     .maybeSingle()
 
-  if (!member) redirect('/business/onboarding')
+  if (!member) redirect('/onboarding')
 
   const account = (member as unknown as { biz_accounts: BizAccount }).biz_accounts
-  if (!account) redirect('/business/onboarding')
+  if (!account) redirect('/onboarding')
 
   return {
     user: { id: user.id, phone: user.phone },
