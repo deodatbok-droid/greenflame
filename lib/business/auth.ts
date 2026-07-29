@@ -34,7 +34,7 @@ export async function getBizSession(): Promise<BizSession> {
     .from('biz_members')
     .select('role, permissions, business_id, biz_accounts(*)')
     .eq('user_id', user.id)
-    .order('created_at', { ascending: false })
+    .order('invited_at', { ascending: false })
     .limit(1)
     .maybeSingle()
 
