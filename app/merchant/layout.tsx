@@ -76,6 +76,13 @@ export default async function MerchantLayout({ children }: { children: React.Rea
           >
             {tierLabel}
           </Link>
+          <a
+            href="https://business.greenflameafrica.com"
+            title="GreenFlame Business"
+            className="text-[10px] font-bold px-2 py-0.5 rounded-full border shrink-0 bg-green-900 text-green-300 border-green-700 hover:bg-green-800 transition-colors"
+          >
+            Business
+          </a>
           {isAdmin && (
             <Link
               href="/admin/verify"

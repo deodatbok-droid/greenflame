@@ -56,6 +56,13 @@ const NAV_GROUPS: NavGroup[] = [
       { href: '/admin/exports',             label: 'Exports',              icon: '📤' },
     ],
   },
+  {
+    title: 'Business',
+    items: [
+      { href: '/admin/business',              label: 'Comptes Business',     icon: '🏢' },
+      { href: '/admin/business/abonnements',  label: 'Abonnements Business', icon: '💼' },
+    ],
+  },
 ]
 
 /* ── Icônes SVG ──────────────────────────────────────────────────────────── */
