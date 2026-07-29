@@ -24,7 +24,7 @@ function getClientIp(req: NextRequest): string {
 
 export async function middleware(request: NextRequest) {
   const host        = request.headers.get('host') ?? ''
-  const isBusiness  = host.startsWith('business.')
+  const isBusiness  = host === 'business.greenflameafrica.com' || host.startsWith('business.greenflameafrica.')
   const rawPathname = request.nextUrl.pathname
 
   // ─── Locale extraction ─────────────────────────────────────────────────────
