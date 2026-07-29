@@ -23,6 +23,8 @@ function getClientIp(req: NextRequest): string {
 }
 
 export async function middleware(request: NextRequest) {
+  const host        = request.headers.get('host') ?? ''
+  const isBusiness  = host.startsWith('business.')
   const rawPathname = request.nextUrl.pathname
 
   // ─── Locale extraction ─────────────────────────────────────────────────────
@@ -102,6 +104,21 @@ export async function middleware(request: NextRequest) {
   )
 
   const { data: { user } } = await supabase.auth.getUser()
+
+  // ─── Business subdomain: business.greenflame.com → /business/* ────────────
+  if (isBusiness) {
+    if (!user) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/login'
+      return NextResponse.redirect(url)
+    }
+    const bizPath = rawPathname === '/' ? '/business/dashboard' : `/business${rawPathname}`
+    const rewriteUrl = request.nextUrl.clone()
+    rewriteUrl.pathname = bizPath
+    const resp = NextResponse.rewrite(rewriteUrl)
+    supabaseResponse.cookies.getAll().forEach(c => resp.cookies.set(c.name, c.value))
+    return resp
+  }
 
   // Routes protégées
   const protectedPaths = [
