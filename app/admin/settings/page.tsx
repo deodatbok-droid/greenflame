@@ -26,7 +26,7 @@ export default async function SettingsPage() {
       .limit(30),
   ])
 
-  const auditLogs = (auditRes.data ?? []) as Array<{
+  const auditLogs = (auditRes.data ?? []) as unknown as Array<{
     key: string
     old_value: unknown
     new_value: unknown

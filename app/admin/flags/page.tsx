@@ -24,7 +24,7 @@ export default async function FlagsPage() {
       .limit(20),
   ])
 
-  const auditLogs = (auditRes.data ?? []) as Array<{
+  const auditLogs = (auditRes.data ?? []) as unknown as Array<{
     key: string
     old_value: Record<string, unknown> | null
     new_value: Record<string, unknown> | null
