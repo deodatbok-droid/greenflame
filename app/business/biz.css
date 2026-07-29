@@ -1,0 +1,195 @@
+/* ─── GreenFlame Business — Design Tokens ───────────────────────────────── */
+:root {
+  /* Brand */
+  --biz-green:        #22C55E;
+  --biz-green-dark:   #16A34A;
+  --biz-green-light:  #DCFCE7;
+  --biz-green-muted:  #F0FDF4;
+
+  /* Status */
+  --biz-blue:   #3B82F6;
+  --biz-amber:  #F59E0B;
+  --biz-red:    #EF4444;
+  --biz-purple: #8B5CF6;
+  --biz-teal:   #14B8A6;
+
+  /* Surfaces */
+  --biz-bg:         #EFF3F8;
+  --biz-card:       #FFFFFF;
+  --biz-sidebar:    #0D1117;
+  --biz-topbar:     #FFFFFF;
+
+  /* Text */
+  --biz-txt-primary:   #0F172A;
+  --biz-txt-secondary: #475569;
+  --biz-txt-muted:     #94A3B8;
+  --biz-txt-xmuted:    #CBD5E1;
+
+  /* Border */
+  --biz-border:       #E2E8F0;
+  --biz-border-light: #F1F5F9;
+
+  /* Shadows */
+  --biz-shadow-xs: 0 1px 2px rgba(0,0,0,.04);
+  --biz-shadow-sm: 0 1px 3px rgba(0,0,0,.07), 0 1px 2px rgba(0,0,0,.04);
+  --biz-shadow-md: 0 4px 6px -1px rgba(0,0,0,.07), 0 2px 4px -2px rgba(0,0,0,.05);
+  --biz-shadow-lg: 0 10px 24px -4px rgba(0,0,0,.1), 0 4px 6px -4px rgba(0,0,0,.05);
+  --biz-shadow-xl: 0 20px 40px -8px rgba(0,0,0,.15), 0 8px 16px -8px rgba(0,0,0,.08);
+
+  /* Radius */
+  --biz-r-sm:  6px;
+  --biz-r-md:  10px;
+  --biz-r-lg:  14px;
+  --biz-r-xl:  20px;
+  --biz-r-full: 9999px;
+
+  /* Transition */
+  --biz-t: all .15s cubic-bezier(.4,0,.2,1);
+  --biz-t-slow: all .25s cubic-bezier(.4,0,.2,1);
+}
+
+/* ─── Reset pour la zone business ──────────────────────────────────────── */
+.biz-root *,
+.biz-root *::before,
+.biz-root *::after { box-sizing: border-box; }
+
+.biz-root {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  background: var(--biz-bg);
+  color: var(--biz-txt-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── Scrollbar élégante ──────────────────────────────────────────────── */
+.biz-root ::-webkit-scrollbar { width: 5px; height: 5px; }
+.biz-root ::-webkit-scrollbar-track { background: transparent; }
+.biz-root ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 999px; }
+.biz-root ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+
+/* ─── Sidebar links ───────────────────────────────────────────────────── */
+.biz-nav-link {
+  display: flex; align-items: center; gap: 9px;
+  padding: 7px 10px; border-radius: 8px; margin-bottom: 1px;
+  font-size: 13px; color: #64748B; text-decoration: none;
+  transition: var(--biz-t); white-space: nowrap; position: relative;
+}
+.biz-nav-link:hover { background: #1A2232; color: #CBD5E1; }
+.biz-nav-link.active { background: #1A2232; color: #22C55E; font-weight: 600; }
+.biz-nav-link.active::before {
+  content: ''; position: absolute; left: -8px; top: 50%; transform: translateY(-50%);
+  width: 3px; height: 18px; background: #22C55E; border-radius: 0 2px 2px 0;
+}
+
+/* ─── BizTopBar ───────────────────────────────────────────────────────── */
+.biz-topbar {
+  position: sticky; top: 0; z-index: 40;
+  background: var(--biz-topbar);
+  border-bottom: 1px solid var(--biz-border-light);
+  box-shadow: var(--biz-shadow-xs);
+  display: flex; align-items: center; gap: 12px;
+  padding: 0 24px; height: 52px;
+}
+
+/* ─── Cards ───────────────────────────────────────────────────────────── */
+.biz-card {
+  background: var(--biz-card);
+  border-radius: var(--biz-r-lg);
+  box-shadow: var(--biz-shadow-sm);
+  border: 1px solid var(--biz-border);
+}
+
+/* ─── Badges ──────────────────────────────────────────────────────────── */
+.biz-badge {
+  display: inline-flex; align-items: center;
+  padding: 3px 9px; border-radius: var(--biz-r-full);
+  font-size: 11px; font-weight: 700; letter-spacing: .02em;
+}
+
+/* ─── Command bar backdrop ────────────────────────────────────────────── */
+.biz-cmd-backdrop {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(0,0,0,.55); backdrop-filter: blur(3px);
+  display: flex; align-items: flex-start; justify-content: center;
+  padding-top: 80px;
+  animation: biz-fade-in .1s ease;
+}
+
+.biz-cmd-panel {
+  width: 100%; max-width: 580px;
+  background: #fff; border-radius: var(--biz-r-xl);
+  box-shadow: var(--biz-shadow-xl);
+  overflow: hidden;
+  animation: biz-slide-down .15s cubic-bezier(.22,1,.36,1);
+}
+
+/* ─── Onboarding widget ───────────────────────────────────────────────── */
+.biz-onboard-widget {
+  position: fixed; bottom: 20px; right: 20px; z-index: 200;
+  animation: biz-slide-up .3s cubic-bezier(.22,1,.36,1);
+}
+
+/* ─── Guide panel ─────────────────────────────────────────────────────── */
+.biz-guide-panel {
+  position: fixed; top: 0; right: 0; bottom: 0; z-index: 500;
+  width: 360px; background: #fff;
+  box-shadow: -4px 0 32px rgba(0,0,0,.12);
+  animation: biz-slide-from-right .2s cubic-bezier(.22,1,.36,1);
+  overflow-y: auto;
+}
+
+/* ─── Animations ──────────────────────────────────────────────────────── */
+@keyframes biz-fade-in { from { opacity: 0 } to { opacity: 1 } }
+@keyframes biz-slide-down { from { opacity: 0; transform: translateY(-12px) scale(.98) } to { opacity: 1; transform: none } }
+@keyframes biz-slide-up { from { opacity: 0; transform: translateY(12px) } to { opacity: 1; transform: none } }
+@keyframes biz-slide-from-right { from { opacity: 0; transform: translateX(24px) } to { opacity: 1; transform: none } }
+@keyframes biz-pulse { 0%,100% { opacity: 1 } 50% { opacity: .6 } }
+
+/* ─── Tooltip ─────────────────────────────────────────────────────────── */
+.biz-tooltip-wrap { position: relative; display: inline-flex; }
+.biz-tooltip-box {
+  position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%);
+  background: #0F172A; color: #F8FAFC; font-size: 12px; line-height: 1.4;
+  padding: 6px 10px; border-radius: 7px; white-space: nowrap; max-width: 240px;
+  white-space: normal; text-align: center; z-index: 9999;
+  pointer-events: none; box-shadow: var(--biz-shadow-md);
+  animation: biz-fade-in .1s ease;
+}
+.biz-tooltip-box::after {
+  content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+  border: 5px solid transparent; border-top-color: #0F172A;
+}
+
+/* ─── Focus visible ───────────────────────────────────────────────────── */
+.biz-root :focus-visible {
+  outline: 2px solid var(--biz-green);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ─── Inputs ──────────────────────────────────────────────────────────── */
+.biz-input {
+  width: 100%; padding: 8px 12px;
+  border: 1px solid var(--biz-border); border-radius: var(--biz-r-md);
+  font-size: 13px; color: var(--biz-txt-primary);
+  background: #fff; transition: var(--biz-t);
+  outline: none;
+}
+.biz-input:focus { border-color: var(--biz-green); box-shadow: 0 0 0 3px rgba(34,197,94,.12); }
+
+/* ─── Buttons ─────────────────────────────────────────────────────────── */
+.biz-btn-primary {
+  padding: 9px 20px; border-radius: var(--biz-r-md);
+  background: var(--biz-green); color: #fff;
+  font-size: 13px; font-weight: 700; border: none; cursor: pointer;
+  transition: var(--biz-t);
+}
+.biz-btn-primary:hover { background: var(--biz-green-dark); }
+.biz-btn-primary:disabled { opacity: .6; cursor: not-allowed; }
+
+.biz-btn-secondary {
+  padding: 9px 20px; border-radius: var(--biz-r-md);
+  background: #fff; color: var(--biz-txt-secondary);
+  font-size: 13px; font-weight: 600; border: 1px solid var(--biz-border); cursor: pointer;
+  transition: var(--biz-t);
+}
+.biz-btn-secondary:hover { background: var(--biz-bg); border-color: var(--biz-txt-muted); }
