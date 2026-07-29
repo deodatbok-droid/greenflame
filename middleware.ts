@@ -108,12 +108,11 @@ export async function middleware(request: NextRequest) {
   // ─── Business subdomain: business.greenflameafrica.com → /business/* ───────
   if (isBusiness) {
     const isAuthPath = rawPathname === '/login' || rawPathname === '/register'
+    // Les routes API ne sont jamais réécrites — elles servent depuis app/api/*
+    const isApiPath  = rawPathname.startsWith('/api/')
 
     if (!user) {
-      // Les pages d'auth passent sans rewrite — le login se fait directement sur
-      // le sous-domaine pour que les cookies soient valides sur business.*
-      if (isAuthPath) return supabaseResponse
-      // Toute autre page → redirect vers le login du sous-domaine
+      if (isAuthPath || isApiPath) return supabaseResponse
       const url = request.nextUrl.clone()
       url.pathname = '/login'
       return NextResponse.redirect(url)
@@ -126,6 +125,12 @@ export async function middleware(request: NextRequest) {
       const resp = NextResponse.redirect(url)
       supabaseResponse.cookies.getAll().forEach(c => resp.cookies.set(c.name, c.value))
       return resp
+    }
+
+    // Routes API → pass-through (les cookies Supabase doivent être transmis)
+    if (isApiPath) {
+      supabaseResponse.cookies.getAll().forEach(c => supabaseResponse.cookies.set(c.name, c.value))
+      return supabaseResponse
     }
 
     // Page normale → rewrite vers /business/*
