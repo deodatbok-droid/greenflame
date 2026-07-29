@@ -37,6 +37,8 @@ const NAV_GROUPS: NavGroup[] = [
   {
     title: 'Plateforme',
     items: [
+      { href: '/admin/flags',       label: 'Feature flags',  icon: '🚩' },
+      { href: '/admin/settings',    label: 'Paramètres',     icon: '⚙️' },
       { href: '/admin/marketplace', label: 'Marketplace',    icon: '🛒' },
       { href: '/admin/delivery',    label: 'Delivery',       icon: '🚴' },
       { href: '/admin/matrix',      label: 'Matrice réseau', icon: '🕸️' },
