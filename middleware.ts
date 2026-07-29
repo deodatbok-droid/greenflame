@@ -105,13 +105,30 @@ export async function middleware(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser()
 
-  // ─── Business subdomain: business.greenflame.com → /business/* ────────────
+  // ─── Business subdomain: business.greenflameafrica.com → /business/* ───────
   if (isBusiness) {
+    const isAuthPath = rawPathname === '/login' || rawPathname === '/register'
+
     if (!user) {
+      // Les pages d'auth passent sans rewrite — le login se fait directement sur
+      // le sous-domaine pour que les cookies soient valides sur business.*
+      if (isAuthPath) return supabaseResponse
+      // Toute autre page → redirect vers le login du sous-domaine
       const url = request.nextUrl.clone()
       url.pathname = '/login'
       return NextResponse.redirect(url)
     }
+
+    // Connecté sur une page d'auth → redirect vers le dashboard Business
+    if (isAuthPath) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/business/dashboard'
+      const resp = NextResponse.redirect(url)
+      supabaseResponse.cookies.getAll().forEach(c => resp.cookies.set(c.name, c.value))
+      return resp
+    }
+
+    // Page normale → rewrite vers /business/*
     const bizPath = rawPathname === '/' ? '/business/dashboard' : `/business${rawPathname}`
     const rewriteUrl = request.nextUrl.clone()
     rewriteUrl.pathname = bizPath
