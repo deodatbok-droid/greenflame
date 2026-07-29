@@ -25,6 +25,33 @@ export async function GET() {
   return NextResponse.json(data ?? [])
 }
 
+export async function POST(request: NextRequest) {
+  const user = await getAdminUser()
+  if (!user) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+
+  const body = await request.json() as { key: string; label: string; description?: string; category: string; enabled?: boolean }
+  const { key, label, description, category, enabled = false } = body
+  if (!key || !label || !category) return NextResponse.json({ error: 'Missing key, label or category' }, { status: 400 })
+
+  const safeKey = key.toLowerCase().replace(/[^a-z0-9_]/g, '_').replace(/__+/g, '_')
+
+  const svc = createServiceClient()
+  const { error } = await svc.from('feature_flags').insert({
+    key: safeKey, label, description: description ?? null, category, enabled,
+    updated_by: user.id,
+  })
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+
+  await svc.from('platform_settings_audit').insert({
+    table_name: 'feature_flags', key: safeKey,
+    old_value: null, new_value: { label, category, enabled },
+    changed_by: user.id,
+  })
+
+  return NextResponse.json({ ok: true, key: safeKey })
+}
+
 export async function PATCH(request: NextRequest) {
   const user = await getAdminUser()
   if (!user) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })

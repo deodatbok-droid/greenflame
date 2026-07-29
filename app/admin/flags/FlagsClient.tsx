@@ -49,6 +49,9 @@ export default function FlagsClient({ flagsByCategory, categoryMeta, auditLogs }
   const [newNote, setNewNote]     = useState('')
   const [loadingOverrides, setLoadingOverrides] = useState(false)
   const [showAudit, setShowAudit] = useState(false)
+  const [newCountryName, setNewCountryName] = useState('')
+  const [addingCountry, setAddingCountry] = useState(false)
+  const [addCountryError, setAddCountryError] = useState('')
   const [, startTransition] = useTransition()
 
   async function toggleFlag(key: string, currentEnabled: boolean) {
@@ -115,6 +118,36 @@ export default function FlagsClient({ flagsByCategory, categoryMeta, auditLogs }
     setNewUserId(''); setNewNote('')
   }
 
+  function slugify(name: string) {
+    return name.toLowerCase()
+      .normalize('NFD').replace(/[̀-ͯ]/g, '')
+      .replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '')
+  }
+
+  async function addCountry() {
+    const name = newCountryName.trim()
+    if (!name) return
+    const key = `market_${slugify(name)}`
+    setAddingCountry(true)
+    setAddCountryError('')
+
+    const res = await fetch('/api/admin/flags', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ key, label: name, category: 'market', description: `Marché ${name}`, enabled: false }),
+    })
+
+    if (!res.ok) {
+      const json = await res.json().catch(() => ({}))
+      setAddCountryError((json as { error?: string }).error ?? 'Erreur lors de l\'ajout')
+    } else {
+      const newFlag: FeatureFlag = { key, label: name, description: `Marché ${name}`, category: 'market', enabled: false, mode: 'all', updated_at: new Date().toISOString(), updated_by: null }
+      setFlags(prev => ({ ...prev, market: [...(prev.market ?? []), newFlag] }))
+      setNewCountryName('')
+    }
+    setAddingCountry(false)
+  }
+
   async function removeOverride(userId: string) {
     if (!overrideModal) return
     await fetch(`/api/admin/flags/${overrideModal.key}/overrides?user_id=${userId}`, { method: 'DELETE' })
@@ -126,7 +159,7 @@ export default function FlagsClient({ flagsByCategory, categoryMeta, auditLogs }
   return (
     <>
       {/* Catégories */}
-      {CATEGORY_ORDER.filter(cat => flags[cat]?.length > 0).map(cat => {
+      {CATEGORY_ORDER.filter(cat => (flags[cat]?.length ?? 0) > 0 || cat === 'market').map(cat => {
         const meta = categoryMeta[cat]
         const catFlags = flags[cat] ?? []
         const activeCount = catFlags.filter(f => f.enabled).length
@@ -147,7 +180,7 @@ export default function FlagsClient({ flagsByCategory, categoryMeta, auditLogs }
 
             {/* Flags de la catégorie */}
             <ul className="divide-y divide-gray-700/50">
-              {catFlags.map(flag => (
+              {catFlags.sort((a, b) => a.label.localeCompare(b.label)).map(flag => (
                 <li key={flag.key} className="px-5 py-4 flex items-center gap-4 hover:bg-gray-700/20 transition-colors">
                   {/* Toggle */}
                   <button
@@ -195,6 +228,37 @@ export default function FlagsClient({ flagsByCategory, categoryMeta, auditLogs }
                 </li>
               ))}
             </ul>
+
+            {/* Formulaire ajout pays (section market uniquement) */}
+            {cat === 'market' && (
+              <div className="px-5 py-4 border-t border-gray-700/60">
+                <p className="text-xs text-gray-500 uppercase tracking-wide font-medium mb-3">Ajouter un marché</p>
+                <div className="flex gap-2">
+                  <input
+                    value={newCountryName}
+                    onChange={e => { setNewCountryName(e.target.value); setAddCountryError('') }}
+                    onKeyDown={e => e.key === 'Enter' && addCountry()}
+                    placeholder="Nom du pays (ex : Côte d'Ivoire)"
+                    className="flex-1 bg-gray-900 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-green-500 transition-colors"
+                  />
+                  <button
+                    onClick={addCountry}
+                    disabled={!newCountryName.trim() || addingCountry}
+                    className="px-4 py-2 rounded-lg text-sm font-medium bg-green-600 hover:bg-green-500 disabled:opacity-40 disabled:cursor-not-allowed text-white transition-colors flex-shrink-0"
+                  >
+                    {addingCountry ? '…' : 'Ajouter'}
+                  </button>
+                </div>
+                {newCountryName.trim() && !addCountryError && (
+                  <p className="text-xs text-gray-600 mt-1.5 font-mono">
+                    clé : market_{slugify(newCountryName)}
+                  </p>
+                )}
+                {addCountryError && (
+                  <p className="text-xs text-red-400 mt-1.5">{addCountryError}</p>
+                )}
+              </div>
+            )}
           </section>
         )
       })}
