@@ -133,6 +133,11 @@ export async function middleware(request: NextRequest) {
       return supabaseResponse
     }
 
+    // Chemin déjà sous /business/* → Next.js le sert directement, pas de double-préfixe
+    if (rawPathname.startsWith('/business/') || rawPathname === '/business') {
+      return supabaseResponse
+    }
+
     // Page normale → rewrite vers /business/*
     const bizPath = rawPathname === '/' ? '/business/dashboard' : `/business${rawPathname}`
     const rewriteUrl = request.nextUrl.clone()
