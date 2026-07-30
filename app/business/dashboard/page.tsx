@@ -1,6 +1,7 @@
 import { getBizSession, formatBizAmount } from '@/lib/business/auth'
 import { createServiceClient } from '@/lib/supabase/server'
 import Link from 'next/link'
+import QuickAction from './QuickAction'
 
 async function getBizKPIs(businessId: string) {
   const svc = createServiceClient()
@@ -166,24 +167,7 @@ export default async function BizDashboardPage() {
               { href: '/business/stock/mouvement', icon: '↕️', label: 'Entrée de stock',     desc: 'Réceptionner marchandise',  accent: '#14B8A6' },
               { href: '/business/rapports',        icon: '📊', label: 'Voir les rapports',   desc: 'Tendances & analyses',      accent: '#EF4444' },
             ].map(a => (
-              <Link key={a.href} href={a.href} style={{
-                display: 'flex', flexDirection: 'column', gap: 6,
-                padding: '14px 14px', borderRadius: 12,
-                background: '#fff', border: '1px solid #E2E8F0',
-                textDecoration: 'none',
-                boxShadow: '0 1px 3px rgba(0,0,0,.05)',
-                transition: 'all .15s',
-                borderTop: `3px solid ${a.accent}`,
-              }}
-              onMouseEnter={(e: React.MouseEvent<HTMLAnchorElement>) => { (e.currentTarget as HTMLAnchorElement).style.boxShadow = '0 4px 12px rgba(0,0,0,.1)'; (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(-2px)' }}
-              onMouseLeave={(e: React.MouseEvent<HTMLAnchorElement>) => { (e.currentTarget as HTMLAnchorElement).style.boxShadow = '0 1px 3px rgba(0,0,0,.05)'; (e.currentTarget as HTMLAnchorElement).style.transform = 'none' }}
-              >
-                <span style={{ fontSize: 20, lineHeight: 1 }}>{a.icon}</span>
-                <div>
-                  <p style={{ fontSize: 13, fontWeight: 700, color: '#0F172A', margin: 0 }}>{a.label}</p>
-                  <p style={{ fontSize: 11, color: '#94A3B8', margin: '2px 0 0' }}>{a.desc}</p>
-                </div>
-              </Link>
+              <QuickAction key={a.href} {...a} />
             ))}
           </div>
         </section>
