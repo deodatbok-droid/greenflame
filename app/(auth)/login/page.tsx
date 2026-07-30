@@ -255,6 +255,8 @@ function LoginForm() {
       <p className="text-brand-100 text-xs mt-6 text-center">
         En vous connectant, vous acceptez nos{' '}
         <Link href="/terms" className="underline hover:text-white">Conditions d&apos;utilisation</Link>
+        {' '}et notre{' '}
+        <Link href="/privacy" className="underline hover:text-white">Politique de confidentialité</Link>
       </p>
     </div>
   )
