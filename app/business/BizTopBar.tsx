@@ -24,7 +24,7 @@ const BREADCRUMBS: Record<string, { title: string; crumbs: string[] }> = {
   '/business/fournisseurs':    { title: 'Fournisseurs',        crumbs: ['Inventaire'] },
   '/business/achats':          { title: 'Bons de commande',    crumbs: ['Inventaire'] },
   '/business/achats/nouveau':  { title: 'Nouvelle commande',   crumbs: ['Inventaire', 'Achats'] },
-  '/business/equipe':          { title: 'Équipe',              crumbs: ['Gestion'] },
+  '/business/equipe':          { title: 'Gestion du Personnel', crumbs: ['Gestion'] },
   '/business/parametres':      { title: 'Paramètres',          crumbs: ['Gestion'] },
 }
 
@@ -145,7 +145,7 @@ export default function BizTopBar({ accountName, userInitials, userRole }: BizTo
               </div>
               {[
                 { href: '/business/parametres', label: '⚙️ Paramètres', },
-                { href: '/business/equipe', label: '👥 Équipe', },
+                { href: '/business/equipe', label: '👥 Gestion du Personnel', },
               ].map(item => (
                 <a key={item.href} href={item.href} onClick={() => setShowMenu(false)} style={{ display: 'block', padding: '8px 12px', borderRadius: 8, fontSize: 13, color: '#374151', textDecoration: 'none', transition: 'background .1s' }}
                   onMouseEnter={e => (e.currentTarget.style.background = '#F8FAFC')}

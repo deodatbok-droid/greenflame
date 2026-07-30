@@ -55,7 +55,7 @@ export default function EquipePage() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 24 }}>
         <div>
           <p style={{ fontSize: 12, color: '#64748B', textTransform: 'uppercase', letterSpacing: '.08em', marginBottom: 4 }}>Gestion</p>
-          <h1 style={{ fontSize: 22, fontWeight: 800, color: '#0F172A', margin: 0 }}>Équipe</h1>
+          <h1 style={{ fontSize: 22, fontWeight: 800, color: '#0F172A', margin: 0 }}>Gestion du Personnel</h1>
         </div>
         <button onClick={() => { setShowInvite(s => !s); setErr(''); setSuccess('') }}
           style={{ padding: '9px 20px', borderRadius: 8, background: '#22C55E', color: '#fff', fontSize: 13, fontWeight: 700, border: 'none', cursor: 'pointer' }}>

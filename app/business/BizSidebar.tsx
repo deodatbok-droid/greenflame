@@ -39,7 +39,7 @@ const NAV_GROUPS = [
   {
     label: 'Gestion',
     items: [
-      { href: '/business/equipe',      label: 'Équipe',       icon: '👥', emoji: true },
+      { href: '/business/equipe',      label: 'Gestion du Personnel', icon: '👥', emoji: true },
       { href: '/business/parametres',  label: 'Paramètres',   icon: '⚙️', emoji: true },
     ],
   },

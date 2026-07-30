@@ -25,7 +25,7 @@ const NAV_COMMANDS: Command[] = [
   { id: 'mouvements', group: 'Navigation', label: 'Mouvements stock',icon: '↕️', href: '/business/stock/mouvement' },
   { id: 'fournisseurs',group: 'Navigation',label: 'Fournisseurs',    icon: '🏭', href: '/business/fournisseurs' },
   { id: 'achats',     group: 'Navigation', label: 'Bons de commande',icon: '🛒', href: '/business/achats' },
-  { id: 'equipe',     group: 'Navigation', label: 'Équipe',          icon: '👥', href: '/business/equipe' },
+  { id: 'equipe',     group: 'Navigation', label: 'Gestion du Personnel', icon: '👥', href: '/business/equipe' },
   { id: 'parametres', group: 'Navigation', label: 'Paramètres',      icon: '⚙️', href: '/business/parametres' },
 ]
 
