@@ -37,6 +37,12 @@ const NAV_GROUPS = [
     ],
   },
   {
+    label: 'Immobilier',
+    items: [
+      { href: '/business/immobilier', label: 'Mes biens', icon: '⌂', emoji: true },
+    ],
+  },
+  {
     label: 'Gestion',
     items: [
       { href: '/business/equipe',      label: 'Gestion du Personnel', icon: '👥', emoji: true },

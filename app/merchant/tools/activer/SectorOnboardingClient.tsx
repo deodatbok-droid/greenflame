@@ -99,9 +99,11 @@ const PRO_BENEFITS = [
 export default function SectorOnboardingClient({
   businessName,
   isPro,
+  isVip,
 }: {
   businessName: string
   isPro: boolean
+  isVip: boolean
 }) {
   const router = useRouter()
   const [step, setStep]       = useState(0)
@@ -283,6 +285,21 @@ export default function SectorOnboardingClient({
         <div className="space-y-4">
           <h2 className="text-xl font-bold text-gray-900">Quelle est votre activité principale ?</h2>
           <p className="text-sm text-gray-500">Choisissez le secteur qui correspond le mieux à ce que vous faites.</p>
+
+          {isVip && (
+            <button
+              onClick={() => router.push('/business/immobilier')}
+              className="w-full flex items-center gap-3 p-3 rounded-xl border-2 border-brand-500 bg-brand-50 text-left transition-all hover:bg-brand-100"
+            >
+              <span className="text-2xl">🏠</span>
+              <div>
+                <span className="text-sm font-semibold text-brand-700">Immobilier & Location</span>
+                <p className="text-xs text-brand-600 mt-0.5">Démarcheurs / agences — gestion de biens & catalogue dédié</p>
+              </div>
+              <span className="ml-auto bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-0.5 rounded-full">VIP</span>
+            </button>
+          )}
+
           <div className="grid grid-cols-2 gap-2">
             {SECTORS.map(s => (
               <button
