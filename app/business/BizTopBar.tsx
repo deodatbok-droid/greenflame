@@ -26,6 +26,12 @@ const BREADCRUMBS: Record<string, { title: string; crumbs: string[] }> = {
   '/business/achats/nouveau':  { title: 'Nouvelle commande',   crumbs: ['Inventaire', 'Achats'] },
   '/business/equipe':          { title: 'Gestion du Personnel', crumbs: ['Gestion'] },
   '/business/parametres':      { title: 'Paramètres',          crumbs: ['Gestion'] },
+  '/business/immobilier':               { title: 'Mes biens',          crumbs: ['Immobilier'] },
+  '/business/immobilier/nouveau':       { title: 'Nouveau bien',       crumbs: ['Immobilier'] },
+  '/business/immobilier/mandats':       { title: 'Mandats',            crumbs: ['Immobilier'] },
+  '/business/immobilier/mandats/nouveau': { title: 'Nouveau mandat',   crumbs: ['Immobilier', 'Mandats'] },
+  '/business/immobilier/visites':       { title: 'Visites',            crumbs: ['Immobilier'] },
+  '/business/immobilier/visites/nouveau': { title: 'Planifier une visite', crumbs: ['Immobilier', 'Visites'] },
 }
 
 const ROLE_LABEL: Record<string, string> = { owner: 'Propriétaire', manager: 'Manager', staff: 'Employé' }
