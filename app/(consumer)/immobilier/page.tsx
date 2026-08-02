@@ -67,9 +67,14 @@ export default async function ImmobilierPage({
         className="px-5 pt-12 pb-5 md:pt-8 md:rounded-b-3xl"
         style={{ background: `linear-gradient(135deg, ${CATEGORY_BG}, ${CATEGORY_BG}dd)` }}
       >
-        <Link href="/marketplace" className="text-sm mb-4 inline-block" style={{ color: CATEGORY_ICON }}>
-          {t('immobilier.backToMarketplace')}
-        </Link>
+        <div className="flex items-center justify-between mb-4">
+          <Link href="/marketplace" className="text-sm inline-block" style={{ color: CATEGORY_ICON }}>
+            {t('immobilier.backToMarketplace')}
+          </Link>
+          <Link href="/immobilier/alertes" className="text-sm font-semibold inline-block" style={{ color: CATEGORY_ICON }}>
+            {t('immobilier.alertsMenuLink')}
+          </Link>
+        </div>
         <div className="flex items-center gap-3">
           <div
             className="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0"

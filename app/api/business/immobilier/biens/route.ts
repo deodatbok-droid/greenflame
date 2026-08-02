@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getBizApiSession } from '@/lib/business/auth'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
+import { notifyMatchingAlerts, isPubliclyListed } from '@/lib/immobilier/alerts'
 
 async function resolveBusinessId(requestedId?: string | null): Promise<string | null> {
   if (requestedId) return requestedId
@@ -77,6 +78,13 @@ export async function POST(request: NextRequest) {
     .single()
 
   if (error || !property) return NextResponse.json({ error: error?.message ?? 'Erreur création du bien' }, { status: 500 })
+
+  if (isPubliclyListed(gf_listed, 'disponible')) {
+    void notifyMatchingAlerts({
+      id: property.id, title: title.trim(), listing_type, property_type, price_fcfa,
+      city: city || null, neighborhood: neighborhood || null, rooms: rooms ?? null, surface_m2: surface_m2 ?? null,
+    })
+  }
 
   return NextResponse.json({ ok: true, property_id: property.id })
 }

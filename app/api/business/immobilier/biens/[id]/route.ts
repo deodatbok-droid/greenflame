@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getBizApiSession } from '@/lib/business/auth'
 import { createServiceClient } from '@/lib/supabase/server'
+import { notifyMatchingAlerts, isPubliclyListed } from '@/lib/immobilier/alerts'
 
 type PropertyBody = {
   title?: string
@@ -58,9 +59,14 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
   if (!title?.trim()) return NextResponse.json({ error: 'Titre requis' }, { status: 400 })
   if (price_fcfa == null || price_fcfa <= 0) return NextResponse.json({ error: 'Prix requis' }, { status: 400 })
 
+  const { data: before } = await svc.from('biz_properties').select('gf_listed, status').eq('id', id).maybeSingle()
+
   const location = (lat != null && lng != null && !isNaN(lat) && !isNaN(lng))
     ? `SRID=4326;POINT(${lng} ${lat})`
     : null
+
+  const nextGfListed = gf_listed ?? false
+  const nextStatus   = status || 'disponible'
 
   const { error } = await svc
     .from('biz_properties')
@@ -78,13 +84,23 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
       location,
       photos:       photos ?? [],
       description:  description || null,
-      gf_listed:    gf_listed ?? false,
-      status:       status || 'disponible',
+      gf_listed:    nextGfListed,
+      status:       nextStatus,
       updated_at:   new Date().toISOString(),
     })
     .eq('id', id)
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+
+  const wasListed = isPubliclyListed(before?.gf_listed, before?.status)
+  const isListed  = isPubliclyListed(nextGfListed, nextStatus)
+  if (!wasListed && isListed && listing_type && property_type && price_fcfa != null) {
+    void notifyMatchingAlerts({
+      id, title: title.trim(), listing_type, property_type, price_fcfa,
+      city: city || null, neighborhood: neighborhood || null, rooms: rooms ?? null, surface_m2: surface_m2 ?? null,
+    })
+  }
+
   return NextResponse.json({ ok: true })
 }
 

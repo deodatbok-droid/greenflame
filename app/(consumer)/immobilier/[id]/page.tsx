@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation'
 import { formatFcfa } from '@/lib/utils/format'
 import { getServerT } from '@/lib/i18n/server'
 import type { PublicProperty } from '@/components/immobilier/PropertyCard'
+import { ContactReveal } from '@/components/immobilier/ContactReveal'
 
 export const revalidate = 60
 
@@ -15,7 +16,7 @@ interface Props {
 export default async function PropertyDetailPage({ params }: Props) {
   const { id } = await params
   const supabase = await createClient()
-  const { t } = await getServerT()
+  const { t, locale } = await getServerT()
 
   const { data } = await supabase
     .from('v_public_properties')
@@ -23,6 +24,7 @@ export default async function PropertyDetailPage({ params }: Props) {
     .eq('id', id)
     .maybeSingle()
 
+  const { data: { user } } = await supabase.auth.getUser()
   const property = data as unknown as PublicProperty | null
 
   if (!property) notFound()
@@ -82,6 +84,8 @@ export default async function PropertyDetailPage({ params }: Props) {
       )}
 
       <p className="text-xs text-gray-400 mt-6">{t('immobilier.publishedBy').replace('{name}', property.business_name)}</p>
+
+      <ContactReveal propertyId={property.id} locale={locale} isLoggedIn={!!user} />
     </div>
   )
 }
