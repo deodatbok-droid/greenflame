@@ -7,10 +7,8 @@ export const dynamic = 'force-dynamic'
 
 export const metadata = {
   title: 'GreenFlame Hub — Abonnements & Services',
-  description: 'Plan Standard gratuit, VIP 5 000 FCFA/mois, outils sectoriels et Service Agent.',
+  description: 'Plan Standard gratuit, VIP 15 000 FCFA/an avec un outil sectoriel inclus, et Service Agent.',
 }
-
-const TOOL_PRICE = 5_000   // tous les outils sectoriels au même prix
 
 export default async function HubPage() {
   const svc = createServiceClient()
@@ -28,7 +26,7 @@ export default async function HubPage() {
     .select('id, name, description, emoji, subscription_trigger')
     .eq('merchant_id', hub.id)
     .eq('is_available', true)
-    .in('subscription_trigger', ['salon', 'couture', 'btp', 'resto'])
+    .in('subscription_trigger', ['salon', 'couture', 'btp', 'resto', 'immobilier'])
     .order('sort_order')).data ?? [] : []
 
   const toolCards = [
@@ -36,6 +34,7 @@ export default async function HubPage() {
     { trigger: 'couture', color: 'from-violet-600 to-violet-900', badge: '🪡 Couture', badgeCls: 'bg-violet-300 text-violet-900', perks: t('hub.couturePerks').split('|'), href: '/merchant/tools/couture' },
     { trigger: 'btp', color: 'from-orange-600 to-orange-900', badge: '🏗️ BTP', badgeCls: 'bg-orange-300 text-orange-900', perks: t('hub.btpPerks').split('|'), href: '/merchant/tools/btp' },
     { trigger: 'resto', color: 'from-green-700 to-green-900', badge: '🍲 Resto', badgeCls: 'bg-green-300 text-green-900', perks: t('hub.restoPerks').split('|'), href: '/merchant/tools/resto' },
+    { trigger: 'immobilier', color: 'from-teal-600 to-teal-900', badge: '🏠 Immobilier', badgeCls: 'bg-teal-300 text-teal-900', perks: t('hub.immobilierPerks').split('|'), href: '/merchant/tools/activer' },
   ]
 
   return (
@@ -85,7 +84,7 @@ export default async function HubPage() {
           </div>
         </div>
 
-        {/* VIP — 5 000 FCFA/mois · ou 50 000/an */}
+        {/* VIP — 15 000 FCFA/an, 1 outil sectoriel inclus */}
         <div className="rounded-2xl overflow-hidden shadow-md bg-gradient-to-br from-amber-600 to-amber-900 text-white">
           <div className="p-5">
             <div className="flex items-start justify-between gap-3">
@@ -96,9 +95,8 @@ export default async function HubPage() {
                 <h2 className="text-lg font-bold">Plan VIP</h2>
               </div>
               <div className="text-right flex-shrink-0">
-                <p className="text-2xl font-bold">{formatFcfa(5_000)}</p>
-                <p className="text-xs opacity-70">{t('hub.perMonth')}</p>
-                <p className="text-xs opacity-50 mt-0.5">ou {formatFcfa(50_000)}/an</p>
+                <p className="text-2xl font-bold">{formatFcfa(15_000)}</p>
+                <p className="text-xs opacity-70">{t('hub.perYear')}</p>
               </div>
             </div>
             <ul className="mt-4 space-y-1.5">
@@ -156,7 +154,7 @@ export default async function HubPage() {
           {t('hub.sectoralTools')}
         </h2>
         <p className="text-xs text-gray-500 -mt-3">
-          {formatFcfa(TOOL_PRICE)}{t('hub.perMonth')} · ou {formatFcfa(50_000)}/an — tous les secteurs au même prix
+          {t('hub.toolsIncludedVip')}
         </p>
 
         {toolCards.map(card => {
@@ -175,9 +173,9 @@ export default async function HubPage() {
                     )}
                   </div>
                   <div className="text-right flex-shrink-0">
-                    <p className="text-2xl font-bold">{formatFcfa(TOOL_PRICE)}</p>
-                    <p className="text-xs opacity-70">{t('hub.perMonth')}</p>
-                    <p className="text-xs opacity-50 mt-0.5">ou {formatFcfa(50_000)}/an</p>
+                    <span className="inline-block text-xs font-semibold bg-white/15 px-2.5 py-1 rounded-full whitespace-nowrap">
+                      {t('hub.includedWithVip')}
+                    </span>
                   </div>
                 </div>
                 <ul className="mt-4 space-y-1.5">
