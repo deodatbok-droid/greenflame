@@ -3,53 +3,13 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
+import { NAV_GROUPS } from './biz-nav-items'
 
 interface BizSidebarProps {
   accountName: string
   plan: string
   userInitials: string
 }
-
-const NAV_GROUPS = [
-  {
-    label: 'Principal',
-    items: [
-      { href: '/business/dashboard', label: 'Tableau de bord', icon: '⊞', emoji: true },
-      { href: '/business/rapports',  label: 'Rapports',        icon: '📊', emoji: true },
-    ],
-  },
-  {
-    label: 'Commerce',
-    items: [
-      { href: '/business/caisse',  label: 'Caisse',   icon: '🖥️', emoji: true },
-      { href: '/business/ventes',  label: 'Factures', icon: '🧾', emoji: true },
-      { href: '/business/devis',   label: 'Devis',    icon: '📋', emoji: true },
-      { href: '/business/clients', label: 'Clients',  icon: '👤', emoji: true },
-    ],
-  },
-  {
-    label: 'Inventaire',
-    items: [
-      { href: '/business/stock',           label: 'Produits',     icon: '📦', emoji: true },
-      { href: '/business/stock/mouvement', label: 'Mouvements',   icon: '↕️', emoji: true },
-      { href: '/business/fournisseurs',    label: 'Fournisseurs', icon: '🏭', emoji: true },
-      { href: '/business/achats',          label: 'Achats',       icon: '🛒', emoji: true },
-    ],
-  },
-  {
-    label: 'Immobilier',
-    items: [
-      { href: '/business/immobilier', label: 'Mes biens', icon: '⌂', emoji: true },
-    ],
-  },
-  {
-    label: 'Gestion',
-    items: [
-      { href: '/business/equipe',      label: 'Gestion du Personnel', icon: '👥', emoji: true },
-      { href: '/business/parametres',  label: 'Paramètres',   icon: '⚙️', emoji: true },
-    ],
-  },
-]
 
 const PLAN_BADGE: Record<string, { label: string; color: string }> = {
   trial:    { label: 'Essai',    color: '#F59E0B' },
@@ -70,7 +30,7 @@ export default function BizSidebar({ accountName, plan, userInitials }: BizSideb
   }
 
   return (
-    <aside style={{
+    <aside className="biz-sidebar" style={{
       width: collapsed ? 60 : 224, flexShrink: 0,
       transition: 'width .22s cubic-bezier(.4,0,.2,1)',
       background: '#0D1117',

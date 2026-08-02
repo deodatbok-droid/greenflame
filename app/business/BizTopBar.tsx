@@ -41,7 +41,7 @@ export default function BizTopBar({ accountName, userInitials, userRole }: BizTo
   }
 
   return (
-    <header style={{
+    <header className="biz-topbar" style={{
       position: 'sticky', top: 0, zIndex: 40,
       background: '#fff', borderBottom: '1px solid #F1F5F9',
       boxShadow: '0 1px 3px rgba(0,0,0,.04)',
@@ -75,8 +75,8 @@ export default function BizTopBar({ accountName, userInitials, userRole }: BizTo
         onMouseLeave={e => { e.currentTarget.style.borderColor = '#E2E8F0'; e.currentTarget.style.color = '#94A3B8' }}
       >
         <span style={{ fontSize: 13 }}>🔍</span>
-        <span>Rechercher…</span>
-        <kbd style={{
+        <span className="biz-topbar-label">Rechercher…</span>
+        <kbd className="biz-topbar-label" style={{
           padding: '2px 6px', borderRadius: 4,
           background: '#F1F5F9', border: '1px solid #E2E8F0',
           fontSize: 10, fontFamily: 'monospace', color: '#94A3B8',
@@ -98,7 +98,7 @@ export default function BizTopBar({ accountName, userInitials, userRole }: BizTo
         onMouseLeave={e => (e.currentTarget.style.background = '#22C55E')}
       >
         <span style={{ fontSize: 14, lineHeight: 1 }}>+</span>
-        <span>Nouveau</span>
+        <span className="biz-topbar-label">Nouveau</span>
       </button>
 
       {/* User menu */}

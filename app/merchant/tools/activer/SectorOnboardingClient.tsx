@@ -100,15 +100,42 @@ export default function SectorOnboardingClient({
   businessName,
   isPro,
   isVip,
+  merchantCountry,
 }: {
   businessName: string
   isPro: boolean
   isVip: boolean
+  merchantCountry: string
 }) {
   const router = useRouter()
   const [step, setStep]       = useState(0)
   const [answers, setAnswers] = useState<Answers>(EMPTY_ANSWERS)
   const [saving, setSaving]   = useState(false)
+  const [activatingImmobilier, setActivatingImmobilier] = useState(false)
+
+  // Marchand déjà VIP → passage direct en Business, sans formulaire ni surcoût.
+  // Crée l'espace Business à la volée avec les infos déjà connues du marchand.
+  async function activateImmobilier() {
+    setActivatingImmobilier(true)
+    try {
+      const res = await fetch('/api/business/accounts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: businessName, country: merchantCountry }),
+      })
+      // 409 = un espace Business existe déjà pour ce marchand — on continue normalement.
+      if (!res.ok && res.status !== 409) {
+        const err = await res.json().catch(() => ({}))
+        toast.error(err.error ?? 'Erreur lors de la création de votre espace Business')
+        setActivatingImmobilier(false)
+        return
+      }
+      router.push('/business/immobilier')
+    } catch {
+      toast.error('Erreur réseau — réessayez')
+      setActivatingImmobilier(false)
+    }
+  }
 
   const totalSteps = 6
   const progress   = step >= 1 && step <= totalSteps ? Math.round((step / totalSteps) * 100) : 0
@@ -288,13 +315,16 @@ export default function SectorOnboardingClient({
 
           {isVip && (
             <button
-              onClick={() => router.push('/business/immobilier')}
-              className="w-full flex items-center gap-3 p-3 rounded-xl border-2 border-brand-500 bg-brand-50 text-left transition-all hover:bg-brand-100"
+              onClick={activateImmobilier}
+              disabled={activatingImmobilier}
+              className="w-full flex items-center gap-3 p-3 rounded-xl border-2 border-brand-500 bg-brand-50 text-left transition-all hover:bg-brand-100 disabled:opacity-60"
             >
               <span className="text-2xl">🏠</span>
               <div>
                 <span className="text-sm font-semibold text-brand-700">Immobilier & Location</span>
-                <p className="text-xs text-brand-600 mt-0.5">Démarcheurs / agences — gestion de biens & catalogue dédié</p>
+                <p className="text-xs text-brand-600 mt-0.5">
+                  {activatingImmobilier ? 'Ouverture de votre espace Business…' : 'Démarcheurs / agences — gestion de biens & catalogue dédié'}
+                </p>
               </div>
               <span className="ml-auto bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-0.5 rounded-full">VIP</span>
             </button>

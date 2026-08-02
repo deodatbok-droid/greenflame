@@ -21,8 +21,7 @@ export interface BizSession {
 
 /**
  * Récupère la session Business du user connecté.
- * Redirige vers /login si non authentifié.
- * Redirige vers /business/onboarding si aucun compte business.
+ * Redirige vers /login si non authentifié, /business/onboarding si aucun compte business.
  */
 export async function getBizSession(): Promise<BizSession> {
   const auth = await createClient()
@@ -38,10 +37,10 @@ export async function getBizSession(): Promise<BizSession> {
     .limit(1)
     .maybeSingle()
 
-  if (!member) redirect('/onboarding')
+  if (!member) redirect('/business/onboarding')
 
   const account = (member as unknown as { biz_accounts: BizAccount }).biz_accounts
-  if (!account) redirect('/onboarding')
+  if (!account) redirect('/business/onboarding')
 
   return {
     user: { id: user.id, phone: user.phone },

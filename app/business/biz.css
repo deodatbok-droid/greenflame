@@ -193,3 +193,25 @@
   transition: var(--biz-t);
 }
 .biz-btn-secondary:hover { background: var(--biz-bg); border-color: var(--biz-txt-muted); }
+
+/* ─── Mobile (≤768px) ─────────────────────────────────────────────────── */
+.biz-bottom-nav,
+.biz-bottom-more { display: none; }
+
+@media (max-width: 768px) {
+  /* Sidebar desktop cède la place à la barre du bas */
+  .biz-sidebar { display: none !important; }
+
+  .biz-bottom-nav,
+  .biz-bottom-more { display: block; }
+
+  /* Laisse de la place pour la barre de navigation fixe */
+  .biz-main { padding-bottom: calc(76px + env(safe-area-inset-bottom)); }
+
+  /* Topbar compacte — on masque les libellés texte, on garde les icônes */
+  .biz-topbar { padding: 0 12px !important; }
+  .biz-topbar-label { display: none; }
+
+  /* Le widget d'onboarding remonte au-dessus de la barre de navigation fixe */
+  .biz-onboard-widget { bottom: calc(76px + env(safe-area-inset-bottom)) !important; right: 12px !important; }
+}

@@ -13,7 +13,7 @@ export default async function ActivateSectorToolPage() {
 
   const { data: merchant } = await supabase
     .from('merchants')
-    .select('id, business_name, subscription_tier, sector, sector_activated_at')
+    .select('id, business_name, subscription_tier, sector, sector_activated_at, country')
     .eq('user_id', user.id)
     .single()
 
@@ -29,7 +29,12 @@ export default async function ActivateSectorToolPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-2xl mx-auto pb-16">
-        <SectorOnboardingClient businessName={merchant.business_name ?? ''} isPro={isPro} isVip={isVip} />
+        <SectorOnboardingClient
+          businessName={merchant.business_name ?? ''}
+          isPro={isPro}
+          isVip={isVip}
+          merchantCountry={merchant.country ?? 'BJ'}
+        />
       </div>
     </div>
   )

@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import type { BizAccount } from '@/lib/business/auth'
 import BizSidebar from './BizSidebar'
 import BizTopBar from './BizTopBar'
+import BizBottomNav from './BizBottomNav'
 import BizCommandBar from './BizCommandBar'
 import BizOnboarding from './BizOnboarding'
 import './biz.css'
@@ -63,10 +64,11 @@ export default async function BusinessLayout({ children }: { children: ReactNode
           userInitials={userInitials}
           userRole={memberRole}
         />
-        <main style={{ flex: 1, overflow: 'auto' }}>
+        <main className="biz-main" style={{ flex: 1, overflow: 'auto' }}>
           {children}
         </main>
       </div>
+      <BizBottomNav />
       <BizCommandBar />
       <BizOnboarding businessId={account.id} />
     </div>
