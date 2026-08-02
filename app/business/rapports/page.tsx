@@ -113,7 +113,7 @@ export default async function RapportsPage() {
         ))}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 16, marginBottom: 16 }}>
+      <div className="biz-rapports-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 16, marginBottom: 16 }}>
         {/* Graphique CA 30j */}
         <div style={{ background: '#fff', borderRadius: 14, border: '1px solid #E2E8F0', padding: '20px 20px 12px' }}>
           <h2 style={{ fontSize: 13, fontWeight: 700, color: '#0F172A', marginBottom: 16 }}>CA journalier — 30 derniers jours</h2>

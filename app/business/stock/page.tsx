@@ -72,7 +72,7 @@ export default async function StockPage() {
       {stock.length === 0 ? (
         <EmptyStock />
       ) : (
-        <div style={{ background: '#fff', borderRadius: 14, border: '1px solid #E2E8F0', overflow: 'hidden' }}>
+        <div className="biz-table-scroll" style={{ background: '#fff', borderRadius: 14, border: '1px solid #E2E8F0' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
             <thead>
               <tr style={{ background: '#F8FAFC', borderBottom: '1px solid #E2E8F0' }}>

@@ -214,4 +214,21 @@
 
   /* Le widget d'onboarding remonte au-dessus de la barre de navigation fixe */
   .biz-onboard-widget { bottom: calc(76px + env(safe-area-inset-bottom)) !important; right: 12px !important; }
+
+  /* Caisse — panier sous la grille produits au lieu d'un panneau latéral fixe */
+  .biz-caisse-layout { flex-direction: column !important; height: auto !important; min-height: 100vh; }
+  .biz-caisse-products { padding: 16px 12px !important; }
+  .biz-caisse-cart {
+    width: 100% !important; border-left: none !important;
+    border-top: 1px solid var(--biz-border);
+    max-height: none !important;
+  }
+}
+
+/* ─── Tableaux : défilement horizontal plutôt que découpage ──────────────── */
+.biz-table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+/* ─── Rapports : la colonne moyens de paiement passe sous le graphique ───── */
+@media (max-width: 960px) {
+  .biz-rapports-grid { grid-template-columns: 1fr !important; }
 }

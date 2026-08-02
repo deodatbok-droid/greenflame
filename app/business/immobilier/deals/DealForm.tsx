@@ -122,8 +122,8 @@ export default function DealForm({ properties, ownBusinessName }: { properties: 
 
               <div style={{ border: '1px solid #E2E8F0', borderRadius: 10, overflow: 'hidden' }}>
                 {splits.map((s, i) => (
-                  <div key={s.business_id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 12px', borderTop: i > 0 ? '1px solid #F1F5F9' : 'none' }}>
-                    <span style={{ flex: 1, fontSize: 13, fontWeight: 600, color: '#0F172A', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <div key={s.business_id} style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8, padding: '10px 12px', borderTop: i > 0 ? '1px solid #F1F5F9' : 'none' }}>
+                    <span style={{ flex: '1 1 100px', minWidth: 0, fontSize: 13, fontWeight: 600, color: '#0F172A', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {s.name}
                     </span>
                     <select value={s.role} onChange={e => updateSplit(s.business_id, { role: e.target.value as SplitRow['role'] })} style={{ ...inp, width: 150, padding: '7px 9px', fontSize: 12 }}>

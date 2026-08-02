@@ -73,26 +73,30 @@ export default function MouvementStockPage() {
         {/* Lignes produits */}
         <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #E2E8F0', padding: 20, marginBottom: 16 }}>
           <h2 style={{ fontSize: 13, fontWeight: 700, color: '#0F172A', marginBottom: 14 }}>Produits</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: '2.5fr 1fr 1.2fr 2fr 28px', gap: 8, marginBottom: 8 }}>
-            {['Produit *', 'Quantité', 'Coût unit.', 'Note', ''].map(h => (
-              <span key={h} style={{ fontSize: 10, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '.06em' }}>{h}</span>
-            ))}
-          </div>
-          {lines.map((line, i) => (
-            <div key={i} style={{ display: 'grid', gridTemplateColumns: '2.5fr 1fr 1.2fr 2fr 28px', gap: 8, marginBottom: 8, alignItems: 'center' }}>
-              <select style={inp} value={line.product_id} onChange={e => updateLine(i, 'product_id', e.target.value)} required>
-                <option value="">— Choisir —</option>
-                {products.map(p => <option key={p.id} value={p.id}>{p.name}{p.sku ? ` (${p.sku})` : ''}</option>)}
-              </select>
-              <input style={{ ...inp, textAlign: 'right' }} type="number" min="0.001" step="0.001" value={line.qty}
-                onChange={e => updateLine(i, 'qty', parseFloat(e.target.value) || 0)} required />
-              <input style={{ ...inp, textAlign: 'right' }} type="number" min="0" step="1" value={line.unit_cost}
-                onChange={e => updateLine(i, 'unit_cost', parseFloat(e.target.value) || 0)} placeholder="0" />
-              <input style={inp} value={line.note} onChange={e => updateLine(i, 'note', e.target.value)} placeholder="Optionnel" />
-              <button type="button" onClick={() => removeLine(i)} disabled={lines.length === 1}
-                style={{ border: 'none', background: 'none', color: '#CBD5E1', cursor: 'pointer', fontSize: 18, lineHeight: 1 }}>×</button>
+          <div className="biz-table-scroll">
+            <div style={{ minWidth: 520 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '2.5fr 1fr 1.2fr 2fr 28px', gap: 8, marginBottom: 8 }}>
+                {['Produit *', 'Quantité', 'Coût unit.', 'Note', ''].map(h => (
+                  <span key={h} style={{ fontSize: 10, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '.06em' }}>{h}</span>
+                ))}
+              </div>
+              {lines.map((line, i) => (
+                <div key={i} style={{ display: 'grid', gridTemplateColumns: '2.5fr 1fr 1.2fr 2fr 28px', gap: 8, marginBottom: 8, alignItems: 'center' }}>
+                  <select style={inp} value={line.product_id} onChange={e => updateLine(i, 'product_id', e.target.value)} required>
+                    <option value="">— Choisir —</option>
+                    {products.map(p => <option key={p.id} value={p.id}>{p.name}{p.sku ? ` (${p.sku})` : ''}</option>)}
+                  </select>
+                  <input style={{ ...inp, textAlign: 'right' }} type="number" min="0.001" step="0.001" value={line.qty}
+                    onChange={e => updateLine(i, 'qty', parseFloat(e.target.value) || 0)} required />
+                  <input style={{ ...inp, textAlign: 'right' }} type="number" min="0" step="1" value={line.unit_cost}
+                    onChange={e => updateLine(i, 'unit_cost', parseFloat(e.target.value) || 0)} placeholder="0" />
+                  <input style={inp} value={line.note} onChange={e => updateLine(i, 'note', e.target.value)} placeholder="Optionnel" />
+                  <button type="button" onClick={() => removeLine(i)} disabled={lines.length === 1}
+                    style={{ border: 'none', background: 'none', color: '#CBD5E1', cursor: 'pointer', fontSize: 18, lineHeight: 1 }}>×</button>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
           <button type="button" onClick={addLine}
             style={{ fontSize: 12, color: '#22C55E', background: 'none', border: '1px dashed #BBF7D0', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', marginTop: 4 }}>
             + Ajouter un produit

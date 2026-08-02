@@ -66,7 +66,7 @@ export default async function DevisPage() {
       </div>
 
       {/* Table */}
-      <div style={{ background: '#fff', borderRadius: 14, border: '1px solid #E2E8F0', overflow: 'hidden' }}>
+      <div className="biz-table-scroll" style={{ background: '#fff', borderRadius: 14, border: '1px solid #E2E8F0' }}>
         <div style={{ display: 'grid', gridTemplateColumns: '140px 1fr 160px 130px 100px 80px', padding: '10px 20px', borderBottom: '1px solid #F1F5F9', gap: 12 }}>
           {['N° Devis', 'Client', 'Montant', 'Validité', 'Statut', ''].map(h => (
             <span key={h} style={{ fontSize: 10, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '.06em' }}>{h}</span>

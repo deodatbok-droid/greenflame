@@ -305,7 +305,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 }
 
 function Row({ children }: { children: React.ReactNode }) {
-  return <div style={{ display: 'flex', gap: 14 }}>{children}</div>
+  return <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14 }}>{children}</div>
 }
 
 function Divider() {

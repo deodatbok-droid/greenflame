@@ -63,7 +63,7 @@ export default function NouveauDevisPage() {
         {/* Client */}
         <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #E2E8F0', padding: 20, marginBottom: 16 }}>
           <h2 style={{ fontSize: 13, fontWeight: 700, color: '#0F172A', marginBottom: 14 }}>Informations client</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 10 }}>
             {([['name','Nom complet *'], ['email','Email'], ['phone','Téléphone']] as [string, string][]).map(([f, l]) => (
               <div key={f}>
                 <label style={lbl}>{l}</label>
@@ -76,24 +76,28 @@ export default function NouveauDevisPage() {
         {/* Lignes */}
         <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #E2E8F0', padding: 20, marginBottom: 16 }}>
           <h2 style={{ fontSize: 13, fontWeight: 700, color: '#0F172A', marginBottom: 14 }}>Articles</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: '2fr 3fr 1fr 1.2fr 0.8fr 28px', gap: 8, marginBottom: 8 }}>
-            {['Produit', 'Libellé', 'Qté', 'P.U. (FCFA)', 'TVA %', ''].map(h => (
-              <span key={h} style={{ fontSize: 10, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '.06em' }}>{h}</span>
-            ))}
-          </div>
-          {lines.map((line, i) => (
-            <div key={i} style={{ display: 'grid', gridTemplateColumns: '2fr 3fr 1fr 1.2fr 0.8fr 28px', gap: 8, marginBottom: 8, alignItems: 'center' }}>
-              <select style={inp} value={line.product_id} onChange={e => updateLine(i, 'product_id', e.target.value)}>
-                <option value="">— Manuel —</option>
-                {products.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-              </select>
-              <input style={inp} value={line.label} onChange={e => updateLine(i, 'label', e.target.value)} placeholder="Description" required />
-              <input style={{ ...inp, textAlign: 'right' }} type="number" min="0.01" step="0.01" value={line.qty} onChange={e => updateLine(i, 'qty', parseFloat(e.target.value) || 0)} required />
-              <input style={{ ...inp, textAlign: 'right' }} type="number" min="0" step="1" value={line.unit_price} onChange={e => updateLine(i, 'unit_price', parseFloat(e.target.value) || 0)} required />
-              <input style={{ ...inp, textAlign: 'right' }} type="number" min="0" max="100" step="0.1" value={line.tax_rate} onChange={e => updateLine(i, 'tax_rate', parseFloat(e.target.value) || 0)} />
-              <button type="button" onClick={() => removeLine(i)} disabled={lines.length === 1} style={{ border: 'none', background: 'none', color: '#CBD5E1', cursor: 'pointer', fontSize: 18, lineHeight: 1 }}>×</button>
+          <div className="biz-table-scroll">
+            <div style={{ minWidth: 560 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '2fr 3fr 1fr 1.2fr 0.8fr 28px', gap: 8, marginBottom: 8 }}>
+                {['Produit', 'Libellé', 'Qté', 'P.U. (FCFA)', 'TVA %', ''].map(h => (
+                  <span key={h} style={{ fontSize: 10, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '.06em' }}>{h}</span>
+                ))}
+              </div>
+              {lines.map((line, i) => (
+                <div key={i} style={{ display: 'grid', gridTemplateColumns: '2fr 3fr 1fr 1.2fr 0.8fr 28px', gap: 8, marginBottom: 8, alignItems: 'center' }}>
+                  <select style={inp} value={line.product_id} onChange={e => updateLine(i, 'product_id', e.target.value)}>
+                    <option value="">— Manuel —</option>
+                    {products.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                  </select>
+                  <input style={inp} value={line.label} onChange={e => updateLine(i, 'label', e.target.value)} placeholder="Description" required />
+                  <input style={{ ...inp, textAlign: 'right' }} type="number" min="0.01" step="0.01" value={line.qty} onChange={e => updateLine(i, 'qty', parseFloat(e.target.value) || 0)} required />
+                  <input style={{ ...inp, textAlign: 'right' }} type="number" min="0" step="1" value={line.unit_price} onChange={e => updateLine(i, 'unit_price', parseFloat(e.target.value) || 0)} required />
+                  <input style={{ ...inp, textAlign: 'right' }} type="number" min="0" max="100" step="0.1" value={line.tax_rate} onChange={e => updateLine(i, 'tax_rate', parseFloat(e.target.value) || 0)} />
+                  <button type="button" onClick={() => removeLine(i)} disabled={lines.length === 1} style={{ border: 'none', background: 'none', color: '#CBD5E1', cursor: 'pointer', fontSize: 18, lineHeight: 1 }}>×</button>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
           <button type="button" onClick={addLine} style={{ fontSize: 12, color: '#22C55E', background: 'none', border: '1px dashed #BBF7D0', borderRadius: 8, padding: '6px 14px', cursor: 'pointer', marginTop: 4 }}>
             + Ajouter une ligne
           </button>

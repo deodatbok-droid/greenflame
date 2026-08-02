@@ -90,10 +90,10 @@ export default function CaissePage() {
   }
 
   return (
-    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
+    <div className="biz-caisse-layout" style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
 
       {/* Product grid */}
-      <div style={{ flex: 1, overflow: 'auto', padding: '24px 20px 24px 32px' }}>
+      <div className="biz-caisse-products" style={{ flex: 1, overflow: 'auto', padding: '24px 20px 24px 32px' }}>
         <div style={{ marginBottom: 16 }}>
           <p style={{ fontSize: 12, color: '#64748B', textTransform: 'uppercase', letterSpacing: '.08em', marginBottom: 4 }}>Caisse</p>
           <h1 style={{ fontSize: 20, fontWeight: 800, color: '#0F172A', margin: 0 }}>Point de vente</h1>
@@ -135,7 +135,7 @@ export default function CaissePage() {
       </div>
 
       {/* Cart */}
-      <div style={{
+      <div className="biz-caisse-cart" style={{
         width: 320, flexShrink: 0, borderLeft: '1px solid #E2E8F0',
         background: '#fff', display: 'flex', flexDirection: 'column', overflow: 'hidden',
       }}>

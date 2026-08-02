@@ -103,7 +103,7 @@ export default function EquipePage() {
       {/* Permissions info */}
       <div style={{ background: '#F8FAFC', borderRadius: 10, border: '1px solid #E2E8F0', padding: '12px 16px', marginBottom: 20 }}>
         <p style={{ fontSize: 11, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '.08em', marginBottom: 8 }}>Niveaux d&apos;accès</p>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 10 }}>
           {[
             { role: 'staff', desc: 'Caisse, consultation stock' },
             { role: 'manager', desc: 'Tout sauf paramètres & équipe' },
@@ -118,7 +118,7 @@ export default function EquipePage() {
       </div>
 
       {/* Liste membres */}
-      <div style={{ background: '#fff', borderRadius: 14, border: '1px solid #E2E8F0', overflow: 'hidden' }}>
+      <div className="biz-table-scroll" style={{ background: '#fff', borderRadius: 14, border: '1px solid #E2E8F0' }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 120px 130px 80px', padding: '10px 20px', borderBottom: '1px solid #F1F5F9', gap: 12 }}>
           {['Membre', 'Rôle', 'Depuis', ''].map(h => (
             <span key={h} style={{ fontSize: 10, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '.06em' }}>{h}</span>
