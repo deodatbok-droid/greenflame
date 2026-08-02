@@ -261,7 +261,7 @@ export default function MarketplaceClient({
                 {categories.slice(0, 4).map((cat) => (
                   <Link
                     key={cat.slug}
-                    href={`/marketplace/categorie/${cat.slug}`}
+                    href={cat.slug === 'immobilier-location' ? '/immobilier' : `/marketplace/categorie/${cat.slug}`}
                     className="px-3 py-1.5 rounded-full text-xs font-medium bg-brand-50 text-brand-700 border border-brand-200"
                   >
                     {cat.name}

@@ -20,7 +20,7 @@ export function CategoryGrid({ categories }: { categories: MarketplaceCategory[]
       {categories.map((cat) => (
         <Link
           key={cat.slug}
-          href={`/marketplace/categorie/${cat.slug}`}
+          href={cat.slug === 'immobilier-location' ? '/immobilier' : `/marketplace/categorie/${cat.slug}`}
           className="group flex flex-col items-center gap-2 p-3 rounded-2xl hover:bg-gray-50 transition-colors text-center"
         >
           <div
