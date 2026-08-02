@@ -32,6 +32,8 @@ const BREADCRUMBS: Record<string, { title: string; crumbs: string[] }> = {
   '/business/immobilier/mandats/nouveau': { title: 'Nouveau mandat',   crumbs: ['Immobilier', 'Mandats'] },
   '/business/immobilier/visites':       { title: 'Visites',            crumbs: ['Immobilier'] },
   '/business/immobilier/visites/nouveau': { title: 'Planifier une visite', crumbs: ['Immobilier', 'Visites'] },
+  '/business/immobilier/deals':         { title: 'Deals',               crumbs: ['Immobilier'] },
+  '/business/immobilier/deals/nouveau': { title: 'Déclarer un deal',     crumbs: ['Immobilier', 'Deals'] },
 }
 
 const ROLE_LABEL: Record<string, string> = { owner: 'Propriétaire', manager: 'Manager', staff: 'Employé' }

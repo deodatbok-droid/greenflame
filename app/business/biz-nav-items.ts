@@ -41,6 +41,7 @@ export const NAV_GROUPS: BizNavGroup[] = [
       { href: '/business/immobilier',         label: 'Mes biens', icon: '⌂' },
       { href: '/business/immobilier/mandats',  label: 'Mandats',   icon: '📜' },
       { href: '/business/immobilier/visites',  label: 'Visites',   icon: '🗓️' },
+      { href: '/business/immobilier/deals',    label: 'Deals',     icon: '🤝' },
     ],
   },
   {
